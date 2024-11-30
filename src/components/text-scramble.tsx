@@ -1,5 +1,5 @@
 'use client';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useState, useCallback } from 'react';
 import { motion, type MotionProps } from 'framer-motion';
 
 type TextScrambleProps = {
@@ -34,7 +34,7 @@ export function TextScramble({
   const [isAnimating, setIsAnimating] = useState(false);
   const text = children;
 
-  const scramble = async () => {
+  const scramble = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
 
@@ -51,7 +51,7 @@ export function TextScramble({
           continue;
         }
 
-        if (progress * text.length > i) {
+        if (progress * text.length > i && step <= steps) {
           scrambled += text[i];
         } else {
           scrambled +=
@@ -64,22 +64,37 @@ export function TextScramble({
 
       if (step > steps) {
         clearInterval(interval);
-        setDisplayText(text);
         setIsAnimating(false);
-        onScrambleComplete?.();
+        setTimeout(() => {
+          scramble();
+        }, 2000);
       }
     }, speed * 1000);
-  };
+
+    return () => {
+      clearInterval(interval);
+      setIsAnimating(false);
+    };
+  }, [text, speed, duration, characterSet]);
 
   useEffect(() => {
     if (!trigger) return;
-
-    scramble();
-  }, [trigger]);
+    
+    const cleanup = scramble();
+    return cleanup;
+  }, [trigger, scramble]);
 
   return (
     <MotionComponent className={className} {...props}>
       {displayText}
     </MotionComponent>
+  );
+}
+
+export function ScrambleName() {
+  return (
+    <TextScramble className="text-sm text-gray-500 pb-2">
+      Product Engineer
+    </TextScramble>
   );
 }

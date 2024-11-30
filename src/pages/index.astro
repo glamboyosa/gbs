@@ -1,72 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
+import { ScrambleName } from "@/components/text-scramble";
 ---
 
 <Layout title="Welcome to Astro.">
-  <main>
-    <p class="instructions">This site is a WIP :/</p>
-    <ul role="list" class="link-card-grid">
-      <Card
-        href="https://to.glamboyosa.xyz"
-        title="TO"
-        body="Upscale your images with AI"
-      />
-      <Card
-      href="https://blog.glamboyosa.xyz"
-      title="My Blog"
-      body="Osa's knowledge base"
-    />
-      <Card
-        href="https://github.com/glamboyosa"
-        title="Me/GitHub"
-        body="My GitHub profile."
-      />
-    </ul>
-  </main>
+  <div class="mx-auto px-4 pt-8 pb-2 md:max-w-[900px] max-w-full tracking-wider h-screen overflow-x-hidden md:overflow-visible md:text-justify">
+    <header class="mb-8" >
+      <div class="cursor-pointer">
+        <h1 class="text-xl font-medium">glamboyosa 🏄🏾‍♂️</h1>
+        <ScrambleName client:load/>
+      </div>
+      <hr />
+    </header>
+    <div class="flex  md:flex-nowrap flex-wrap md:space-x-8">
+      <div class="hidden md:block w-64 text-sm"></div>
+      <main class="flex-grow mx-auto max-w-full sm:px-4">
+      hey
+      </main>
+    </div>
+    </div>
 </Layout>
 
-<style>
-  main {
-    margin: auto;
-    padding: 1.5rem;
-    max-width: 60ch;
-  }
-  h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    margin: 0;
-  }
-  .text-gradient {
-    background-image: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 400%;
-    background-position: 0%;
-  }
-  .instructions {
-    line-height: 1.6;
-    margin: 1rem 0;
-    border: 1px solid rgba(var(--accent), 25%);
-    background-color: white;
-    padding: 1rem;
-    border-radius: 0.4rem;
-  }
-  .instructions code {
-    font-size: 0.875em;
-    font-weight: bold;
-    background: rgba(var(--accent), 12%);
-    color: rgb(var(--accent));
-    border-radius: 4px;
-    padding: 0.3em 0.45em;
-  }
-  .instructions strong {
-    color: rgb(var(--accent));
-  }
-  .link-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-    gap: 1rem;
-    padding: 0;
-  }
-</style>
+

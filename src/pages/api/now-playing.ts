@@ -1,0 +1,55 @@
+import type { APIRoute } from 'astro';
+import type { SpotifyData, SpotifyPlaybackState } from '@/lib/types';
+
+export const GET: APIRoute = async () => {
+  try {
+    const tokenResponse = await fetch('http://localhost:4321/api/token');
+    const { access_token } = await tokenResponse.json();
+
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+
+    if (response.status === 204 || response.status > 400) {
+      return new Response(JSON.stringify({
+        isPlaying: false,
+        title: '',
+        artist: '',
+        albumImageUrl: '',
+        progress_ms: 0
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
+    const song = await response.json() as SpotifyPlaybackState;
+
+    const data: SpotifyData & { progress_ms: number } = {
+      isPlaying: song.is_playing,
+      title: song.item?.name,
+      artist: song.item?.artists[0]?.name,
+      albumImageUrl: song.item?.album?.images[0]?.url,
+      progress_ms: song.progress_ms
+    };
+
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching now playing:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch now playing' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+}; 

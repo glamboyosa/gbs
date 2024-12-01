@@ -2,21 +2,31 @@ import type { APIRoute } from 'astro';
 
 const CLIENT_ID = import.meta.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = import.meta.env.SPOTIFY_CLIENT_SECRET;
-const REFRESH_TOKEN = import.meta.env.SPOTIFY_REFRESH_TOKEN;
 
-export const GET: APIRoute = async () => {
+export const POST: APIRoute = async ({ request }) => {
   try {
+    const body = await request.json();
     const basic = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
+
+    // Determine if this is a refresh token request or initial token request
+    const params = new URLSearchParams({
+      ...(body.refresh_token 
+        ? {
+            grant_type: 'refresh_token',
+            refresh_token: body.refresh_token,
+          }
+        : {
+            grant_type: 'client_credentials',
+          }),
+    });
+
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         Authorization: `Basic ${basic}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: REFRESH_TOKEN,
-      }),
+      body: params,
     });
 
     if (!response.ok) {
@@ -32,12 +42,18 @@ export const GET: APIRoute = async () => {
       }
     });
   } catch (error) {
-    console.error('Error refreshing token:', error);
-    return new Response(JSON.stringify({ error: 'Failed to refresh token' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    console.error('Error with token operation:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Failed to perform token operation',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }), 
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    });
+    );
   }
 }; 

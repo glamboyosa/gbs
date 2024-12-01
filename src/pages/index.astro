@@ -1,4 +1,5 @@
 ---
+import { NowPlaying } from "@/components/now-playing";
 import Layout from "../layouts/Layout.astro";
 import { ScrambleName } from "@/components/text-scramble";
 import { ShimmerName } from "@/components/text-shimmer";
@@ -31,6 +32,9 @@ import "@/styles/global.css";
           <p class="leading-relaxed">
             When I'm not coding, you'll probably find me cooking up something experimental in the kitchen, watching movies (<span class="font-medium">60 logged on Letterboxd</span> this year and counting!), or gaming. I'm always learning, tinkering, and looking for the next exciting challenge.
           </p>
+        </section>
+        <section class="space-y-4 flex justify-center items-center">
+          <NowPlaying client:load/>
         </section>
       </main>
     </div>

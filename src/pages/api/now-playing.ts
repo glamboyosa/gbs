@@ -1,9 +1,24 @@
 import type { APIRoute } from 'astro';
 import type { SpotifyData, SpotifyPlaybackState } from '@/lib/types';
 
+const REFRESH_TOKEN = import.meta.env.SPOTIFY_REFRESH_TOKEN;
+
 export const GET: APIRoute = async () => {
   try {
-    const tokenResponse = await fetch('http://localhost:4321/api/token');
+    const tokenResponse = await fetch('http://localhost:4321/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        refresh_token: REFRESH_TOKEN
+      })
+    });
+    
+    if (!tokenResponse.ok) {
+      throw new Error('Failed to get access token');
+    }
+
     const { access_token } = await tokenResponse.json();
 
     const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -45,7 +60,10 @@ export const GET: APIRoute = async () => {
     });
   } catch (error) {
     console.error('Error fetching now playing:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch now playing' }), {
+    return new Response(JSON.stringify({ 
+      error: 'Failed to fetch now playing',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json'

@@ -1,21 +1,37 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { ScrambleName } from "@/components/text-scramble";
+import { ShimmerName } from "@/components/text-shimmer";
+import "@/styles/global.css";
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Timothy Osa Ogbemudia">
   <div class="mx-auto px-4 pt-8 pb-2 md:max-w-[900px] max-w-full tracking-wider h-screen overflow-x-hidden md:overflow-visible md:text-justify">
     <header class="mb-8" >
       <div class="cursor-pointer">
-        <h1 class="text-xl font-medium">glamboyosa 🏄🏾‍♂️</h1>
+        <h1 class="text-xl font-medium"><ShimmerName client:load/> ✨</h1>
         <ScrambleName client:load/>
       </div>
       <hr />
     </header>
     <div class="flex  md:flex-nowrap flex-wrap md:space-x-8">
       <div class="hidden md:block w-64 text-sm"></div>
-      <main class="flex-grow mx-auto max-w-full sm:px-4">
-      hey
+      <main class="flex-grow mx-auto max-w-full sm:px-4 space-y-6">
+        <section class="space-y-4">
+          <p class="leading-relaxed">
+            Hey, I'm Osa, known on the www as glamboyosa. I'm a product engineer who loves turning ideas into real, working systems. I've spent my time building with Go, TypeScript, Next.js, and Python—languages and frameworks that keep me excited about shipping fast! But I'm always experimenting with new ones.
+          </p>
+
+          <p class="leading-relaxed">
+            I'm passionate about creating things developers love—whether it's <span class="font-medium">SDKs</span>, <span class="font-medium">internal tools</span>, or <span class="font-medium">full-stack systems</span> that just feel right. There's nothing better than seeing something you built make someone's life easier or more enjoyable. Along the way, I've collaborated with teams across <span class="italic">Texas, SF, NYC, London and the EU</span> and have developed a <a href="https://zesty-blanket-089.notion.site/Timothy-Osa-Ogbemudia-s-Handbook-Engineering-Design-More-d21a912f9f4e4c07991c3e39e3c0f477?pvs=74" target="_blank" rel="noopener noreferrer" class="hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 px-1.5 rounded transition-all duration-200 inline-flex items-center gap-0.5">personal handbook <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+</svg></a> along the way.
+          </p>
+          
+          <p class="leading-relaxed">
+            When I'm not coding, you'll probably find me cooking up something experimental in the kitchen, watching movies (<span class="font-medium">60 logged on Letterboxd</span> this year and counting!), or gaming. I'm always learning, tinkering, and looking for the next exciting challenge.
+          </p>
+        </section>
       </main>
     </div>
     </div>

@@ -53,3 +53,7 @@ export function TextShimmer({
     </MotionComponent>
   );
 }
+
+export const ShimmerName = () => (
+  <TextShimmer className="font-rubik-marker">Osa</TextShimmer>
+);

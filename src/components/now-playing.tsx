@@ -4,6 +4,7 @@ import { FastAverageColor } from "fast-average-color";
 import { cn, generateRandomValues, getValidToken } from "@/lib/utils";
 import useSWR from "swr";
 import type { SpotifyData } from "@/lib/types";
+import { MouseCursor } from "./cursor";
 
 const fac = new FastAverageColor();
 
@@ -82,6 +83,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
       onClick={() => setIsExpanded(!isExpanded)}
       className="h-fit max-w-[400px] overflow-hidden bg-black cursor-pointer"
     >
+      <MouseCursor />
       <motion.div
         className={cn("relative h-7 px-2.5")}
         initial={{ height: 28, width: 128 }}

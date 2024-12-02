@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 const CLIENT_ID = import.meta.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = import.meta.env.SPOTIFY_CLIENT_SECRET;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const body = await request.json();
     const basic = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
             grant_type: 'client_credentials',
           }),
     });
-
+    
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -34,11 +34,18 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const data = await response.json();
-
+    console.log("data is", data)
+    cookies.set('spotify_token', data.access_token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: data.expires_in
+    })
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     });
   } catch (error) {

@@ -4,6 +4,8 @@ import Layout from "../layouts/Layout.astro";
 import { ScrambleName } from "@/components/text-scramble";
 import { ShimmerName } from "@/components/text-shimmer";
 import "@/styles/global.css";
+
+const accessToken = Astro.cookies.get('spotify_token')?.value;
 ---
 
 <Layout title="Timothy Osa Ogbemudia">
@@ -34,7 +36,7 @@ import "@/styles/global.css";
           </p>
         </section>
         <section class="space-y-4 flex justify-center items-center">
-          <NowPlaying client:load/>
+          <NowPlaying client:load accessToken={accessToken}/>
         </section>
       </main>
     </div>

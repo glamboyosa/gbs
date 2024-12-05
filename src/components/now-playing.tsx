@@ -49,8 +49,8 @@ async function fetchLastPlayedTrack(accessToken?: string) {
 }
 
 async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { progress_ms: number }> {
-  const access_token = accessToken ?? await getValidToken();
-  
+  const access_token = accessToken || await getValidToken();
+  console.log("access token is", access_token)
   // First try to get currently playing
   const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
     headers: {
@@ -83,9 +83,9 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
   const [color, setColor] = useState("#E2E8F0");
   const [frequencies, setFrequencies] = useState<number[]>(generateRandomValues(6));
   const [isExpanded, setIsExpanded] = useState(false);
-
+  console.log("access token is", accessToken)
   const { data: song } = useSWR<SpotifyData & { progress_ms: number }>(
-    accessToken ? 'spotify-now-playing' : null,
+    'spotify-now-playing',
     ()=> fetchNowPlaying(accessToken),
     {
       refreshInterval: 1000,
@@ -115,9 +115,9 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
     return () => clearInterval(intervalId);
   }, [song?.isPlaying]);
 
-  if (!accessToken) {
-    return <SpotifyLogin />;
-  }
+  // if (!accessToken) {
+  //   return <SpotifyLogin />;
+  // }
 
   if (!song) return null;
 

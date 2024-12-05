@@ -24,6 +24,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       params.append('code_verifier', body.code_verifier);
     } else if (body.grant_type === 'refresh_token') {
       const refreshToken = await redis.get<string>('spotify_refresh_token');
+      console.log("refresh token is", refreshToken)
       if (!refreshToken) {
         throw new Error('Refresh token not found');
       }

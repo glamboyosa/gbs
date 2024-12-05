@@ -1,6 +1,5 @@
 {
     "build": {
-      "command": "pnpm build",
       "installCommand": "pnpm install"
     }
   }

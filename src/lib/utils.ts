@@ -37,7 +37,8 @@ const BASE_URL = import.meta.env.DEV
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      refresh_token: tokenData?.refresh_token
+      refresh_token: tokenData?.refresh_token,
+      grant_type: 'refresh_token',
     }),
   });
 

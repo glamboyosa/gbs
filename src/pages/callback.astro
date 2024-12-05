@@ -1,0 +1,39 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Authenticating...">
+  <div class="flex h-screen items-center justify-center">
+    <p>Authenticating with Spotify...</p>
+  </div>
+</Layout>
+
+<script>
+  import { generateCodeChallenge } from "@/lib/pkce";
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  const codeVerifier = localStorage.getItem('code_verifier');
+
+  if (code && codeVerifier) {
+    const response = await fetch('/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        code_verifier: codeVerifier,
+        grant_type: 'authorization_code',
+        redirect_uri: `${window.location.origin}/callback`,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Refresh token:', data.refresh_token);
+      // Redirect back to home
+      window.location.href = '/';
+    }
+  }
+</script> 

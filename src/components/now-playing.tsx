@@ -5,20 +5,34 @@ import { cn, generateRandomValues, getValidToken } from "@/lib/utils";
 import useSWR from "swr";
 import type { SpotifyData } from "@/lib/types";
 import { MouseCursor } from "./cursor";
+import { SpotifyLogin } from "./spotify-login";
 
 const fac = new FastAverageColor();
 
-async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { progress_ms: number }> {
-    console.log("access token is", accessToken)
-  const access_token = accessToken ?? await getValidToken();
-  console.log("access token is", access_token)
-  const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  });
+function processLastPlayedTrack(lastTrack: any) {
+  return {
+    isPlaying: false,
+    title: lastTrack?.name ?? '',
+    artist: lastTrack?.artists[0]?.name ?? '',
+    albumImageUrl: lastTrack?.album?.images[0]?.url ?? '',
+    progress_ms: 0
+  };
+}
 
-  if (response.status === 204 || response.status > 400) {
+async function fetchLastPlayedTrack(accessToken?: string) {
+  const lastPlayedResponse = await fetch(
+    'https://api.spotify.com/v1/me/player/recently-played?limit=1',
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (!lastPlayedResponse.ok) {
+    if (lastPlayedResponse.status === 204) {
+      return processLastPlayedTrack(null);
+    }
     return {
       isPlaying: false,
       title: '',
@@ -28,7 +42,34 @@ async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { pr
     };
   }
 
+  const lastPlayedData = await lastPlayedResponse.json();
+  const lastTrack = lastPlayedData.items[0]?.track;
+  console.log("data from last played", lastPlayedData);
+  return processLastPlayedTrack(lastTrack);
+}
+
+async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { progress_ms: number }> {
+  const access_token = accessToken ?? await getValidToken();
+  
+  // First try to get currently playing
+  const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+
+  if (response.status === 204 || response.status > 400) {
+    return fetchLastPlayedTrack(access_token);
+  }
+
   const data = await response.json();
+    console.log("data from currently playing",data)
+  // If not playing, get last played
+  if (!data.is_playing) {
+    return fetchLastPlayedTrack(access_token);
+  }
+
+  // Return currently playing track data
   return {
     isPlaying: data.is_playing,
     title: data.item?.name,
@@ -44,10 +85,10 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: song } = useSWR<SpotifyData & { progress_ms: number }>(
-    'spotify-now-playing',
+    accessToken ? 'spotify-now-playing' : null,
     ()=> fetchNowPlaying(accessToken),
     {
-      // refreshInterval: 1000,
+      refreshInterval: 1000,
       revalidateOnFocus: false,
     }
   );
@@ -69,10 +110,14 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
       if (song?.isPlaying) {
         setFrequencies(generateRandomValues(6));
       }
-    }, 300);
+    }, 230);
 
     return () => clearInterval(intervalId);
   }, [song?.isPlaying]);
+
+  if (!accessToken) {
+    return <SpotifyLogin />;
+  }
 
   if (!song) return null;
 
@@ -132,7 +177,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                     transition={{ duration: 0.2, delay: 0.1 }}
                     className="text-white"
                   >
-                    {"In Your Eyes"}
+                    {song.title}
                   </motion.span>
                   <motion.span 
                     initial={{ opacity: 0 }}
@@ -141,7 +186,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                     transition={{ duration: 0.2, delay: 0.15 }}
                     className="text-gray-50"
                   >
-                    {"The Weeknd"}
+                    {song.artist}
                   </motion.span>
                 </div>
                 <div className="ml-auto mr-1 flex items-center">
@@ -160,7 +205,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                       }}
                       animate={{
                         width: 2,
-                        height: value,
+                        height: song.isPlaying ? value : 2,
                         scaleY: 0.75,
                       }}
                       transition={{
@@ -198,7 +243,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                       }}
                       initial={{
                         width: 2,
-                        height: song.isPlaying ? value : 0,
+                        height: song.isPlaying ? value : 2,
                         scaleY: 0.75,
                       }}
                       transition={{

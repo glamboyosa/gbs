@@ -1,10 +1,10 @@
-
 ---
 export interface Props {
 	title: string;
+	description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = "Default description" } = Astro.props;
 import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 ---
 
@@ -12,10 +12,15 @@ import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description">
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="description" content={description}>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<GoogleFontsOptimizer url="https://fonts.googleapis.com/css2?family=Lacquer&family=Inter:wght@400;500;600;700&family=Rubik+Marker+Hatch&display=swap" />
 		<title>{title}</title>
 	</head>
@@ -27,10 +32,12 @@ import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 	:root {
 		--accent: 124, 58, 237;
 		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
+		--background-color: #F6F6F6;
+		--font-family: system-ui, sans-serif;
 	}
 	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
+		font-family: var(--font-family);
+		background-color: var(--background-color);
 	}
 	code {
 		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,

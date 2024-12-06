@@ -8,13 +8,18 @@ const redis = new Redis({
   token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
 })
 
+const ALLOWED_ORIGINS = ['https://glamboyosa.xyz', 'https://www.glamboyosa.xyz'];
+
 export const POST: APIRoute = async ({ request, cookies }) => {
+  const origin = request.headers.get('Origin');
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin!) ? origin : ALLOWED_ORIGINS[0];
+
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+        'Access-Control-Allow-Origin': allowedOrigin as string,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Credentials': 'true',
@@ -76,7 +81,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+        'Access-Control-Allow-Origin': allowedOrigin as string,
         'Access-Control-Allow-Credentials': 'true',
       }
     });
@@ -91,7 +96,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+          'Access-Control-Allow-Origin': allowedOrigin as string,
           'Access-Control-Allow-Credentials': 'true',
         }
       }

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "4321:4321"
+    environment:
+      - NODE_ENV=production
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+    restart: unless-stopped 

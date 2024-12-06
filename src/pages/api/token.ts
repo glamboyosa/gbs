@@ -8,7 +8,7 @@ const redis = new Redis({
   token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
 })
 
-const ALLOWED_ORIGINS = ['https://glamboyosa.xyz', 'https://www.glamboyosa.xyz'];
+const ALLOWED_ORIGINS = ['https://www.glamboyosa.xyz'];
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   const origin = request.headers.get('Origin');

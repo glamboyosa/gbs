@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-const ALLOWED_ORIGINS = ['https://glamboyosa.xyz', 'https://www.glamboyosa.xyz'];
+const ALLOWED_ORIGINS = ['https://www.glamboyosa.xyz'];
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = request.headers.get('Origin');

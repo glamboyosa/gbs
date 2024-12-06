@@ -44,13 +44,13 @@ async function fetchLastPlayedTrack(accessToken?: string) {
 
   const lastPlayedData = await lastPlayedResponse.json();
   const lastTrack = lastPlayedData.items[0]?.track;
-  console.log("data from last played", lastPlayedData);
+  
   return processLastPlayedTrack(lastTrack);
 }
 
 async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { progress_ms: number }> {
   const access_token = accessToken || await getValidToken();
-  console.log("access token is", access_token)
+  
   // First try to get currently playing
   const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
     headers: {
@@ -63,7 +63,7 @@ async function fetchNowPlaying(accessToken?: string): Promise<SpotifyData & { pr
   }
 
   const data = await response.json();
-    console.log("data from currently playing",data)
+    
   // If not playing, get last played
   if (!data.is_playing) {
     return fetchLastPlayedTrack(access_token);
@@ -83,7 +83,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
   const [color, setColor] = useState("#E2E8F0");
   const [frequencies, setFrequencies] = useState<number[]>(generateRandomValues(6));
   const [isExpanded, setIsExpanded] = useState(false);
-  console.log("access token is", accessToken)
+  
   const { data: song } = useSWR<SpotifyData & { progress_ms: number }>(
     'spotify-now-playing',
     ()=> fetchNowPlaying(accessToken),
@@ -100,7 +100,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
       });
       setColor(c.hex);
     } catch (error) {
-      console.log(error);
+      
       setColor("#E2E8F0");
     }
   };
@@ -164,7 +164,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                   alt={song.title || "Album Art"}
                   className={cn("rounded-sm", isExpanded ? "size-10" : "size-5")}
                   onLoad={(e) => {
-                    console.log("loaded the image")
+                    
                     getColor(e.target as HTMLImageElement)
                   }}
                  

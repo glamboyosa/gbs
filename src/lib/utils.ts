@@ -24,7 +24,7 @@ const BASE_URL = import.meta.env.DEV
   ? 'http://localhost:4321' 
   : 'https://www.glamboyosa.xyz';
   export async function getValidToken() {
-  console.log("token data is", tokenData)
+  
   const now = Date.now();
   
   if (tokenData && tokenExpirationTime && now < tokenExpirationTime - 300000) {

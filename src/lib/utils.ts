@@ -22,7 +22,7 @@ let tokenExpirationTime: number | null = null;
 
 const BASE_URL = import.meta.env.DEV 
   ? 'http://localhost:4321' 
-  : 'https://glamboyosa.xyz';
+  : 'https://www.glamboyosa.xyz';
   export async function getValidToken() {
   console.log("token data is", tokenData)
   const now = Date.now();

@@ -9,6 +9,19 @@ const redis = new Redis({
 })
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
+      },
+    });
+  }
+
   try {
     const body = await request.json();
     const basic = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
@@ -63,6 +76,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+        'Access-Control-Allow-Credentials': 'true',
       }
     });
   } catch (error) {
@@ -75,7 +90,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       {
         status: 500,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': 'https://glamboyosa.xyz',
+          'Access-Control-Allow-Credentials': 'true',
         }
       }
     );

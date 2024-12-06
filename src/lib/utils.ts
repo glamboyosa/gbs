@@ -33,6 +33,7 @@ const BASE_URL = import.meta.env.DEV
 
   const response = await fetch(`${BASE_URL}/api/token`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },

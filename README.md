@@ -1,4 +1,4 @@
-# Personal Website
+# Glamboyosa Personal Website
 
 A modern, minimalist personal website built with Astro and React, featuring real-time Spotify playback status and elegant animations.
 

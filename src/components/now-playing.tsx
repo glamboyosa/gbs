@@ -262,7 +262,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                 layoutId="album-art"
                 onLoad={(e) => getColor(e.target as HTMLImageElement)}
               />
-              <div className={cn("ml-auto flex items-center", song.isPlaying ? "mr-3" : "mr-0")}>
+              <div className={cn("ml-auto flex items-center", song?.isPlaying && "mr-3")}>
                 {frequencies.map((value, index) => (
                   <motion.div
                     layout

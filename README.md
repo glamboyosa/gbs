@@ -1,55 +1,59 @@
-# Astro Starter Kit: Basics
+# Personal Website
 
+A modern, minimalist personal website built with Astro and React, featuring real-time Spotify playback status and elegant animations.
+
+## Features
+
+- 🎵 Real-time Spotify integration showing currently playing track
+- 🔒 Secure authentication using Spotify PKCE flow
+- 🎨 Dynamic color extraction from album artwork
+- ✨ Smooth animations using Framer Motion
+- 🌓 Custom font combinations (Lacquer, Inter, Rubik Marker Hatch)
+- 🚀 Server-side rendering with Astro
+- 🔄 Automatic token refresh handling
+- 🎯 Redis caching for improved performance
+
+## Tech Stack
+
+- **Framework**: [Astro](https://astro.build)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **Animations**: [Framer Motion](https://www.framer.com/motion)
+- **Data Fetching**: [SWR](https://swr.vercel.app)
+- **Database**: [Upstash Redis](https://upstash.com)
+- **Deployment**: Docker & Vercel
+- **Authentication**: Spotify OAuth 2.0 with PKCE
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm
+- Docker (optional)
+- Spotify Developer Account
+
+### Environment Variables
+
+Copy the example environment file and update it with your credentials:
+ 
+```bash
+cp .env.example .env
 ```
-npm create astro@latest -- --template basics
+
+You'll need to:
+1. Create a Spotify application in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Create a free Redis database at [Upstash](https://upstash.com)
+3. Update the .env file with your credentials
+
+### Installation
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+The site should now be running at http://localhost:4321
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![basics](https://user-images.githubusercontent.com/4677417/186188965-73453154-fdec-4d6b-9c34-cb35c248ae5b.png)
-
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

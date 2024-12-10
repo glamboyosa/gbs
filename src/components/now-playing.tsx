@@ -161,7 +161,13 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
           height: isExpanded ? 100 : 28, 
           width: isExpanded ? 230 : 128,
         }}
-        transition={{ type: "spring", bounce: 0.5, stiffness: 300, damping: 30 }}
+        transition={{ 
+          type: "spring", 
+          bounce: 0.5, 
+          stiffness: 300, 
+          damping: 30,
+          layout: { type: "spring", bounce: 0.2 }
+        }}
       >
         <AnimatePresence mode="wait">
           {isExpanded ? (
@@ -170,14 +176,21 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="relative mt-3 flex items-center gap-2"
+              className="relative mt-3 px-2.5 flex items-center gap-2"
             >
               <motion.img
+                layoutId="album-art"
                 initial={{ filter: "blur(15px)", scale: 2 }}
                 animate={{ filter: "blur(0px)", scale: 1 }}
+                exit={{ filter: "blur(15px)", scale: 0.2, opacity: 0 }}
                 transition={{ 
                   duration: 0.2,
                   delay: 0.1,
+                  layout: { type: "spring", bounce: 0.2 },
+                  exit: {
+                    duration: 0.15,
+                    delay: 0
+                  },
                   scale: {
                     type: "spring",
                     damping: 12,
@@ -186,7 +199,7 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
                 }}
                 src={song.albumImageUrl || "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36"}
                 alt={song.title || "Album Art"}
-                className={cn("rounded-sm ml-1", isExpanded ? "size-10" : "size-5")}
+                className={cn("rounded-sm", isExpanded ? "size-8" : "size-5")}
                 onLoad={(e) => {
                   getColor(e.target as HTMLImageElement)
                 }}
@@ -253,13 +266,20 @@ export function NowPlaying({accessToken}: {accessToken?: string}) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.2,
+                layout: { type: "spring", bounce: 0.2 }
+              }}
               className="relative mt-3 flex w-full items-center justify-end"
             >
               <motion.img
+                layoutId="album-art"
+                transition={{
+                  layout: { type: "spring", bounce: 0.2 }
+                }}
                 src={song.albumImageUrl || "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36"}
                 alt={song.title || "Album Art"}
                className={cn("rounded-sm size-6 -mt-1 ml-2")}
-                layoutId="album-art"
                 onLoad={(e) => getColor(e.target as HTMLImageElement)}
               />
               <div className={cn("ml-auto flex items-center", song?.isPlaying && "mr-3")}>

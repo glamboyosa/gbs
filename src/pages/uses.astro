@@ -1,0 +1,69 @@
+---
+import "@/styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import { ScrambleName } from "@/components/text-scramble";
+import { ShimmerName } from "@/components/text-shimmer";
+
+const accessToken = Astro.cookies.get("spotify_access_token")?.value;
+---
+
+<Layout
+    title="Uses - Timothy Osa Ogbemudia"
+    description="My current setup and tools I use daily."
+>
+    <div
+        class="mx-auto px-4 pt-8 pb-2 md:max-w-[900px] max-w-full tracking-wider h-auto md:h-screen overflow-x-hidden md:overflow-visible md:text-justify"
+    >
+        <header class="mb-8">
+            <div class="cursor-pointer">
+                <h1 class="text-xl font-medium">
+                    <ShimmerName client:load /> ✨
+                </h1>
+                <ScrambleName client:load />
+            </div>
+            <hr />
+        </header>
+        <div class="flex md:flex-nowrap flex-wrap md:space-x-8">
+            <div class="hidden md:block w-64 text-sm"></div>
+            <main class="flex-grow mx-auto max-w-full sm:px-4 space-y-6">
+                <section class="space-y-4">
+                    <h2 class="text-lg font-medium">Hardware</h2>
+                    <ul class="list-disc list-inside text-sm space-y-2">
+                        <li>MacBook Air 13-inch (M3, 2024)</li>
+                        <li>iPhone 14 Pro</li>
+                        <li>Sony WH-1000XM5</li>
+                        <li>AirPods Pro 3</li>
+                        <li>Playstation 5</li>
+                        <li>Xbox Series X</li>
+                    </ul>
+                </section>
+
+                <section class="space-y-4">
+                    <h2 class="text-lg font-medium">Software</h2>
+                    <ul class="list-disc list-inside text-sm space-y-2">
+                        <li>Cursor (Editor)</li>
+                        <li>Edge (Browser)</li>
+                        <li>HTTPie (API Testing)</li>
+                        <li>Linear (Project Management)</li>
+                        <li>Notion (Notes & Documentation)</li>
+                        <li>v0.dev (AI UI Generation)</li>
+                        <li>Raycast (Productivity)</li>
+                        <li>Alcove (Dynamic Island)</li>
+                        <li>CloudFlare WARP (VPN)</li>
+                        <li>Orbstack (Container Management)</li>
+                    </ul>
+                </section>
+
+                <section class="space-y-4">
+                    <h2 class="text-lg font-medium">Music</h2>
+                    <ul class="list-disc list-inside text-sm space-y-2">
+                        <li>Spotify</li>
+                        <li>Apple Music</li>
+                        <li>YouTube Premium</li>
+                        <li>YouTube</li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+    </div>
+</Layout>

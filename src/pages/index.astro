@@ -16,9 +16,11 @@ const accessToken = Astro.cookies.get("spotify_access_token")?.value;
     class="mx-auto px-4 pt-8 pb-2 md:max-w-[900px] max-w-full tracking-wider h-auto md:h-screen overflow-x-hidden md:overflow-visible md:text-justify"
   >
     <header class="mb-8">
-      <div class="cursor-pointer">
-        <h1 class="text-xl font-medium"><ShimmerName client:load /> ✨</h1>
-        <ScrambleName client:load />
+      <div class="flex items-center gap-4">
+        <div class="cursor-pointer">
+          <h1 class="text-xl font-medium"><ShimmerName client:load /> ✨</h1>
+          <ScrambleName client:load />
+        </div>
         <a
           href="/uses"
           class="text-sm hover:bg-slate-200 px-1.5 rounded transition-all duration-200"

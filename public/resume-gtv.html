@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timothy Ogbemudia — Resume</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a18;
+    --ink-mid: #4a4a45;
+    --ink-muted: #888780;
+    --rule: #e2e0d8;
+    --accent: #1D9E75;
+    --accent-light: #E1F5EE;
+    --page: #fafaf8;
+    --white: #ffffff;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; }
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    background: #f0ede6;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 56px 64px;
+    box-shadow: 0 2px 40px rgba(0,0,0,0.10);
+  }
+
+  /* Header */
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 28px;
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .name {
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .name span {
+    display: block;
+    font-weight: 500;
+  }
+
+  .tagline {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    margin-top: 6px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.01em;
+  }
+
+  .contact {
+    text-align: right;
+    font-size: 11.5px;
+    color: var(--ink-mid);
+    line-height: 1.9;
+  }
+
+  .contact a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 14px;
+  }
+
+  /* Experience */
+  .job {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .job:last-child { margin-bottom: 0; }
+
+  .job-header {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .job-title {
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+
+  .job-company {
+    font-size: 12px;
+    color: var(--ink-mid);
+    margin-bottom: 8px;
+  }
+
+  .job-company .co-name {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .job-date {
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .job-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .bullets {
+    list-style: none;
+    padding: 0;
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.55;
+  }
+
+  .bullets li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--rule);
+    font-weight: 300;
+  }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 18px 0;
+  }
+
+  /* Projects */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .project-card {
+    border: 0.5px solid var(--rule);
+    padding: 12px 14px;
+    border-radius: 4px;
+  }
+
+  .project-name {
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .project-desc {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  .project-stack {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+  }
+
+  /* Skills */
+  .skills-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 6px 16px;
+    align-items: baseline;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  .skill-label {
+    color: var(--ink-muted);
+    font-size: 11px;
+  }
+
+  .skill-items {
+    color: var(--ink-mid);
+  }
+
+  /* Education */
+  .edu-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .edu-school {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .edu-degree {
+    font-size: 12px;
+    color: var(--ink-mid);
+    margin-top: 2px;
+  }
+
+  .edu-grade {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .bullets a { color: var(--ink-mid); border-bottom: 0.5px solid var(--rule); }
+  .bullets a:hover { color: var(--accent); border-bottom-color: var(--accent); text-decoration: none; }
+  .job-company a.co-name { font-weight: 500; text-decoration: none; }
+  .job-company a.co-name:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div>
+      <h1 class="name">Timothy <span>Ogbemudia</span></h1>
+      <p class="tagline">Full-stack & tooling engineer · TypeScript · Go · Elixir</p>
+    </div>
+    <div class="contact">
+      <div>ogbemudiatimothy@gmail.com</div>
+      <div><a href="https://github.com/glamboyosa">github.com/glamboyosa</a></div>
+      <div><a href="https://glamboyosa.xyz">glamboyosa.xyz</a> · <a href="https://blog.glamboyosa.xyz">blog</a></div>
+      <div>Lagos, Nigeria (GMT+1)</div>
+    </div>
+  </header>
+
+  <!-- Experience -->
+  <section class="section">
+    <p class="section-label">Experience</p>
+
+    <!-- CMI -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Fullstack Engineer, Indigenous Guardianship <span class="job-tag">Contract</span></div>
+        <div class="job-date">Jun 2025 – Present</div>
+      </div>
+      <div class="job-company"><a href="https://conservationmetrics.com/" class="co-name">Conservation Metrics International</a> · Santa Cruz, USA · Remote</div>
+      <ul class="bullets">
+        <li>Maintained and extended Google Earth Engine-backed geospatial data pipelines (collectors) that pre-compute conservation indicators and load them into PostgreSQL for a multi-territory indigenous land monitoring dashboard.</li>
+        <li>Optimized geospatial dashboard from 19.9s → 1.2s (94%) via PostGIS indexes, pre-computed columns, and frontend request deduplication.</li>
+        <li>Designed zero-downtime schema migration from a single JSON blob per dataset to a normalized per-view relational model, with transactional backfill eliminating brittle string-parsing.</li>
+        <li>Built Incidents end-to-end in a Nuxt/Vue alerts product: map-driven multi-select, bbox workflows, create/list/detail APIs, sidebar UX with i18n, GeoJSON/CSV export.</li>
+        <li>Hardened server performance on Nuxt/Nitro: optimized GeoJSON pipeline cutting per-request allocations ~38%, added Brotli/gzip compression via zlib Nitro hook.</li>
+        <li>Drove infrastructure migration from hosted PostgreSQL to on-VM services, enabling partners to self-host.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- APM Help -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Senior Software Engineer, Innovation Team <span class="job-tag">Contract</span></div>
+        <div class="job-date">Nov 2024 – Jun 2025</div>
+      </div>
+      <div class="job-company"><a href="https://apmhelp.com" class="co-name">APM Help</a> · Texas, USA · Remote</div>
+      <ul class="bullets">
+        <li>Led full project lifecycle for an AI-powered invoice pipeline, identifying integration risks and coordinating with product teams to deliver a solution handling 30k+ invoices.</li>
+        <li>Engineered a high-throughput 1099 reconciliation pipeline, cross-referencing MISC/NEC totals against raw cashflow ledgers and surfacing variance across 10k+ audited records.</li>
+        <li>Developed Synapse — a system turning Google Drive folders into a searchable knowledge base via Gemini multimodal embeddings and natural language Q&A.</li>
+        <li>Led delivery of <a href="https://zesty-blanket-089.notion.site/Inside-SideKick-A-Technical-Deep-Dive-into-Automated-Task-Management-for-Property-Managers-13450826540880ee82c7f2da6055978d?pvs=74">PM-in-a-box</a>, a productivity and embedded banking app for property managers with check deposit, rental price comparison, and natural language task scheduling.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Shepherd -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Founding Product Engineer <span class="job-tag">Contract</span></div>
+        <div class="job-date">2023 – Oct 2024</div>
+      </div>
+      <div class="job-company"><a href="http://shepherd.study" class="co-name">Shepherd</a> (YC-backed) · San Francisco, USA · Remote</div>
+      <ul class="bullets">
+        <li>Led redesign of AI learning platform using Python FastAPI and AWS; implemented MultiRAG pipelines improving ingestion speed by 12x.</li>
+        <li>Built <a href="https://github.com/glamboyosa/ore">Ore</a>, a TypeScript HTTP streaming library for SSE on the client and React Server Components — used by engineering teams worldwide.</li>
+        <li>Implemented image occlusion study cards with an internal canvas engine (<a href="https://roughjs.com">Rough.js</a>) featuring undo/redo, draw, and preview functionality.</li>
+        <li>Introduced RFC culture for knowledge-sharing across larger features; mentored junior engineers 1:1 and participated in hiring decisions.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Vendorful -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Fullstack Engineer <span class="job-tag">Contract</span></div>
+        <div class="job-date">2021 – 2023</div>
+      </div>
+      <div class="job-company"><a href="http://vendorful.com" class="co-name">Vendorful</a> · New York, USA · Remote</div>
+      <ul class="bullets">
+        <li>Built an RFP document metadata extractor using LangChain + PGVector — one of the earliest production LLM integrations at the company.</li>
+        <li>Led frontend for Vendorful v4: rebuilt dashboard, navigation, and core UI components while refactoring underlying logic using the <a href="https://kentcdodds.com/blog/compound-components-with-react-hooks">Compound Components</a> pattern.</li>
+        <li>Built <a href="https://github.com/glamboyosa/ex-cleanse">EX-CLEANSE</a>, an open-source VS Code extension for stripping Elixir log calls — published and adopted by the broader Elixir community.</li>
+        <li>Implemented drag-and-drop task management with infinite scroll, informing stakeholders in real-time via WebSockets and emails.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- IDLayr -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Developer Experience Engineer <span class="job-tag">Contract</span></div>
+        <div class="job-date">2021</div>
+      </div>
+      <div class="job-company"><a href="https://idlayr.com/" class="co-name">IDLayr (formerly tru.ID)</a> · London, UK · Remote</div>
+      <ul class="bullets">
+        <li>Owned technical content strategy — wrote tutorials and sample apps in React Native, Flutter, Node.js, and Kotlin integrating tru.ID with Supabase, Auth0, Firebase, and Twilio (<a href="https://github.com/tru-ID/amazon-cognito-sim-authentication">Cognito</a>, <a href="https://github.com/tru-ID/2fa-sim-swap-detection-messagebird">MessageBird</a>).</li>
+        <li>Built and published <a href="https://www.npmjs.com/package/@tru_id/tru-plugin-ionic-capacitor">Ionic/Capacitor</a> and Flutter SDKs implementing native cellular-verification flows; Ionic plugin surpassed 600 NPM downloads.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section">
+    <p class="section-label">Open Source & Projects</p>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-name"><a href="https://github.com/glamboyosa/ore">Ore</a></div>
+        <div class="project-desc">Fully-typed HTTP streaming library for SSE on the client and React Server Components.</div>
+        <div class="project-stack">TypeScript · 1,800+ npm downloads</div>
+      </div>
+      <div class="project-card">
+        <div class="project-name"><a href="https://github.com/glamboyosa/unkey-elixir-sdk">Unkey Elixir SDK</a></div>
+        <div class="project-desc">Community Elixir SDK for the Unkey API key platform, built with GenServer.</div>
+        <div class="project-stack">Elixir · 2,176+ Hex downloads</div>
+      </div>
+      <div class="project-card">
+        <div class="project-name"><a href="https://github.com/glamboyosa/swig">Swig</a></div>
+        <div class="project-desc">PostgreSQL-backed job queue in Go leveraging native DB features for distributed processing.</div>
+        <div class="project-stack">Go · PostgreSQL</div>
+      </div>
+      <div class="project-card">
+        <div class="project-name"><a href="https://pulseapp.click">Pulse</a> <span style="font-size:10px;color:var(--ink-muted)">· <a href="https://github.com/glamboyosa/Pulse" style="color:var(--ink-muted)">github</a></span></div>
+        <div class="project-desc">Real-time voice feedback platform for collecting and analyzing customer sentiment.</div>
+        <div class="project-stack">Next.js · Eleven Labs · Gemini · Elysia</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="section">
+    <p class="section-label">Skills</p>
+    <div class="skills-row"><span class="skill-label">Languages</span><span class="skill-items">TypeScript, Go, Elixir, Python, SQL</span></div>
+    <div class="skills-row"><span class="skill-label">Frontend</span><span class="skill-items">React, Next.js, Nuxt 3 / Vue, Server Components, SSE</span></div>
+    <div class="skills-row"><span class="skill-label">Backend</span><span class="skill-items">Phoenix / LiveView, FastAPI, Echo (Go), Nitro, REST & WebSockets</span></div>
+    <div class="skills-row"><span class="skill-label">Data</span><span class="skill-items">PostgreSQL, PostGIS, Drizzle ORM, PGVector, Google Earth Engine</span></div>
+    <div class="skills-row"><span class="skill-label">Infra</span><span class="skill-items">Docker, CapRover, AWS (EC2, S3, Textract), GCP, Auth0, Stripe</span></div>
+    <div class="skills-row"><span class="skill-label">AI / LLM</span><span class="skill-items">Anthropic, OpenAI, Gemini, LangChain, Llama Index, MultiRAG</span></div>
+  </section>
+
+  <!-- Education -->
+  <section class="section">
+    <p class="section-label">Education</p>
+    <div class="edu-row">
+      <div>
+        <div class="edu-school">Bowen University</div>
+        <div class="edu-degree">B.Sc Computer Science & Information Technology</div>
+      </div>
+      <div class="edu-grade">2:1 Honours</div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

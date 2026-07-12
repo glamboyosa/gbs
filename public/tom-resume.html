@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thomas Ogbemudia — Resume</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a18;
+    --ink-mid: #4a4a45;
+    --ink-muted: #888780;
+    --rule: #e2e0d8;
+    --accent: #1D9E75;
+    --accent-light: #E1F5EE;
+    --page: #fafaf8;
+    --white: #ffffff;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; }
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    background: #f0ede6;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 56px 64px;
+    box-shadow: 0 2px 40px rgba(0,0,0,0.10);
+  }
+
+  /* Header */
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 28px;
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .name {
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .name span {
+    display: block;
+    font-weight: 500;
+  }
+
+  .tagline {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    margin-top: 6px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.01em;
+  }
+
+  .contact {
+    text-align: right;
+    font-size: 11.5px;
+    color: var(--ink-mid);
+    line-height: 1.9;
+  }
+
+  .contact a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 14px;
+  }
+
+  .summary {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.65;
+  }
+
+  /* Experience */
+  .job {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .job:last-child { margin-bottom: 0; }
+
+  .job-header {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .job-title {
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+
+  .job-company {
+    font-size: 12px;
+    color: var(--ink-mid);
+    margin-bottom: 8px;
+  }
+
+  .job-company .co-name {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .job-date {
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .job-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .bullets {
+    list-style: none;
+    padding: 0;
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.55;
+  }
+
+  .bullets li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--rule);
+    font-weight: 300;
+  }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 18px 0;
+  }
+
+  /* Certifications */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .cert-card {
+    border: 0.5px solid var(--rule);
+    padding: 12px 14px;
+    border-radius: 4px;
+  }
+
+  .cert-name {
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .cert-issuer {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+  }
+
+  /* Skills */
+  .skills-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 6px 16px;
+    align-items: baseline;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  .skill-label {
+    color: var(--ink-muted);
+    font-size: 11px;
+  }
+
+  .skill-items {
+    color: var(--ink-mid);
+  }
+
+  /* Education */
+  .edu-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .edu-row:last-child { margin-bottom: 0; }
+
+  .edu-school {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .edu-degree {
+    font-size: 12px;
+    color: var(--ink-mid);
+    margin-top: 2px;
+  }
+
+  .edu-grade {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .bullets a { color: var(--ink-mid); border-bottom: 0.5px solid var(--rule); }
+  .bullets a:hover { color: var(--accent); border-bottom-color: var(--accent); text-decoration: none; }
+  .job-company a.co-name { font-weight: 500; text-decoration: none; }
+  .job-company a.co-name:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div>
+      <h1 class="name">Thomas <span>Ogbemudia</span></h1>
+      <p class="tagline">Communications & PR professional · Social media · Digital content</p>
+    </div>
+    <div class="contact">
+      <div>thomas.ogbemudia@yahoo.com</div>
+      <div>+353 083 307 2595</div>
+      <div><a href="https://www.linkedin.com/in/thomasogbemudia">in/thomasogbemudia</a> · <a href="https://bit.ly/ThomasOPortfolio">portfolio</a></div>
+      <div>Dublin, Ireland</div>
+    </div>
+  </header>
+
+  <!-- Summary -->
+  <section class="section">
+    <p class="section-label">Profile</p>
+    <p class="summary">Communications and Public Relations professional with a technical background in Computer Science — able to translate complex concepts into accessible, engaging content. Master of Arts in Public Relations at Technological University Dublin, on track for First Class Honours. Unrestricted full-time work rights in Ireland to December 2027 under the Third Level Graduate Scheme.</p>
+  </section>
+
+  <!-- Communications Experience -->
+  <section class="section">
+    <p class="section-label">Communications Experience</p>
+
+    <!-- AONTAS -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Communications and Social Media Officer</div>
+        <div class="job-date">Sep 2025 – Present</div>
+      </div>
+      <div class="job-company"><a href="https://www.aontas.com" class="co-name">AONTAS</a> · Dublin, Ireland</div>
+      <ul class="bullets">
+        <li>Create and publish social media content promoting AONTAS activities, campaigns, and events; manage community engagement across digital platforms.</li>
+        <li>Maintain and optimise the AONTAS website — timely, accurate, accessible content for 22.9k monthly visitors and 216.9k monthly page views.</li>
+        <li>Developed and delivered the social media strategy for the <em>Community Education: Local, Lifelong, Life Changing</em> advocacy campaign, achieving a reach of 204,830.</li>
+        <li>Developed the social media strategy for the AONTAS Adult Education Summit 2025, generating a reach of 49,754.</li>
+        <li>Monitor and analyse social media performance, maintaining analytics reports that inform content strategy and measure campaign effectiveness.</li>
+        <li>Provide communications and administrative support for EU-funded projects — project promotion and stakeholder engagement.</li>
+        <li>Deliver on-the-ground communications and event support for the STAR Awards, Annual General Meeting, and North–South Collaboration Meeting.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ETBI -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Communications & PR Consultant, ETBI Week 2025 <span class="job-tag">Tactical Project</span></div>
+        <div class="job-date">Jan 2025 – Mar 2025</div>
+      </div>
+      <div class="job-company"><a href="https://events.etbi.ie/ETBWEEK2025" class="co-name">Education and Training Boards Ireland</a> · via MA in Public Relations, TU Dublin</div>
+      <ul class="bullets">
+        <li>Designed graphics and visual assets for ETBI Week 2025 in Canva, aligned with the campaign's brand identity and objectives.</li>
+        <li>Produced and edited a highlight reel in CapCut and Adobe Premiere Pro, shared across ETBI's LinkedIn and social channels to boost engagement.</li>
+        <li>Contributed to event planning and on-site coordination — video recording, logistics, and stakeholder liaison.</li>
+        <li>Managed communications across multiple digital channels through a structured content calendar.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- PRII -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Public Relations & Event Management <span class="job-tag">Volunteer</span></div>
+        <div class="job-date">Oct 2024</div>
+      </div>
+      <div class="job-company"><a href="https://www.prii.ie/ems-event-calendar/prii-national-conference-2024.html" class="co-name">PRII National Conference 2024</a> · Public Relations Institute of Ireland</div>
+      <ul class="bullets">
+        <li>Supported registration and front-of-house operations, providing a professional first point of contact for attendees.</li>
+        <li>Assisted with event logistics — room setup, material distribution, and on-the-spot issue resolution — keeping the event on schedule.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Upwork -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Freelance Communications Consultant</div>
+        <div class="job-date">Mar 2024 – May 2024</div>
+      </div>
+      <div class="job-company"><span class="co-name">Upwork</span> · Remote</div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- AHI -->
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">New Media & Communications <span class="job-tag">Intern</span></div>
+        <div class="job-date">Jul 2023 – Mar 2024</div>
+      </div>
+      <div class="job-company"><span class="co-name">Action Health Incorporated</span> · Lagos, Nigeria</div>
+      <ul class="bullets">
+        <li>Spearheaded short-form content creation for AHI's social platforms, driving a 10% increase in engagement across channels.</li>
+        <li>Analysed social media and website metrics, delivering insights and recommendations that shaped content strategy.</li>
+        <li>Developed a sponsorship brief for AHI's annual event, securing two new sponsors.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Other Experience -->
+  <section class="section">
+    <p class="section-label">Other Experience</p>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">System Operations & Support <span class="job-tag">NYSC Intern</span></div>
+        <div class="job-date">Mar 2021 – Feb 2022</div>
+      </div>
+      <div class="job-company"><span class="co-name">Unified Payments</span> · Lagos, Nigeria</div>
+      <ul class="bullets">
+        <li>Provided hardware and software support across teams, communicating technical issues clearly to keep operations uninterrupted.</li>
+        <li>Collaborated cross-functionally on server infrastructure and system upkeep, supporting system reliability.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Technical Support <span class="job-tag">Intern</span></div>
+        <div class="job-date">Mar 2019 – Aug 2019</div>
+      </div>
+      <div class="job-company"><span class="co-name">KPMG Nigeria</span> · Lagos, Nigeria</div>
+      <ul class="bullets">
+        <li>Main point of contact for intern activities in the Central Service Division; delivered user-focused support via phone, email, and in person.</li>
+        <li>Documented procedures and FAQs, improving internal knowledge sharing and troubleshooting efficiency.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="section">
+    <p class="section-label">Skills</p>
+    <div class="skills-row"><span class="skill-label">Content</span><span class="skill-items">Canva, CapCut, Adobe Premiere Pro, content calendars, visual storytelling</span></div>
+    <div class="skills-row"><span class="skill-label">Digital</span><span class="skill-items">Social media management, community engagement, analytics & reporting, website/CMS management</span></div>
+    <div class="skills-row"><span class="skill-label">Communications</span><span class="skill-items">Public relations, campaign strategy, stakeholder engagement, event support</span></div>
+    <div class="skills-row"><span class="skill-label">Technical</span><span class="skill-items">Microsoft Office Suite, technical troubleshooting, network management, IT security & compliance</span></div>
+  </section>
+
+  <!-- Certifications -->
+  <section class="section">
+    <p class="section-label">Certifications</p>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <div class="cert-name">Digital Marketing</div>
+        <div class="cert-issuer">HubSpot · 2024</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">Prevention of Sexual Exploitation and Abuse (PSEA 2020)</div>
+        <div class="cert-issuer">UNICEF Agora · 2023</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">Cisco Certified Network Associate (CCNA)</div>
+        <div class="cert-issuer">New Horizons Nigeria · 2019</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">Student Member, PRII</div>
+        <div class="cert-issuer">Public Relations Institute of Ireland · 2024 – Present</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="section">
+    <p class="section-label">Education</p>
+    <div class="edu-row">
+      <div>
+        <div class="edu-school">Technological University Dublin</div>
+        <div class="edu-degree">MA Public Relations</div>
+      </div>
+      <div class="edu-grade">First Class Honours (track) · 2025</div>
+    </div>
+    <div class="edu-row">
+      <div>
+        <div class="edu-school">Bowen University</div>
+        <div class="edu-degree">B.Sc Computer Science</div>
+      </div>
+      <div class="edu-grade">2020</div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -20,8 +20,11 @@
   }
 
   @media print {
-    body { background: white; }
+    body { background: white; padding: 0; }
     .page { box-shadow: none; }
+    .page-break { break-before: page; page-break-before: always; }
+    .hide-print { display: none; }
+    .job { break-inside: avoid; page-break-inside: avoid; }
   }
 
   body {
@@ -350,10 +353,10 @@
       </ul>
     </div>
 
-    <hr class="divider">
+    <hr class="divider hide-print">
 
     <!-- Upwork -->
-    <div class="job">
+    <div class="job page-break">
       <div class="job-header">
         <div class="job-title">Freelance Communications Consultant</div>
         <div class="job-date">Mar 2024 – May 2024</div>
@@ -401,7 +404,7 @@
         <div class="job-title">Technical Support <span class="job-tag">Intern</span></div>
         <div class="job-date">Mar 2019 – Aug 2019</div>
       </div>
-      <div class="job-company"><span class="co-name">KPMG Nigeria</span> · Lagos, Nigeria</div>
+      <div class="job-company"><span class="co-name">KPMG Nigeria</span></div>
       <ul class="bullets">
         <li>Main point of contact for intern activities in the Central Service Division; delivered user-focused support via phone, email, and in person.</li>
         <li>Documented procedures and FAQs, improving internal knowledge sharing and troubleshooting efficiency.</li>
@@ -410,7 +413,7 @@
   </section>
 
   <!-- Skills -->
-  <section class="section">
+  <section class="section page-break">
     <p class="section-label">Skills</p>
     <div class="skills-row"><span class="skill-label">Content</span><span class="skill-items">Canva, CapCut, Adobe Premiere Pro, content calendars, visual storytelling</span></div>
     <div class="skills-row"><span class="skill-label">Digital</span><span class="skill-items">Social media management, community engagement, analytics & reporting, website/CMS management</span></div>

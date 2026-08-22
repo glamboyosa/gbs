@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Swig — Walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a18;
+    --ink-mid: #4a4a45;
+    --ink-muted: #888780;
+    --rule: rgba(0,0,0,0.08);
+    --accent: #336791;
+    --accent-light: #E8F0F6;
+    --white: #ffffff;
+    --paper: #fafaf8;
+    --canvas: #f0ede6;
+    --code: #f4f2eb;
+    --gold: #8a6d2b;
+    --gold-bg: #f6f0e0;
+    --z-toolbar: 100;
+    --toolbar-h: 56px;
+  }
+
+  html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background: var(--canvas);
+    color: var(--ink);
+    min-height: 100dvh;
+    padding-top: calc(var(--toolbar-h) + 20px + env(safe-area-inset-top, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-bottom: max(48px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+  }
+
+  ::selection { background: var(--accent-light); color: var(--ink); }
+
+  a, button, summary, input { touch-action: manipulation; }
+
+  a {
+    color: var(--accent);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 2px;
+    text-underline-position: from-font;
+  }
+  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .skip {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    background: var(--ink);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 4px;
+    z-index: calc(var(--z-toolbar) + 1);
+    transform: translateY(-120%);
+  }
+  .skip:focus { transform: none; color: var(--white); }
+
+  .toolbar {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.06),
+      0 1px 2px rgba(0,0,0,0.04),
+      0 8px 24px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 4px 6px 4px 4px;
+    z-index: var(--z-toolbar);
+    font-size: 12px;
+    color: var(--ink-muted);
+    max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    width: max-content;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--code);
+    border-radius: 6px;
+    padding: 2px;
+  }
+  .tabs a {
+    color: var(--ink-mid);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    min-width: 44px;
+    padding: 0 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 12.5px;
+  }
+  .tabs a[aria-current="page"] {
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .toolbar button {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    border: 0;
+    background: transparent;
+    border-radius: 4px;
+    padding: 0 12px;
+    cursor: pointer;
+    color: var(--ink-mid);
+    min-height: 40px;
+    min-width: 44px;
+  }
+  .toolbar button:active { transform: scale(0.96); }
+  .toolbar button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 188px minmax(0, 720px);
+    gap: 28px;
+    max-width: 960px;
+    margin: 0 auto;
+    align-items: start;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .toc {
+    position: sticky;
+    top: calc(var(--toolbar-h) + 20px + env(safe-area-inset-top, 0px));
+    font-size: 12px;
+    line-height: 1.35;
+    padding-block: 8px;
+    min-width: 0;
+  }
+  .toc-label {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+  .toc ol { list-style: none; display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; max-width: none; }
+  .toc a {
+    display: block;
+    color: var(--ink-muted);
+    text-decoration: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    margin-left: -8px;
+    padding-left: 10px;
+  }
+  .toc a:hover { color: var(--ink); background: rgba(255,255,255,0.5); text-decoration: none; }
+  .toc a.active {
+    color: var(--ink);
+    border-left-color: var(--accent);
+    background: var(--white);
+  }
+
+  .page {
+    background: var(--white);
+    padding: 52px 56px 64px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    container-type: inline-size;
+    container-name: page;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.04),
+      0 2px 4px rgba(0,0,0,0.04),
+      0 16px 40px rgba(0,0,0,0.08);
+  }
+
+  .kicker {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(26px, 6vw, 34px);
+    font-weight: 300;
+    letter-spacing: -0.6px;
+    line-height: 1.12;
+    text-wrap: balance;
+    margin-bottom: 10px;
+    max-width: 18em;
+  }
+  h1 em { font-style: italic; font-weight: 400; }
+  .lede {
+    font-size: 16px;
+    color: var(--ink-mid);
+    line-height: 1.55;
+    text-wrap: pretty;
+    max-width: 58ch;
+    margin-bottom: 18px;
+  }
+  .meta {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding-bottom: 28px;
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: 36px;
+  }
+
+  h2 {
+    font-size: clamp(18px, 4.2vw, 20px);
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+    text-wrap: balance;
+    margin: 40px 0 12px;
+    scroll-margin-top: calc(var(--toolbar-h) + 24px + env(safe-area-inset-top, 0px));
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 22px 0 8px;
+    scroll-margin-top: calc(var(--toolbar-h) + 24px + env(safe-area-inset-top, 0px));
+  }
+  p { color: var(--ink-mid); margin-bottom: 12px; max-width: 65ch; }
+  p strong { color: var(--ink); font-weight: 500; }
+  ul, ol { margin: 0 0 16px; padding-left: 18px; color: var(--ink-mid); max-width: 65ch; }
+  li { margin-bottom: 5px; }
+  li::marker { color: var(--ink-muted); }
+
+  .section-label {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 36px 0 8px;
+  }
+
+  pre {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    background: var(--code);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    max-width: 100%;
+    color: var(--ink);
+    margin: 0 0 18px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  pre::-webkit-scrollbar { height: 8px; width: 8px; }
+  pre::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+  code {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--code);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--ink);
+    overflow-wrap: break-word;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  .callout {
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0 20px;
+    max-width: 65ch;
+  }
+  .callout p { margin: 0; color: var(--ink); }
+  .callout .label {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.gold {
+    background: var(--gold-bg);
+  }
+  .callout.gold .label { color: var(--gold); }
+  .callout.gold p { font-size: 17px; font-style: italic; font-weight: 400; letter-spacing: -0.2px; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 0 20px;
+    min-width: 0;
+  }
+  .card {
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    min-width: 0;
+  }
+  .card h3 { margin-top: 0; }
+  .card p, .card ul { margin-bottom: 0; }
+  .card .eyebrow {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .steps { list-style: none; padding: 0; counter-reset: step; max-width: none; }
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 8px;
+  }
+  .steps li::before {
+    content: counter(step);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    background: var(--accent-light);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .methods {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 18px;
+    max-width: 65ch;
+  }
+  .methods div {
+    display: grid;
+    grid-template-columns: 148px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    font-size: 14px;
+  }
+  .methods code { font-size: 12px; }
+  .methods span { color: var(--ink-mid); }
+
+  .qa { border-top: 0.5px solid var(--rule); }
+  .qa:last-of-type { border-bottom: 0.5px solid var(--rule); margin-bottom: 20px; }
+  .qa summary {
+    cursor: pointer;
+    padding: 12px 0;
+    min-height: 44px;
+    font-weight: 500;
+    color: var(--ink);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    text-wrap: pretty;
+  }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa summary::after {
+    content: "+";
+    font-family: 'DM Mono', ui-monospace, monospace;
+    color: var(--ink-muted);
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+  .qa[open] summary::after { content: "–"; color: var(--accent); }
+  .qa summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .qa .answer { padding: 0 0 16px; color: var(--ink-mid); max-width: 65ch; }
+
+  .checks { list-style: none; padding: 0; max-width: none; }
+  .checks li { margin-bottom: 8px; }
+  .checks label {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: start;
+    cursor: pointer;
+    color: var(--ink-mid);
+    min-height: 44px;
+    padding: 8px 0;
+  }
+  .checks input {
+    margin-top: 3px;
+    accent-color: var(--accent);
+    width: 18px;
+    height: 18px;
+  }
+  .checks label:has(input:checked) { color: var(--ink-muted); text-decoration: line-through; text-decoration-color: var(--rule); }
+
+  .footer-note {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { text-decoration: underline; }
+    .tabs a:hover { color: var(--accent); text-decoration: none; }
+    .toolbar button:hover { color: var(--accent); background: var(--accent-light); }
+    .toc a:hover { color: var(--ink); background: rgba(255,255,255,0.5); text-decoration: none; }
+    .qa summary:hover { color: var(--accent); }
+  }
+  @media (hover: hover) and (pointer: fine) and (max-width: 960px) {
+    .toc a:hover { background: var(--white); box-shadow: inset 0 0 0 1px var(--accent); }
+  }
+
+  @container page (max-width: 540px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .methods div { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  @media (max-width: 960px) {
+    .shell {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+    .toc {
+      position: sticky;
+      top: calc(var(--toolbar-h) + 8px + env(safe-area-inset-top, 0px));
+      z-index: 90;
+      background: var(--canvas);
+      padding: 0 0 10px;
+      margin: 0;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    .toc-label { display: none; }
+    .toc ol {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 2px 8px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .toc ol::-webkit-scrollbar { display: none; }
+    .toc li { flex: 0 0 auto; margin: 0; }
+    .toc a {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      background: var(--white);
+      margin-left: 0;
+      border-left: 0;
+      padding: 8px 14px;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .toc a.active {
+      border-left-color: transparent;
+      box-shadow: inset 0 0 0 1.5px var(--accent);
+      background: var(--white);
+      color: var(--ink);
+    }
+    .page { padding: 36px 28px 48px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .methods div { grid-template-columns: 1fr; gap: 2px; }
+    h2, h3 {
+      scroll-margin-top: calc(var(--toolbar-h) + 64px + env(safe-area-inset-top, 0px));
+    }
+  }
+
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .page { padding: 28px 18px 40px; }
+    h2 { margin-top: 32px; }
+    pre { font-size: 11.5px; padding: 12px; }
+    .callout { padding: 12px 14px; }
+    .callout.gold p { font-size: 16px; }
+    .meta { font-size: 10.5px; padding-bottom: 20px; margin-bottom: 28px; }
+  }
+
+  @media print {
+    body { background: white; padding: 0; overflow: visible; }
+    html { overflow: visible; }
+    .toolbar, .toc, .skip { display: none !important; }
+    .page { box-shadow: none; padding: 0; }
+    .qa { break-inside: avoid; }
+    .qa:not([open]) .answer { display: block !important; }
+    .qa summary::after { display: none; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="toolbar">
+  <nav class="tabs" aria-label="Walkthroughs">
+    <a href="ore-walkthrough.html">Ore</a>
+    <a href="swig-walkthrough.html" aria-current="page">Swig</a>
+    <a href="interview.html">Interview</a>
+  </nav>
+  <button type="button" id="printBtn">Print</button>
+</div>
+
+<div class="shell">
+  <nav class="toc" aria-label="On this page">
+    <p class="toc-label">On this page</p>
+    <ol>
+      <li><a href="#what">What Swig is</a></li>
+      <li><a href="#postgres">Why PostgreSQL</a></li>
+      <li><a href="#story">The user story</a></li>
+      <li><a href="#components">Core components</a></li>
+      <li><a href="#drivers">Drivers</a></li>
+      <li><a href="#workers">Worker registry</a></li>
+      <li><a href="#lifecycle">Job lifecycle</a></li>
+      <li><a href="#skip">SKIP LOCKED</a></li>
+      <li><a href="#notify">LISTEN / NOTIFY</a></li>
+      <li><a href="#leader">Advisory locks</a></li>
+      <li><a href="#interview">Interview</a></li>
+      <li><a href="#say-this">Personal pitch</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+    </ol>
+  </nav>
+
+  <article class="page" id="main">
+    <p class="kicker">Study guide · Interview prep</p>
+    <h1>Swig: <em>a PostgreSQL job queue in Go</em></h1>
+    <p class="lede">Swig lets a Go app say “do this work later.” Jobs live in a normal Postgres table. Workers are goroutines. The interesting part is how transactions, row locks, notifications, and leadership fit together without Redis or RabbitMQ.</p>
+    <p class="meta">
+      <span>Go · PostgreSQL · queues</span>
+      <span>SELECT FOR UPDATE SKIP LOCKED</span>
+    </p>
+
+    <h2 id="what">What Swig is</h2>
+    <p>A job queue for Go, backed by PostgreSQL. Typical work: send a welcome email after signup, resize an upload, process a webhook, generate a report, retry an unreliable API call.</p>
+    <p>Many systems use Redis, RabbitMQ, SQS, Kafka, or a managed queue. Swig uses the database you already have. Jobs are rows. Workers are processes. PostgreSQL supplies the concurrency guarantees.</p>
+
+    <h2 id="postgres">Why PostgreSQL</h2>
+    <p>The design bet: PostgreSQL is already a strong coordination system.</p>
+    <ul>
+      <li>Transactions</li>
+      <li>Row-level locks</li>
+      <li><code>SELECT FOR UPDATE SKIP LOCKED</code></li>
+      <li><code>LISTEN</code> / <code>NOTIFY</code></li>
+      <li>Advisory locks</li>
+      <li>Indexes, JSONB, timestamps, constraints, durable storage</li>
+    </ul>
+    <p>For many Go apps — especially small to medium systems — that is simpler than operating a separate queue.</p>
+
+    <h2 id="story">The main user story</h2>
+    <p>A user signs up. The app must create a user row and send a welcome email.</p>
+    <div class="grid-2">
+      <div class="card">
+        <p class="eyebrow">Without a shared transaction</p>
+        <h3>Split writes</h3>
+        <ol>
+          <li>Insert user</li>
+          <li>Commit user</li>
+          <li>Enqueue email</li>
+        </ol>
+        <p>If enqueue fails, the user exists and no email is sent.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">AddJobWithTx</p>
+        <h3>One commit</h3>
+        <ol>
+          <li>Begin transaction</li>
+          <li>Insert user</li>
+          <li>Insert email job into <code>swig_jobs</code></li>
+          <li>Commit</li>
+        </ol>
+        <p>Both exist, or neither does.</p>
+      </div>
+    </div>
+    <div class="callout gold">
+      <span class="label">Strongest product story</span>
+      <p>Either both the user and the job exist, or neither exists.</p>
+    </div>
+
+    <h2 id="components">Core components</h2>
+    <p><code>Swig</code> is the queue manager. It owns the database driver, queue configuration, worker registry, worker goroutine lifecycle, leader identity, and a shutdown channel.</p>
+    <div class="methods">
+      <div><code>NewSwig</code><span>Create the queue instance</span></div>
+      <div><code>Start</code><span>Create tables, elect a leader, start workers</span></div>
+      <div><code>Stop</code><span>Gracefully stop workers and release leader locks</span></div>
+      <div><code>Close</code><span>Drop Swig tables and trigger — cleanup and tests</span></div>
+      <div><code>AddJob</code><span>Insert one job</span></div>
+      <div><code>AddJobWithTx</code><span>Insert one job inside a caller-provided transaction</span></div>
+      <div><code>AddJobs</code><span>Insert a batch atomically</span></div>
+      <div><code>AddJobsWithTx</code><span>Insert a batch inside a caller-provided transaction</span></div>
+    </div>
+
+    <h2 id="drivers">Drivers</h2>
+    <p><code>drivers.Driver</code> hides the concrete database library. Swig depends on behaviour, not a concrete type — a standard Go interface story.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>PgxDriver</h3>
+        <p>Wraps <code>github.com/jackc/pgx/v5</code>.</p>
+      </div>
+      <div class="card">
+        <h3>SQLDriver</h3>
+        <p>Wraps <code>database/sql</code> with <code>github.com/lib/pq</code>.</p>
+      </div>
+    </div>
+    <p>Shared operations: <code>Exec</code>, <code>Query</code>, <code>QueryRow</code>, <code>WithTx</code>, <code>AddJobWithTx</code>, <code>Listen</code>, <code>Notify</code>, <code>WaitForNotification</code>.</p>
+
+    <h2 id="workers">Worker registry</h2>
+    <p>Workers are registered by job name. A worker has:</p>
+    <ul>
+      <li><code>JobName() string</code> — the job kind</li>
+      <li><code>Process(context.Context) error</code> — the work</li>
+      <li>JSON-serialisable fields for the payload</li>
+    </ul>
+    <p>An <code>EmailWorker</code> might serialise to:</p>
+    <pre><code>{
+  "to": "user@example.com",
+  "subject": "Welcome",
+  "body": "Thanks for joining"
+}</code></pre>
+    <p>Swig stores that JSON in PostgreSQL. A worker later pulls the row, unmarshals into the registered struct, and calls <code>Process</code>.</p>
+
+    <h2 id="lifecycle">Job lifecycle</h2>
+    <ol class="steps">
+      <li>Caller uses <code>AddJob</code> (or a Tx / batch variant).</li>
+      <li>Swig checks the worker has <code>JobName</code> and marshals the struct to JSON.</li>
+      <li>A row is inserted into <code>swig_jobs</code>.</li>
+      <li>A PostgreSQL trigger sends <code>NOTIFY swig_jobs</code>.</li>
+      <li>Workers wake, or keep polling / acquiring.</li>
+      <li>A worker claims a job with <code>UPDATE … WHERE id = (SELECT … FOR UPDATE SKIP LOCKED LIMIT 1) RETURNING …</code>.</li>
+      <li>Status becomes <code>processing</code>.</li>
+      <li>The Go worker runs <code>Process(ctx)</code>.</li>
+      <li>Success → <code>completed</code>. Failure → requeue as <code>pending</code>, or <code>failed</code> if attempts are exhausted.</li>
+    </ol>
+
+    <h2 id="skip">Why <code>SKIP LOCKED</code> matters</h2>
+    <p>Without it, several workers contend on the same first pending job. Some block waiting for a lock.</p>
+    <p>With <code>SKIP LOCKED</code>, each worker says: give me a pending job, but if another transaction already locked one, skip it and find another. Many workers can claim different jobs at once.</p>
+    <div class="callout">
+      <span class="label">Distributed processing</span>
+      <p>This is the heart of Swig’s concurrency story. The lock lives in PostgreSQL, not in the Go process, so it works across machines.</p>
+    </div>
+    <pre><code>UPDATE swig_jobs
+SET status = 'processing'
+WHERE id = (
+  SELECT id FROM swig_jobs
+  WHERE status = 'pending'
+  FOR UPDATE SKIP LOCKED
+  LIMIT 1
+)
+RETURNING *;</code></pre>
+
+    <h2 id="notify">Why <code>LISTEN</code> / <code>NOTIFY</code> matters</h2>
+    <p>Polling a table every second works. It also wastes database and CPU.</p>
+    <p>After a job row is inserted, a trigger emits a notification on the <code>swig_jobs</code> channel. Workers wait for that wakeup, then try to process quickly.</p>
+    <div class="callout gold">
+      <span class="label">Source of truth</span>
+      <p><code>LISTEN</code> / <code>NOTIFY</code> is a wakeup, not the queue. The table is still the source of truth. If a notification is lost or a worker wakes late, the job remains in <code>swig_jobs</code>.</p>
+    </div>
+
+    <h2 id="leader">Why advisory locks matter</h2>
+    <p>Some work should run on only one Swig instance: requeue failed jobs, recover stale <code>processing</code> jobs, maintain shared queue state.</p>
+    <p>Swig elects a leader with <code>pg_try_advisory_lock(leaderLockID)</code>. Advisory locks are application-defined locks inside PostgreSQL. If a process dies or its session ends, PostgreSQL releases the lock.</p>
+
+    <p class="section-label">Interview</p>
+    <h2 id="interview">Why this is a good project to discuss</h2>
+    <p>Swig gives you room to talk about Go concurrency, PostgreSQL transactions and locks, distributed-systems tradeoffs, failure handling, API design, driver abstraction, operational simplicity, and honest limitations.</p>
+
+    <details class="qa" open>
+      <summary>Why not Redis?</summary>
+      <p class="answer">Redis is a strong queue. Swig’s bet is operational: if the app already has PostgreSQL, a second system is extra failure modes, extra backups, extra local setup. You trade some throughput and specialised queue features for transactional enqueue with application data and one datastore to reason about.</p>
+    </details>
+    <details class="qa">
+      <summary>What does transactional enqueue buy you?</summary>
+      <p class="answer"><code>AddJobWithTx</code> inserts the job in the same transaction as business data. You cannot commit a user without the welcome-email job, or the job without the user. Dual-write bugs disappear at the commit boundary.</p>
+    </details>
+    <details class="qa">
+      <summary>How do multiple workers avoid claiming the same job?</summary>
+      <p class="answer"><code>SELECT … FOR UPDATE SKIP LOCKED</code>. The first worker locks a pending row. The next worker skips locked rows and takes another. Locks are held for the transaction, so this works across processes.</p>
+    </details>
+    <details class="qa">
+      <summary>Is NOTIFY enough to never miss a job?</summary>
+      <p class="answer">No. Notifications can be missed. The table is durable; notifications are a hint to wake up. A correct worker still queries pending rows, so a lost notify only adds latency, not data loss.</p>
+    </details>
+    <details class="qa">
+      <summary>What happens if a worker dies mid-job?</summary>
+      <p class="answer">The row can sit in <code>processing</code>. The leader recovers stale processing jobs — a classic “visibility timeout” problem. Advisory locks make sure only one instance does that recovery.</p>
+    </details>
+    <details class="qa">
+      <summary>How is the driver interface useful?</summary>
+      <p class="answer">Swig talks to <code>Exec</code>, <code>Query</code>, transactions, and listen/notify — not to pgx or <code>database/sql</code> directly. Tests and alternate drivers plug in without rewriting the queue.</p>
+    </details>
+    <details class="qa">
+      <summary>What would you improve next?</summary>
+      <p class="answer">Be honest: throughput vs a dedicated broker, poison-message handling, delayed / scheduled jobs, observability, and the fact that Postgres NOTIFY does not queue missed messages. Name the next primitive you would add, and why it belongs in the database rather than a new system.</p>
+    </details>
+
+    <h2 id="say-this">A strong personal explanation</h2>
+    <div class="callout">
+      <span class="label">Say this</span>
+      <p>I built Swig because I wanted to see how far PostgreSQL can go as a coordination primitive. The interesting part was not inserting jobs into a table. It was making multiple Go workers claim jobs safely, supporting transactional enqueueing with application data, and handling retries and leadership without adding Redis or RabbitMQ. The project taught me a lot about Go interfaces, contexts, goroutines, transaction boundaries, and PostgreSQL’s locking model.</p>
+    </div>
+
+    <h2 id="checklist">Deep understanding checklist</h2>
+    <p>You understand Swig if you can explain each of these out loud.</p>
+    <ul class="checks" id="checks">
+      <li><label><input type="checkbox"> Why a Postgres-backed queue can be simpler than a separate broker</label></li>
+      <li><label><input type="checkbox"> What dual-write failure looks like without <code>AddJobWithTx</code></label></li>
+      <li><label><input type="checkbox"> How a worker payload becomes JSON in <code>swig_jobs</code> and back into <code>Process</code></label></li>
+      <li><label><input type="checkbox"> Why <code>SKIP LOCKED</code> lets many workers run without blocking on one row</label></li>
+      <li><label><input type="checkbox"> Why <code>LISTEN</code> / <code>NOTIFY</code> is a wakeup, not the source of truth</label></li>
+      <li><label><input type="checkbox"> What advisory locks elect, and what happens if the leader dies</label></li>
+      <li><label><input type="checkbox"> How job status moves: pending → processing → completed / pending / failed</label></li>
+      <li><label><input type="checkbox"> Why the driver interface exists</label></li>
+      <li><label><input type="checkbox"> An honest limitation vs Redis / SQS / Kafka</label></li>
+    </ul>
+
+    <p class="footer-note">Also: <a href="ore-walkthrough.html">Ore — HTTP streaming in TypeScript</a></p>
+  </article>
+</div>
+
+<script>
+(function () {
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  const links = [...document.querySelectorAll('.toc a')];
+  const sections = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  const io = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    links.forEach(a => {
+      const on = a.getAttribute('href') === '#' + visible.target.id;
+      a.classList.toggle('active', on);
+      if (!on) return;
+      const scroller = a.closest('ol');
+      if (!scroller || scroller.scrollWidth <= scroller.clientWidth) return;
+      const left = a.getBoundingClientRect().left - scroller.getBoundingClientRect().left + scroller.scrollLeft - (scroller.clientWidth / 2) + (a.offsetWidth / 2);
+      scroller.scrollTo({ left: Math.max(0, left), behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: [0, 0.25, 1] });
+
+  sections.forEach(s => io.observe(s));
+
+  const KEY = 'swig-walkthrough-checks';
+  const boxes = [...document.querySelectorAll('#checks input')];
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    boxes.forEach((b, i) => { b.checked = !!saved[i]; });
+  } catch (_) {}
+  boxes.forEach(b => b.addEventListener('change', () => {
+    localStorage.setItem(KEY, JSON.stringify(boxes.map(x => x.checked)));
+  }));
+})();
+</script>
+</body>
+</html>

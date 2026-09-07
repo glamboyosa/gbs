@@ -1,0 +1,88 @@
+---
+import SiteHeader from "@/components/SiteHeader.astro";
+import { rotationItems } from "@/data/rotation";
+import Layout from "@/layouts/Layout.astro";
+import type { RotationCategory } from "@/types";
+import "@/styles/global.css";
+
+const labels: Record<RotationCategory, string> = {
+  tops: "Top",
+  bottoms: "Bottom",
+  shoes: "Shoes",
+  accessories: "Accessory",
+  scent: "Scent",
+};
+---
+
+<Layout title="The rotation | Osa" description="Clothes and fragrances in Osa’s rotation.">
+  <div class="page-shell collection-shell">
+    <SiteHeader current="clothing" />
+    <main>
+      <header class="collection-hero">
+        <p class="eyebrow">PERSONAL ARCHIVE · {rotationItems.length} THINGS</p>
+        <h1>The rotation<span>.</span></h1>
+        <p>Clothes, shoes, accessories and fragrances I own and actually like.</p>
+      </header>
+
+      <div class="filter-bar" aria-label="Filter the collection">
+        <button class="filter-pill active pressable" type="button" data-filter="all" aria-pressed="true">All <span>{rotationItems.length}</span></button>
+        <button class="filter-pill pressable" type="button" data-filter="tops" aria-pressed="false">Tops <span>{rotationItems.filter((item) => item.category === "tops").length}</span></button>
+        <button class="filter-pill pressable" type="button" data-filter="shoes" aria-pressed="false">Shoes <span>{rotationItems.filter((item) => item.category === "shoes").length}</span></button>
+        <button class="filter-pill pressable" type="button" data-filter="accessories" aria-pressed="false">Accessories <span>{rotationItems.filter((item) => item.category === "accessories").length}</span></button>
+        <button class="filter-pill pressable" type="button" data-filter="scent" aria-pressed="false">Scent <span>{rotationItems.filter((item) => item.category === "scent").length}</span></button>
+      </div>
+
+      <div class="collection-grid" id="collection-grid">
+        {rotationItems.map((item, index) => (
+          <article class="collection-item" data-category={item.category} style={`--delay: ${Math.min(index, 7) * 45}ms`}>
+            <a class="product-image" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`View ${item.brand} ${item.name}`}>
+              <span class="product-type">{labels[item.category]}</span>
+              <span class="external-mark" aria-hidden="true">↗</span>
+              <img src={item.image} alt={`${item.brand} ${item.name}`} width="700" height="700" loading={index < 4 ? "eager" : "lazy"} />
+            </a>
+            <div class="product-meta">
+              <div>
+                <p class="product-brand">{item.brand}</p>
+                <h2>{item.name}</h2>
+              </div>
+              {item.price && <p class="product-price"><span>{item.priceLabel ?? "Paid"}</span> {item.price}</p>}
+            </div>
+            <p class="product-note">{item.note}</p>
+          </article>
+        ))}
+      </div>
+    </main>
+
+    <footer class="site-footer collection-footer">
+      <span>More gets added when I like it enough.</span>
+      <a href="mailto:ogbemudiatimothy@gmail.com">Recommend something ↗</a>
+    </footer>
+  </div>
+
+  <script>
+    const filters = document.querySelectorAll<HTMLButtonElement>("[data-filter]");
+    const items = document.querySelectorAll<HTMLElement>(".collection-item");
+
+    /**
+     * Shows items that match the selected collection filter.
+     *
+     * @param {HTMLButtonElement} selectedButton - The selected filter button.
+     * @returns {void}
+     */
+    const setCollectionFilter = (selectedButton: HTMLButtonElement) => {
+      const filter = selectedButton.dataset.filter;
+      filters.forEach((candidate) => {
+        const selected = candidate === selectedButton;
+        candidate.classList.toggle("active", selected);
+        candidate.setAttribute("aria-pressed", selected ? "true" : "false");
+      });
+      items.forEach((item) => {
+        item.hidden = !(filter === "all" || item.dataset.category === filter);
+      });
+    };
+
+    filters.forEach((button) => {
+      button.addEventListener("click", () => setCollectionFilter(button));
+    });
+  </script>
+</Layout>

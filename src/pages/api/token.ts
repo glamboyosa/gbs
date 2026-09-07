@@ -42,7 +42,6 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       params.append('code_verifier', body.code_verifier);
     } else if (body.grant_type === 'refresh_token') {
       const refreshToken = await redis.get<string>('spotify_refresh_token');
-      console.log("refresh token is", refreshToken)
       if (!refreshToken) {
         throw new Error('Refresh token not found');
       }
@@ -76,7 +75,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       maxAge: data.expires_in
     });
     await redis.set('spotify_access_token', data.access_token);
-    await redis.set('spotify_refresh_token', data.refresh_token);
+    if (data.refresh_token) {
+      await redis.set('spotify_refresh_token', data.refresh_token);
+    }
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
@@ -102,4 +103,4 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   }
-}; 
+};

@@ -1,0 +1,26 @@
+<div class="project-folder">
+  <button class="folder-toggle" type="button" aria-expanded="false" aria-label="Open project folder">
+    <span class="folder-back" aria-hidden="true"></span>
+    <span class="folder-sheets" aria-hidden="true">
+      <span class="folder-sheet"><b>Pulse</b><span class="pulse-wave">▂ ▅ ▃ █ ▄ ▆ ▂</span><small>Voice feedback</small></span>
+      <span class="folder-sheet"><b>Swig</b><code>queue.Enqueue(job)</code><small>Go + PostgreSQL</small></span>
+      <span class="folder-sheet"><b>Things</b><span class="things-mark">✳</span><small>Experiments</small></span>
+    </span>
+    <span class="folder-front" aria-hidden="true"><span>Projects</span><span>↗</span></span>
+  </button>
+</div>
+<script>
+  const folderButton = document.querySelector<HTMLButtonElement>(".folder-toggle");
+  folderButton?.addEventListener("click", () => {
+    const open = folderButton.getAttribute("aria-expanded") !== "true";
+    folderButton.setAttribute("aria-expanded", open ? "true" : "false");
+    folderButton.setAttribute("aria-label", open ? "Close project folder" : "Open project folder");
+  });
+  folderButton?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      folderButton.setAttribute("aria-expanded", "false");
+      folderButton.setAttribute("aria-label", "Open project folder");
+      folderButton.blur();
+    }
+  });
+</script>

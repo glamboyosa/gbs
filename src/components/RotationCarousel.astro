@@ -1,0 +1,44 @@
+---
+import { rotationItems } from "@/data/rotation";
+const selection = [rotationItems[0], rotationItems[7], ...rotationItems.filter((item) => item.featured)].slice(0, 5);
+---
+<section class="panel carousel-panel stagger-item" aria-label="The rotation" aria-roledescription="carousel">
+  <div class="panel-label"><a href="/clothing">THE ROTATION ↗</a><div class="carousel-arrows"><button type="button" data-step="-1" aria-label="Previous item">‹</button><button type="button" data-step="1" aria-label="Next item">›</button></div></div>
+  <div class="carousel-track" tabindex="0" aria-label="Clothes and fragrances. Swipe to browse.">
+    {selection.map((item) => <a class="carousel-slide" href="/clothing" aria-label={`${item.brand} ${item.name}, view archive`}>
+      <img src={item.image} alt={`${item.brand} ${item.name}`} width="420" height="420" loading="lazy" />
+      <span class="carousel-caption"><small>{item.brand}</small><strong>{item.name}</strong></span>
+    </a>)}
+  </div>
+  <div class="carousel-bottom"><a href="/clothing">View all {rotationItems.length} items ↗</a><div class="carousel-dots" aria-label="Choose item">{selection.map((item, index) => <button type="button" data-slide={index} aria-label={`Show ${item.brand} ${item.name}`} aria-pressed={index === 0 ? "true" : "false"}><span></span></button>)}</div></div>
+</section>
+<script>
+  const carousel = document.querySelector<HTMLElement>(".carousel-panel");
+  const track = carousel?.querySelector<HTMLElement>(".carousel-track");
+  const dots = Array.from(carousel?.querySelectorAll<HTMLButtonElement>("[data-slide]") ?? []);
+  let current = 0;
+  /**
+   * Scrolls to an item and wraps at either end of the collection.
+   * @param {number} index - Requested item index.
+   * @returns {void}
+   */
+  const showSlide = (index: number) => {
+    if (!track || !dots.length) return;
+    current = (index + dots.length) % dots.length;
+    track.scrollTo({ left: current * track.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  };
+  dots.forEach((dot, index) => dot.addEventListener("click", () => showSlide(index)));
+  carousel?.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((button) => {
+    button.addEventListener("click", () => showSlide(current + (button.dataset.step === "1" ? 1 : -1)));
+  });
+  track?.addEventListener("scroll", () => {
+    const visible = Math.round(track.scrollLeft / track.clientWidth);
+    dots.forEach((dot, index) => dot.setAttribute("aria-pressed", index === visible ? "true" : "false"));
+  }, { passive: true });
+  track?.addEventListener("scrollend", () => { current = Math.round(track.scrollLeft / track.clientWidth); });
+  track?.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+    event.preventDefault();
+    showSlide(current + (event.key === "ArrowRight" ? 1 : -1));
+  });
+</script>

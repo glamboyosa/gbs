@@ -1,70 +1,60 @@
 ---
 import "@/styles/global.css";
-import Layout from "../layouts/Layout.astro";
-import { ScrambleName } from "@/components/text-scramble";
-import { ShimmerName } from "@/components/text-shimmer";
+import SiteHeader from "@/components/SiteHeader.astro";
+import Layout from "@/layouts/Layout.astro";
 
-const accessToken = Astro.cookies.get("spotify_access_token")?.value;
+const groups = [
+  {
+    index: "01",
+    title: "Hardware",
+    description: "Computers, phones, headphones and consoles.",
+    items: ["MacBook Air 13-inch · M3", "iPhone 17", "Google Pixel 9", "Sennheiser Momentum 4", "Nothing Ear 3", "PlayStation 5", "Xbox Series X"],
+  },
+  {
+    index: "02",
+    title: "Software",
+    description: "Apps I use for work and everything else.",
+    items: ["Codex", "Cursor", "Docker", "Docker Sandboxes", "CleanMyMac", "Edge", "HTTPie", "Linear", "Notion", "v0", "Raycast", "Alcove", "Proton", "OrbStack"],
+  },
+  {
+    index: "03",
+    title: "Music",
+    description: "Subscriptions I still pay for.",
+    items: ["Spotify", "Apple Music", "YouTube Premium", "YouTube"],
+  },
+];
 ---
 
-<Layout
-    title="Uses - Timothy Osa Ogbemudia"
-    description="My current setup and tools I use daily."
->
-    <div
-        class="mx-auto px-4 pt-8 pb-2 md:max-w-[900px] max-w-full tracking-wider h-auto md:h-screen overflow-x-hidden md:overflow-visible md:text-justify"
-    >
-        <header class="mb-8">
-            <div class="cursor-pointer" onclick="window.location.href='/'">
-                <h1 class="text-xl font-medium">
-                    <ShimmerName client:load /> ✨
-                </h1>
-                <ScrambleName client:load />
+<Layout title="Uses | Osa" description="The hardware, software and services Osa uses daily.">
+  <div class="page-shell neutral-shell">
+    <SiteHeader current="uses" />
+    <main class="uses-page">
+      <header class="uses-hero">
+        <p class="eyebrow">SETUP · UPDATED 2026</p>
+        <h1>My setup<span>.</span></h1>
+        <p>Hardware, apps and services I use most days. This changes whenever my setup does.</p>
+      </header>
+      <div class="inventory-grid">
+        {groups.map((group) => (
+          <section class="inventory-card">
+            <div class="panel-label"><span>{group.title.toUpperCase()}</span><span>{group.index}</span></div>
+            <div>
+              <h2>{group.title}</h2>
+              <p>{group.description}</p>
             </div>
-            <hr />
-        </header>
-        <div class="flex md:flex-nowrap flex-wrap md:space-x-8">
-            <div class="hidden md:block w-64 text-sm"></div>
-            <main class="flex-grow mx-auto max-w-full sm:px-4 space-y-6">
-                <section class="space-y-4">
-                    <h2 class="text-lg font-medium">Hardware</h2>
-                    <ul class="list-disc list-inside text-sm space-y-2">
-                        <li>MacBook Air 13-inch (M3, 2024)</li>
-                        <li>iPhone 17</li>
-                        <li>Google Pixel 9</li>
-                        <li>Sennheiser Momentum 4 ANC Headphones</li>
-                        <li>Nothing Ear 3</li>
-                        <li>Playstation 5</li>
-                        <li>Xbox Series X</li>
-                    </ul>
-                </section>
-
-                <section class="space-y-4">
-                    <h2 class="text-lg font-medium">Software</h2>
-                    <ul class="list-disc list-inside text-sm space-y-2">
-                        <li>Cursor (Editor)</li>
-                        <li>Edge (Browser)</li>
-                        <li>HTTPie (API Testing)</li>
-                        <li>Linear (Project Management)</li>
-                        <li>Notion (Notes & Documentation)</li>
-                        <li>v0.dev (AI UI Generation)</li>
-                        <li>Raycast (Productivity)</li>
-                        <li>Alcove (Dynamic Island)</li>
-                        <li>Proton (VPN)</li>
-                        <li>Orbstack (Container Management)</li>
-                    </ul>
-                </section>
-
-                <section class="space-y-4">
-                    <h2 class="text-lg font-medium">Music</h2>
-                    <ul class="list-disc list-inside text-sm space-y-2">
-                        <li>Spotify</li>
-                        <li>Apple Music</li>
-                        <li>YouTube Premium</li>
-                        <li>YouTube</li>
-                    </ul>
-                </section>
-            </main>
-        </div>
-    </div>
+            <ul>
+              {group.items.map((item) => (
+                <li>
+                  {item === "CleanMyMac" ? (
+                    <a href="https://cleanmymac.com" target="_blank" rel="noopener noreferrer">CleanMyMac ↗</a>
+                  ) : item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </main>
+    <footer class="site-footer"><span>Use what works.</span><a href="/">Back home ↗</a></footer>
+  </div>
 </Layout>

@@ -1,0 +1,60 @@
+---
+import { ShimmerName } from "@/components/text-shimmer";
+
+const { current = "home" } = Astro.props;
+
+const links = [
+  { label: "Home", href: "/", key: "home" },
+  { label: "Clothing", href: "/clothing", key: "clothing" },
+  { label: "Uses", href: "/uses", key: "uses" },
+  { label: "Blog", href: "https://blog.glamboyosa.xyz", key: "blog", external: true },
+];
+---
+
+<header class="site-header">
+  <a class="wordmark pressable" href="/" aria-label="Osa, home">
+    <ShimmerName client:load /><i>✦</i>
+  </a>
+  <nav aria-label="Primary navigation">
+    {links.map((link) => (
+      <a
+        href={link.href}
+        class:list={["nav-link pressable", { active: current === link.key }]}
+        aria-current={current === link.key ? "page" : undefined}
+        target={link.external ? "_blank" : undefined}
+        rel={link.external ? "noopener noreferrer" : undefined}
+      >
+        {link.label}
+        {link.external && <span aria-hidden="true">↗</span>}
+      </a>
+    ))}
+  </nav>
+  {current !== "clothing" && <button class="theme-toggle pressable" type="button" aria-label="Use dark theme" aria-pressed="false"><span aria-hidden="true">◐</span></button>}
+</header>
+
+<script is:inline>
+  try {
+    document.documentElement.dataset.theme = localStorage.getItem("osa-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  } catch {
+    document.documentElement.dataset.theme = "light";
+  }
+</script>
+<script>
+  const themeButton = document.querySelector<HTMLButtonElement>(".theme-toggle");
+  /**
+   * Sets the theme button label to describe its next action.
+   * @returns {void}
+   */
+  const updateThemeButton = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    themeButton?.setAttribute("aria-pressed", dark ? "true" : "false");
+    themeButton?.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
+  };
+  themeButton?.addEventListener("click", () => {
+    const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem("osa-theme", theme); } catch {}
+    updateThemeButton();
+  });
+  updateThemeButton();
+</script>

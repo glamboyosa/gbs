@@ -19,3 +19,30 @@ export type SpotifyTrackSummary = {
   albumImageUrl: string;
   playedAt?: string;
 };
+
+export type StravaActivityTotal = {
+  count: number;
+  distance: number;
+  moving_time: number;
+  elevation_gain: number;
+};
+
+export type StravaActivityStats = {
+  recent_run_totals: StravaActivityTotal;
+  recent_ride_totals: StravaActivityTotal;
+  recent_swim_totals: StravaActivityTotal;
+};
+
+export type StravaToken = {
+  access_token: string;
+  refresh_token: string;
+  expires_at: number;
+};
+
+export type StravaSummary = {
+  athleteId: string;
+  activityCount: number;
+  distanceKilometers: number;
+  movingTimeSeconds: number;
+  elevationMeters: number;
+};

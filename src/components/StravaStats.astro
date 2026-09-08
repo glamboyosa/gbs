@@ -1,0 +1,31 @@
+---
+import { getStravaSummary } from "@/server/strava";
+import { formatMovingTime } from "@/utils/strava";
+
+let summary = null;
+try {
+  summary = await getStravaSummary();
+} catch {
+  summary = null;
+}
+---
+
+<section class="panel role-panel strava-panel stagger-item">
+  <div class="panel-label"><span>STRAVA</span><a href={summary ? `https://www.strava.com/athletes/${summary.athleteId}` : "https://www.strava.com/dashboard"} target="_blank" rel="noopener noreferrer">LAST 4 WEEKS ↗</a></div>
+  {summary ? (
+    <>
+      <div class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></div>
+      <dl class="strava-stats">
+        <div><dt>Activities</dt><dd>{summary.activityCount}</dd></div>
+        <div><dt>Distance</dt><dd>{summary.distanceKilometers.toFixed(1)}<small> km</small></dd></div>
+        <div><dt>Moving</dt><dd>{formatMovingTime(summary.movingTimeSeconds)}</dd></div>
+        <div><dt>Elevation</dt><dd>{Math.round(summary.elevationMeters)}<small> m</small></dd></div>
+      </dl>
+    </>
+  ) : (
+    <div class="strava-empty">
+      <div class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></div>
+      <p>Waiting for the next activity.</p>
+    </div>
+  )}
+</section>

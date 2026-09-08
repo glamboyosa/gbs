@@ -3,6 +3,7 @@ import { NowPlaying } from "@/components/now-playing";
 import SiteHeader from "@/components/SiteHeader.astro";
 import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
+import StravaStats from "@/components/StravaStats.astro";
 import Layout from "@/layouts/Layout.astro";
 import "@/styles/global.css";
 
@@ -31,20 +32,10 @@ const accessToken = Astro.cookies.get("spotify_access_token")?.value;
         </div>
       </section>
 
-      <section class="panel role-panel time-panel stagger-item">
-        <div class="panel-label"><span>LOCAL TIME</span><span>GMT+1</span></div>
-        <div class="role-orbit" aria-hidden="true">
-          <span class="orbit orbit-one"></span>
-          <span class="orbit orbit-two"></span>
-          <span class="role-mark">+1</span>
-        </div>
-        <div>
-          <time class="local-time" id="local-time">00:00</time>
-        </div>
-      </section>
+      <StravaStats />
 
       <section class="panel listening-panel stagger-item">
-        <div class="panel-label"><span>LISTENING</span><span class="signal" aria-hidden="true">▥</span></div>
+        <div class="panel-label"><span>LISTENING</span><span class="signal" aria-hidden="true">🎵</span></div>
         <div class="listening-content">
           <p class="panel-heading">On repeat.</p>
           <p class="muted">Recently played on Spotify.</p>
@@ -106,29 +97,4 @@ const accessToken = Astro.cookies.get("spotify_access_token")?.value;
     </footer>
   </div>
 
-  <script>
-    const timeElement = document.querySelector<HTMLTimeElement>("#local-time");
-    const timeFormatter = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Etc/GMT-1",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-
-    /**
-     * Updates the GMT+1 clock shown on the home page.
-     *
-     * @returns {void}
-     */
-    const updateClock = () => {
-      if (!timeElement) return;
-      const now = new Date();
-      timeElement.textContent = timeFormatter.format(now);
-      timeElement.dateTime = now.toISOString();
-    };
-
-    updateClock();
-    window.setInterval(updateClock, 1000);
-  </script>
 </Layout>

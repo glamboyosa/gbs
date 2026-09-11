@@ -63,6 +63,19 @@ const getStravaToken = async (): Promise<StravaToken | null> => {
 };
 
 /**
+ * Requests Strava activity totals with the specified access token.
+ *
+ * @param {string} athleteId - Configured Strava athlete ID.
+ * @param {string} accessToken - Current Strava access token.
+ * @returns {Promise<Response>} Strava API response.
+ */
+const fetchStravaStats = async (athleteId: string, accessToken: string): Promise<Response> => {
+  return fetch(`https://www.strava.com/api/v3/athletes/${athleteId}/stats`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+};
+
+/**
  * Gets cached public Strava totals or refreshes them from the API.
  *
  * @returns {Promise<StravaSummary | null>} Four-week totals or null before setup.
@@ -74,9 +87,11 @@ export const getStravaSummary = async (): Promise<StravaSummary | null> => {
   if (!token) return null;
   const athleteId = import.meta.env.STRAVA_ATHLETE_ID;
   if (!athleteId) return null;
-  const response = await fetch(`https://www.strava.com/api/v3/athletes/${athleteId}/stats`, {
-    headers: { Authorization: `Bearer ${token.access_token}` },
-  });
+  let response = await fetchStravaStats(athleteId, token.access_token);
+  if (response.status === 401) {
+    const refreshedToken = await refreshStravaToken(token);
+    response = await fetchStravaStats(athleteId, refreshedToken.access_token);
+  }
   if (!response.ok) throw new Error(`Strava stats request failed with ${response.status}`);
   const stats: StravaActivityStats = await response.json();
   const summary = summarizeStravaStats(stats, athleteId);

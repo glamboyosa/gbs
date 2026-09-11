@@ -5,7 +5,8 @@ import { formatMovingTime } from "@/utils/strava";
 let summary = null;
 try {
   summary = await getStravaSummary();
-} catch {
+} catch (error) {
+  console.error("Failed to load Strava summary", error);
   summary = null;
 }
 ---

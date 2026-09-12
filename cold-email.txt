@@ -1,0 +1,29 @@
+Hey there Panos,  
+ I trust you're well! 👋🏿 
+
+My name is Timothy Osa Ogbemudia, a software engineer. I've had the privilege of working with and leading teams across the UK, New York, SF, Texas, and Mexico, and I'm currently a Senior Software Engineer at Conservation Metrics International on the Indigenous Guardianship Team, where my work sits at the boundary between geospatial data engineering and backend product reliability.
+
+I'm reaching out about the Fullstack Software Engineer Opening
+
+I am a founder and maker. I am the founder of Pulse, a real-time voice feedback platform that helps businesses collect and analyze customer sentiment built with Next.js, Eleven Labs, PostgreSQL, Gemini, Elysia, Resend. You can read about the launch post on Product Hunt and LinkedIn ! A core technical challenge was handling long audio recordings while keeping uploads fast and reliable. I designed a client-side streaming pipeline that records audio, splits it into 2-second chunks, and uploads them incrementally to Cloudflare R2. On the backend, chunks are reassembled and processed with Eleven Labs & Gemini AI for transcription and sentiment analysis. This approach reduced memory usage, improved perceived performance, and allowed recordings of arbitrary length—similar to how WhatsApp handles voice messages. 
+
+I also built Conclave, an open-source tool for working through decisions with an AI council. It runs opportunity, evidence and risk assessments in parallel, then produces a decision memo with a recommendation and next steps. I built the React/TypeScript interface and AI SDK backend, including streamed updates over SSE, validated structured output, direct provider API keys, and a model picker backed by Models.dev. API keys are never saved with decisions or included in exports. https://github.com/glamboyosa/conclave
+
+I am building Swig, a PostgreSQL-backed job queue system in Golang that leverages native database features for distributed job processing. It uses SELECT FOR UPDATE SKIP LOCKED for race-free job distribution, LISTEN/NOTIFY for real-time processing, and advisory locks for leader election - all while maintaining transactional integrity with your application data. 
+
+I really love building, just a while back when I couldn't sleep, I built a simple Go JSON parser using recursive descent parsing in ~45 mins and sub 300LOC.
+
+I really enjoy writing deep-dives into work I have done in my career and I recently put together a piece on what I’ve built at APMHelp Called Sidekick V1 and V2, an AI assistant for PMs. Inside SideKick: A Technical Deep Dive into Automated Task Management for Property Managers 
+  
+At Shepherd, I built a feature that became one of Y Combinator CEO's most viral tweets ever: https://x.com/garrytan/status/1773491917256577203. This feature led to the development of a TypeScript library called glamboyosa/ore: which statrted as fully typed SSE library for handling server-sent events on the client but now supports all streaming responses not just SSE! This library / SDK has already been adopted by several companies worldwide. https://github.com/glamboyosa/ore. Ore also works with RSCs.I also wrote a technical insight about it Case Study: Building and Scaling Shepherd's AI Systems – Maths Mode & MultiRAG (notion.site)  
+
+ I've also written about Shepherd's Feed System (notion.site). As well, I've been diving deeper into recreating microinteractions. I still think these tiny details can really make a big difference in user experience, and I'd love to share some ideas with you.
+Animations by Osa (glamboyosa.xyz) iOS Dynamic Island ring animation
+Animations by Osa (glamboyosa.xyz) iOS Dynamic Island music component with animated waveforms and color-matched palette
+Animations by Osa (glamboyosa.xyz) Family iOS style drawer 
+ Animations by Osa (glamboyosa.xyz) a directionally aware two-step popover
+Animations by Osa (glamboyosa.xyz) a dynamic settings component. 
+
+I've been actively contributing to various projects. Notably, I worked on Unkey.com's Go rate-limiting SDK glamboyosa/unkeygoratelimit: Go library for rate limiting with unkey.com (github.com) and the Elixir SDK (check it out https://docs.unkey.dev/libraries/ex/overview) and Ore-pper, a React animated Stepper component. Here's the live version of it https://ore-pper.glamboyosa.xyz: , with over 800 installs worldwide. This component was built with Tailwind and Framer Motion, inspired by Shadcn/UI. The CLI for this component, written in TypeScript and Inquirer, performs several tasks such as checking dependencies, installing necessary packages, writing the component to a specified path, and running Prettier.
+
+Here's a link to my GitHub https://github.com/glamboyosa, my personal website https://glamboyosa.xyz,  which I'm pretty proud of :) and also my resume. I'd love to chat if there's a potential fit.

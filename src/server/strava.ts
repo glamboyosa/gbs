@@ -8,6 +8,7 @@ const redis = new Redis({
 });
 
 const tokenKey = "strava_token";
+const tokenRefreshLockKey = "strava_token_refresh_lock";
 const summaryKey = "strava_summary_v2";
 
 /**
@@ -17,7 +18,7 @@ const summaryKey = "strava_summary_v2";
  */
 const createInitialStravaToken = async (): Promise<StravaToken | null> => {
   if (!import.meta.env.STRAVA_REFRESH_TOKEN) return null;
-  const initialToken = await refreshStravaToken({
+  const initialToken = await refreshStravaTokenOnce({
     access_token: import.meta.env.STRAVA_ACCESS_TOKEN,
     refresh_token: import.meta.env.STRAVA_REFRESH_TOKEN,
     expires_at: 0,
@@ -51,6 +52,29 @@ const refreshStravaToken = async (token: StravaToken): Promise<StravaToken> => {
 };
 
 /**
+ * Refreshes an expired token once across concurrent server requests.
+ *
+ * @param {StravaToken} token - Current stored Strava token.
+ * @param {boolean} requireNewToken - Wait for a different access token after a rejected API request.
+ * @returns {Promise<StravaToken>} Current token or the newly refreshed token.
+ */
+const refreshStravaTokenOnce = async (token: StravaToken, requireNewToken = false): Promise<StravaToken> => {
+  const lock = await redis.set(tokenRefreshLockKey, "locked", { nx: true, ex: 15 });
+  if (lock) return refreshStravaToken(token);
+
+  const now = Math.floor(Date.now() / 1000);
+  if (!requireNewToken && token.expires_at > now) return token;
+
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const latestToken = await redis.get<StravaToken>(tokenKey);
+    if (latestToken && latestToken.expires_at > now && latestToken.access_token !== token.access_token) return latestToken;
+  }
+
+  throw new Error("Strava token refresh did not complete");
+};
+
+/**
  * Gets a valid stored Strava token.
  *
  * @returns {Promise<StravaToken | null>} Valid token or null before setup.
@@ -59,7 +83,7 @@ const getStravaToken = async (): Promise<StravaToken | null> => {
   const storedToken = await redis.get<StravaToken>(tokenKey);
   if (!storedToken) return createInitialStravaToken();
   const refreshThreshold = Math.floor(Date.now() / 1000) + 3600;
-  return storedToken.expires_at <= refreshThreshold ? refreshStravaToken(storedToken) : storedToken;
+  return storedToken.expires_at <= refreshThreshold ? refreshStravaTokenOnce(storedToken) : storedToken;
 };
 
 /**
@@ -89,7 +113,7 @@ export const getStravaSummary = async (): Promise<StravaSummary | null> => {
   if (!athleteId) return null;
   let response = await fetchStravaStats(athleteId, token.access_token);
   if (response.status === 401) {
-    const refreshedToken = await refreshStravaToken(token);
+    const refreshedToken = await refreshStravaTokenOnce(token, true);
     response = await fetchStravaStats(athleteId, refreshedToken.access_token);
   }
   if (!response.ok) throw new Error(`Strava stats request failed with ${response.status}`);

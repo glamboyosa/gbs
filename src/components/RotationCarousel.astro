@@ -28,30 +28,89 @@ const selection = [
   const carousel = document.querySelector<HTMLElement>(".carousel-panel");
   const track = carousel?.querySelector<HTMLElement>(".carousel-track");
   const dots = Array.from(carousel?.querySelectorAll<HTMLButtonElement>("[data-slide]") ?? []);
+  const slides = Array.from(track?.querySelectorAll<HTMLElement>(".carousel-slide") ?? []);
   let current = 0;
+
+  const normalizeIndex = (index: number) => (index + dots.length) % dots.length;
+  const updateDots = () => {
+    dots.forEach((dot, index) => dot.setAttribute("aria-pressed", index === current ? "true" : "false"));
+  };
+
+  if (track && slides.length > 1) {
+    const firstClone = slides[0].cloneNode(true) as HTMLElement;
+    const lastClone = slides[slides.length - 1].cloneNode(true) as HTMLElement;
+
+    for (const clone of [firstClone, lastClone]) {
+      clone.dataset.clone = "true";
+      clone.setAttribute("aria-hidden", "true");
+      clone.tabIndex = -1;
+    }
+    track.prepend(lastClone);
+    track.append(firstClone);
+    track.scrollTo({ left: track.clientWidth, behavior: "auto" });
+  }
+
+  const scrollToPhysicalSlide = (index: number) => {
+    if (!track) return;
+    const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    track.scrollTo({ left: index * track.clientWidth, behavior });
+  };
+
   /**
-   * Scrolls to an item and wraps at either end of the collection.
+   * Scrolls directly to an item selected by its dot.
    * @param {number} index - Requested item index.
    * @returns {void}
    */
   const showSlide = (index: number) => {
     if (!track || !dots.length) return;
-    current = (index + dots.length) % dots.length;
-    track.scrollTo({ left: current * track.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    current = normalizeIndex(index);
+    updateDots();
+    scrollToPhysicalSlide(current + 1);
   };
+
+  /**
+   * Moves one physical slide so wrapping keeps the direction of travel.
+   * @param {number} step - Either -1 or 1.
+   * @returns {void}
+   */
+  const moveBy = (step: number) => {
+    if (!track || !dots.length) return;
+    const physicalTarget = current + 1 + step;
+    current = normalizeIndex(current + step);
+    updateDots();
+    scrollToPhysicalSlide(physicalTarget);
+  };
+
+  const settleLoop = () => {
+    if (!track || !dots.length) return;
+    const physicalIndex = Math.round(track.scrollLeft / track.clientWidth);
+    current = normalizeIndex(physicalIndex - 1);
+    updateDots();
+
+    if (physicalIndex === 0) {
+      track.scrollTo({ left: dots.length * track.clientWidth, behavior: "auto" });
+    } else if (physicalIndex === dots.length + 1) {
+      track.scrollTo({ left: track.clientWidth, behavior: "auto" });
+    }
+  };
+
   dots.forEach((dot, index) => dot.addEventListener("click", () => showSlide(index)));
   carousel?.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((button) => {
-    button.addEventListener("click", () => showSlide(current + (button.dataset.step === "1" ? 1 : -1)));
+    button.addEventListener("click", () => moveBy(button.dataset.step === "1" ? 1 : -1));
   });
+
+  let settleTimer: number | undefined;
   track?.addEventListener("scroll", () => {
-    const visible = Math.round(track.scrollLeft / track.clientWidth);
-    dots.forEach((dot, index) => dot.setAttribute("aria-pressed", index === visible ? "true" : "false"));
+    current = normalizeIndex(Math.round(track.scrollLeft / track.clientWidth) - 1);
+    updateDots();
+    window.clearTimeout(settleTimer);
+    settleTimer = window.setTimeout(settleLoop, 120);
   }, { passive: true });
-  track?.addEventListener("scrollend", () => { current = Math.round(track.scrollLeft / track.clientWidth); });
+  track?.addEventListener("scrollend", settleLoop);
   track?.addEventListener("keydown", (event) => {
     if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
     event.preventDefault();
-    showSlide(current + (event.key === "ArrowRight" ? 1 : -1));
+    moveBy(event.key === "ArrowRight" ? 1 : -1);
   });
 
   /**
@@ -75,7 +134,7 @@ const selection = [
     const key = event.key.toLowerCase();
     if (key !== "l" && key !== "r") return;
 
-    showSlide(current + (key === "r" ? 1 : -1));
+    moveBy(key === "r" ? 1 : -1);
   };
 
   window.addEventListener("keydown", handleRotationShortcut);

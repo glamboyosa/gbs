@@ -299,7 +299,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 .carousel-key-hint { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 8px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 .carousel-key-hint kbd { display: grid; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 6px; background: var(--paper-deep); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12); font: inherit; place-items: center; }
 .carousel-arrows { display: flex; }
-.carousel-arrows button { width: 40px; height: 40px; border-radius: 50%; font-size: 24px; transition: background-color 160ms ease-out, scale 160ms ease-out; }
+.carousel-arrows button { width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 24px; transition: background-color 160ms ease-out, scale 160ms ease-out; }
 .carousel-arrows button:active { scale: 0.96; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -310,7 +310,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 .carousel-caption strong { font-size: 14px; font-weight: 500; }
 .carousel-bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 10px; color: var(--muted); }
 .carousel-dots { display: flex; }
-.carousel-dots button { display: grid; width: 40px; height: 40px; place-items: center; }
+.carousel-dots button { display: grid; width: 44px; height: 44px; cursor: pointer; place-items: center; }
 .carousel-dots span { width: 6px; height: 6px; border-radius: 8px; background: var(--muted); opacity: 0.35; transition: width 200ms ease-out, opacity 200ms ease-out; }
 .carousel-dots [aria-pressed="true"] span { width: 20px; opacity: 1; background: var(--purple); }
 

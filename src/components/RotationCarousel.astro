@@ -1,6 +1,12 @@
 ---
 import { rotationItems } from "@/data/rotation";
-const selection = [rotationItems[0], rotationItems[7], ...rotationItems.filter((item) => item.featured)].slice(0, 5);
+const selection = [
+  rotationItems[1],
+  rotationItems[2],
+  rotationItems[0],
+  rotationItems[7],
+  ...rotationItems.filter((item) => item.featured && item !== rotationItems[2]),
+].slice(0, 5);
 ---
 <section class="panel carousel-panel stagger-item" aria-label="The rotation" aria-roledescription="carousel">
   <div class="panel-label">

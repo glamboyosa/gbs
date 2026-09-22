@@ -298,8 +298,8 @@
       </div>
       <div class="job-company"><a href="https://conservationmetrics.com/" class="co-name">Conservation Metrics International</a> · Santa Cruz, USA · Remote</div>
       <ul class="bullets">
-        <li>Cut dashboard load time from 19.9s to 1.2s (94%) with PostGIS indexes, precomputed data, and request deduplication; designed an idempotent NASA FIRMS pipeline with atomic table swaps for changing territory boundaries.</li>
-        <li>Migrated map, gallery, and alerts settings from one JSON record per dataset into separate database rows for each view, preserving existing settings without taking the dashboard offline.</li>
+        <li>Designed a PostGIS wildfire-data pipeline using NASA FIRMS feeds, idempotent ingestion, precomputed spatial joins, and atomic table replacement; cut API response time by 92% while supporting changing territory boundaries.</li>
+        <li>Replaced a single JSON blob per dataset with a relational record for each dashboard view, enabling independent queries and updates; migrated existing data transactionally.</li>
         <li>Built a Mapbox GL alerts pipeline with projected Postgres queries, minimal GeoJSON, point and polygon-centroid clustering, and on-click record loading, keeping large maps responsive without sending full survey records.</li>
         <li>Drove infrastructure migration from hosted PostgreSQL to on-VM services, enabling partners to self-host.</li>
       </ul>

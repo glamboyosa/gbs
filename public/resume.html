@@ -298,10 +298,8 @@
       </div>
       <div class="job-company"><a href="https://conservationmetrics.com/" class="co-name">Conservation Metrics International</a> · Santa Cruz, USA · Remote</div>
       <ul class="bullets">
-        <li>Designed a PostGIS wildfire-data pipeline for NASA FIRMS feeds with idempotent ingestion, precomputed spatial joins, and atomic replacement of derived tables, so API reads stay fast when territory boundaries change.</li>
-        <li>Optimized geospatial dashboard from 19.9s → 1.2s (94%) via PostGIS indexes, pre-computed columns, and frontend request deduplication.</li>
-        <li>Designed zero-downtime schema migration from a single JSON blob per dataset to a normalized per-view relational model, with transactional backfill eliminating brittle string-parsing.</li>
-        <li>Built Incidents end-to-end in a Nuxt/Vue alerts product: map-driven multi-select, bbox workflows, create/list/detail APIs, sidebar UX with i18n, GeoJSON/CSV export.</li>
+        <li>Cut dashboard load time from 19.9s to 1.2s (94%) with PostGIS indexes, precomputed data, and request deduplication; designed an idempotent NASA FIRMS pipeline with atomic table swaps for changing territory boundaries.</li>
+        <li>Migrated map, gallery, and alerts settings from one JSON record per dataset into separate database rows for each view, preserving existing settings without taking the dashboard offline.</li>
         <li>Built a Mapbox GL alerts pipeline with projected Postgres queries, minimal GeoJSON, point and polygon-centroid clustering, and on-click record loading, keeping large maps responsive without sending full survey records.</li>
         <li>Drove infrastructure migration from hosted PostgreSQL to on-VM services, enabling partners to self-host.</li>
       </ul>

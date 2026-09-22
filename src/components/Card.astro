@@ -53,11 +53,20 @@ const { href, title, body } = Astro.props;
 		margin-bottom: 0;
 		color: #444;
 	}
-	.link-card:is(:hover, :focus-within) {
+	.link-card:focus-within {
 		background-position: 0;
 		background-image: var(--accent-gradient);
 	}
-	.link-card:is(:hover, :focus-within) h2 {
+	.link-card:focus-within h2 {
 		color: rgb(var(--accent));
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.link-card:hover {
+			background-position: 0;
+			background-image: var(--accent-gradient);
+		}
+		.link-card:hover h2 {
+			color: rgb(var(--accent));
+		}
 	}
 </style>

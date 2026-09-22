@@ -10,6 +10,7 @@ const redis = new Redis({
 const tokenKey = "strava_token";
 const tokenRefreshLockKey = "strava_token_refresh_lock";
 const summaryKey = "strava_summary_v2";
+const athleteId = "198718162";
 
 /**
  * Creates the stored token from the initial credentials in the environment.
@@ -89,7 +90,7 @@ const getStravaToken = async (): Promise<StravaToken | null> => {
 /**
  * Requests Strava activity totals with the specified access token.
  *
- * @param {string} athleteId - Configured Strava athlete ID.
+ * @param {string} athleteId - Public Strava athlete ID.
  * @param {string} accessToken - Current Strava access token.
  * @returns {Promise<Response>} Strava API response.
  */
@@ -109,8 +110,6 @@ export const getStravaSummary = async (): Promise<StravaSummary | null> => {
   if (cached && typeof cached.athleteId === "string") return cached;
   const token = await getStravaToken();
   if (!token) return null;
-  const athleteId = import.meta.env.STRAVA_ATHLETE_ID;
-  if (!athleteId) return null;
   let response = await fetchStravaStats(athleteId, token.access_token);
   if (response.status === 401) {
     const refreshedToken = await refreshStravaTokenOnce(token, true);

@@ -8,7 +8,6 @@ interface ImportMetaEnv {
     readonly SPOTIFY_REFRESH_TOKEN: string;
     readonly STRAVA_CLIENT_ID: string;
     readonly STRAVA_CLIENT_SECRET: string;
-    readonly STRAVA_ATHLETE_ID: string;
     readonly STRAVA_ACCESS_TOKEN: string;
     readonly STRAVA_REFRESH_TOKEN: string;
     readonly STRAVA_SETUP_TOKEN: string;

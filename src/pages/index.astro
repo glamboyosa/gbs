@@ -5,9 +5,16 @@ import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
 import StravaStats from "@/components/StravaStats.astro";
 import Layout from "@/layouts/Layout.astro";
+import { getLetterboxdYearCount } from "@/server/letterboxd";
 import "@/styles/global.css";
 
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
+let letterboxdYearCount = 115;
+try {
+  letterboxdYearCount = await getLetterboxdYearCount();
+} catch (error) {
+  console.error("Failed to load Letterboxd year count", error);
+}
 ---
 
 <Layout
@@ -107,7 +114,7 @@ const accessToken = Astro.cookies.get("spotify_access_token")?.value;
 
     <footer class="site-footer">
       <span>© {new Date().getFullYear()} Osa Ogbemudia</span>
-      <a href="https://letterboxd.com/glamboyosa/" target="_blank" rel="noopener noreferrer">114 films and counting on Letterboxd ↗</a>
+      <a href="https://letterboxd.com/glamboyosa/" target="_blank" rel="noopener noreferrer">{letterboxdYearCount} films this year on Letterboxd ↗</a>
       <span>GMT+1 · probably online</span>
     </footer>
   </div>

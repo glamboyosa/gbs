@@ -68,7 +68,8 @@ p, li { text-wrap: pretty; }
 .role-panel { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; min-height: 420px; padding: 26px; background: var(--purple-soft); }
 .strava-panel { background: #fff3ec; }
 .strava-panel .panel-label a { min-height: 40px; display: inline-flex; align-items: center; }
-.strava-mark { position: relative; display: flex; justify-content: center; width: 126px; height: 122px; margin: 14px auto 4px; color: #fc4c02; transition: transform 240ms cubic-bezier(0.2, 0, 0, 1); }
+.strava-mark-link { display: grid; width: 190px; min-height: 150px; margin: 0 auto; cursor: pointer; place-items: center; }
+.strava-mark { position: relative; display: flex; justify-content: center; width: 126px; height: 122px; color: #fc4c02; pointer-events: none; transition: transform 240ms cubic-bezier(0.2, 0, 0, 1); }
 .strava-mark span { position: absolute; font-size: 96px; line-height: 1; transform: scaleX(0.72); }
 .strava-mark span:first-child { left: 5px; top: 0; }
 .strava-mark span:last-child { right: 5px; bottom: -5px; font-size: 72px; rotate: 180deg; }
@@ -318,7 +319,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
   a.panel:hover { translate: 0 -3px; box-shadow: var(--shadow-border-hover); }
   .button-primary:hover { background: var(--acid); }
   .button-quiet:hover { background: rgba(255, 255, 255, 0.15); }
-  .strava-panel:hover .strava-mark { transform: translateY(-5px) rotate(-3deg); }
+  .strava-mark-link:hover .strava-mark { transform: translateY(-5px) rotate(-3deg); }
   .rotation-panel:hover .rotation-stage img:nth-child(1) { translate: -7px -5px; rotate: -11deg; }
   .rotation-panel:hover .rotation-stage img:nth-child(2) { translate: 7px -7px; rotate: 11deg; }
   .rotation-panel:hover .rotation-stage img:nth-child(3) { translate: 0 -10px; }

@@ -9,13 +9,17 @@ try {
   console.error("Failed to load Strava summary", error);
   summary = null;
 }
+const stravaHref = summary ? `https://www.strava.com/athletes/${summary.athleteId}` : "https://www.strava.com/dashboard";
+const stravaLabel = summary ? "View Osa on Strava" : "Open Strava dashboard";
 ---
 
 <section class="panel role-panel strava-panel stagger-item">
-  <div class="panel-label"><span>STRAVA</span><a href={summary ? `https://www.strava.com/athletes/${summary.athleteId}` : "https://www.strava.com/dashboard"} target="_blank" rel="noopener noreferrer">LAST 4 WEEKS ↗</a></div>
+  <div class="panel-label"><span>STRAVA</span><a href={stravaHref} target="_blank" rel="noopener noreferrer">LAST 4 WEEKS ↗</a></div>
   {summary ? (
     <>
-      <div class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></div>
+      <a class="strava-mark-link" href={stravaHref} target="_blank" rel="noopener noreferrer" aria-label={stravaLabel}>
+        <span class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></span>
+      </a>
       <dl class="strava-stats">
         <div><dt>Activities</dt><dd>{summary.activityCount}</dd></div>
         <div><dt>Distance</dt><dd>{summary.distanceKilometers.toFixed(1)}<small> km</small></dd></div>
@@ -25,7 +29,9 @@ try {
     </>
   ) : (
     <div class="strava-empty">
-      <div class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></div>
+      <a class="strava-mark-link" href={stravaHref} target="_blank" rel="noopener noreferrer" aria-label={stravaLabel}>
+        <span class="strava-mark" aria-hidden="true"><span>▲</span><span>▲</span></span>
+      </a>
       <p>Activity stats are unavailable right now.</p>
     </div>
   )}

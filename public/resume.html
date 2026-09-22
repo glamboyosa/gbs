@@ -298,11 +298,11 @@
       </div>
       <div class="job-company"><a href="https://conservationmetrics.com/" class="co-name">Conservation Metrics International</a> · Santa Cruz, USA · Remote</div>
       <ul class="bullets">
-        <li>Maintained and extended Google Earth Engine-backed geospatial data pipelines (collectors) that pre-compute conservation indicators and load them into PostgreSQL for a multi-territory indigenous land monitoring dashboard.</li>
+        <li>Designed a PostGIS wildfire-data pipeline for NASA FIRMS feeds with idempotent ingestion, precomputed spatial joins, and atomic replacement of derived tables, so API reads stay fast when territory boundaries change.</li>
         <li>Optimized geospatial dashboard from 19.9s → 1.2s (94%) via PostGIS indexes, pre-computed columns, and frontend request deduplication.</li>
         <li>Designed zero-downtime schema migration from a single JSON blob per dataset to a normalized per-view relational model, with transactional backfill eliminating brittle string-parsing.</li>
         <li>Built Incidents end-to-end in a Nuxt/Vue alerts product: map-driven multi-select, bbox workflows, create/list/detail APIs, sidebar UX with i18n, GeoJSON/CSV export.</li>
-        <li>Hardened server performance on Nuxt/Nitro: optimized GeoJSON pipeline cutting per-request allocations ~38%, added Brotli/gzip compression via zlib Nitro hook.</li>
+        <li>Built a Mapbox GL alerts pipeline with projected Postgres queries, minimal GeoJSON, point and polygon-centroid clustering, and on-click record loading, keeping large maps responsive without sending full survey records.</li>
         <li>Drove infrastructure migration from hosted PostgreSQL to on-VM services, enabling partners to self-host.</li>
       </ul>
     </div>
@@ -400,9 +400,9 @@
         <div class="project-stack">Go · PostgreSQL</div>
       </div>
       <div class="project-card">
-        <div class="project-name"><a href="https://pulseapp.click">Pulse</a> <span style="font-size:10px;color:var(--ink-muted)">· <a href="https://github.com/glamboyosa/Pulse" style="color:var(--ink-muted)">github</a></span></div>
-        <div class="project-desc">Real-time voice feedback platform for collecting and analyzing customer sentiment.</div>
-        <div class="project-stack">Next.js · Eleven Labs · Gemini · Elysia</div>
+        <div class="project-name"><a href="https://docket.glamboyosa.xyz">Docket</a> <span style="font-size:10px;color:var(--ink-muted)">· <a href="https://github.com/glamboyosa/docket" style="color:var(--ink-muted)">github</a></span></div>
+        <div class="project-desc">Go TUI that copies and classifies documents with Jev. Users choose an OpenAI or OpenRouter model to read PDFs and images; SQLite tracks results locally.</div>
+        <div class="project-stack">Go · Bubble Tea · SQLite · Jev</div>
       </div>
     </div>
   </section>

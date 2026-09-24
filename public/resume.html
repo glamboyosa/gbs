@@ -268,6 +268,98 @@
   .bullets a:hover { color: var(--accent); border-bottom-color: var(--accent); text-decoration: none; }
   .job-company a.co-name { font-weight: 500; text-decoration: none; }
   .job-company a.co-name:hover { text-decoration: underline; }
+
+  @media screen and (max-width: 680px) {
+    body {
+      padding: 0;
+      background: var(--white);
+    }
+
+    .page {
+      width: 100%;
+      max-width: none;
+      padding: 36px 22px;
+      box-shadow: none;
+    }
+
+    .header {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 26px;
+      padding-bottom: 24px;
+    }
+
+    .name {
+      font-size: 31px;
+    }
+
+    .contact {
+      text-align: left;
+    }
+
+    .contact div,
+    .contact a {
+      overflow-wrap: anywhere;
+    }
+
+    .section {
+      margin-bottom: 26px;
+    }
+
+    .job,
+    .job-header {
+      display: block;
+    }
+
+    .job-date {
+      margin-top: 3px;
+      white-space: normal;
+    }
+
+    .job-company {
+      margin-top: 6px;
+    }
+
+    .job-tag {
+      margin-left: 5px;
+    }
+
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .skills-row {
+      grid-template-columns: 1fr;
+      gap: 1px;
+      margin-bottom: 10px;
+    }
+
+    .edu-row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    .page {
+      padding: 30px 16px;
+    }
+
+    .name {
+      font-size: 29px;
+    }
+
+    .tagline,
+    .bullets li {
+      font-size: 12px;
+    }
+
+    .project-card {
+      padding: 12px;
+    }
+  }
 </style>
 </head>
 <body>

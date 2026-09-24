@@ -1,0 +1,1260 @@
+---
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A fictional construction risk-review agent trace concept for CivCore."
+    />
+    <meta property="og:title" content="Construction issue agent trace — CivCore concept" />
+    <meta
+      property="og:description"
+      content="An evidence-linked, uncertainty-aware construction risk-review agent trace concept."
+    />
+    <meta property="og:type" content="website" />
+    <title>Construction issue agent trace — CivCore concept</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --canvas: oklch(0.975 0.005 82);
+        --surface: oklch(0.995 0.002 82);
+        --surface-raised: oklch(1 0 0);
+        --surface-warm: oklch(0.96 0.018 74);
+        --ink: oklch(0.22 0.018 63);
+        --ink-secondary: oklch(0.46 0.018 65);
+        --ink-tertiary: oklch(0.59 0.015 65);
+        --line: color-mix(in oklch, var(--ink) 10%, transparent);
+        --line-strong: color-mix(in oklch, var(--ink) 18%, transparent);
+        --orange: oklch(0.64 0.16 50);
+        --orange-dark: oklch(0.49 0.13 48);
+        --orange-soft: oklch(0.95 0.035 60);
+        --red: oklch(0.56 0.17 28);
+        --red-soft: oklch(0.95 0.032 28);
+        --green: oklch(0.49 0.095 155);
+        --green-soft: oklch(0.95 0.025 155);
+        --blue: oklch(0.5 0.1 245);
+        --blue-soft: oklch(0.95 0.025 245);
+        --shadow: 0 1px 2px rgba(49, 38, 26, 0.04), 0 8px 24px rgba(49, 38, 26, 0.04),
+          0 20px 48px rgba(49, 38, 26, 0.025);
+        --radius-lg: 16px;
+        --radius-md: 10px;
+        --radius-sm: 7px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--canvas);
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 0 0, color-mix(in oklch, var(--orange) 5%, transparent), transparent 26rem),
+          var(--canvas);
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid color-mix(in oklch, var(--orange) 38%, transparent);
+        outline-offset: 2px;
+      }
+
+      .app-shell {
+        width: min(1540px, 100%);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 18px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 56px;
+        gap: 20px;
+        padding: 0 4px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand,
+      .topbar-meta,
+      .project-line,
+      .status-line,
+      .metric,
+      .reference-meta,
+      .decision-meta,
+      .button-row,
+      .footer {
+        display: flex;
+        align-items: center;
+      }
+
+      .brand {
+        gap: 11px;
+        min-width: 0;
+      }
+
+      .mark {
+        display: grid;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 9px;
+        color: white;
+        background: var(--ink);
+        font-size: 14px;
+        font-weight: 760;
+        letter-spacing: -0.04em;
+      }
+
+      .brand-copy strong,
+      .brand-copy span {
+        display: block;
+      }
+
+      .brand-copy strong {
+        font-size: 14px;
+        letter-spacing: -0.015em;
+      }
+
+      .brand-copy span {
+        color: var(--ink-tertiary);
+        font-size: 11px;
+      }
+
+      .topbar-meta {
+        justify-content: flex-end;
+        gap: 9px;
+        color: var(--ink-secondary);
+        font-size: 11px;
+      }
+
+      .concept-pill,
+      .status-pill,
+      .risk-pill,
+      .confidence-pill,
+      .file-type,
+      .activity-tag {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-weight: 650;
+      }
+
+      .concept-pill {
+        padding: 5px 9px;
+        color: var(--ink-secondary);
+        border-color: var(--line);
+        background: color-mix(in oklch, var(--surface) 78%, transparent);
+      }
+
+      .header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: end;
+        padding: 23px 4px 19px;
+      }
+
+      .eyebrow {
+        margin: 0 0 5px;
+        color: var(--orange-dark);
+        font-size: 10px;
+        font-weight: 760;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 28ch;
+        margin-bottom: 8px;
+        font-size: clamp(23px, 2.2vw, 34px);
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+        text-wrap: balance;
+      }
+
+      .project-line {
+        flex-wrap: wrap;
+        gap: 8px;
+        color: var(--ink-secondary);
+      }
+
+      .dot {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--ink-tertiary);
+      }
+
+      .status-line {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .status-pill,
+      .risk-pill,
+      .confidence-pill {
+        gap: 6px;
+        padding: 5px 9px;
+        font-size: 11px;
+      }
+
+      .status-pill {
+        color: var(--orange-dark);
+        border-color: color-mix(in oklch, var(--orange) 22%, transparent);
+        background: var(--orange-soft);
+      }
+
+      .status-pill::before {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--orange);
+        content: "";
+      }
+
+      .run-meta {
+        color: var(--ink-tertiary);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 222px minmax(520px, 1fr) 318px;
+        min-height: 680px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .trace-nav,
+      .decision-panel {
+        padding: 20px;
+        background: color-mix(in oklch, var(--surface-warm) 45%, var(--surface));
+      }
+
+      .trace-nav {
+        border-right: 1px solid var(--line);
+      }
+
+      .section-label {
+        margin-bottom: 16px;
+        color: var(--ink-tertiary);
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .trace-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .trace-step {
+        position: relative;
+        display: grid;
+        grid-template-columns: 23px 1fr;
+        gap: 10px;
+        min-height: 76px;
+      }
+
+      .trace-step:not(:last-child)::after {
+        position: absolute;
+        top: 23px;
+        bottom: 0;
+        left: 10px;
+        width: 1px;
+        background: var(--line-strong);
+        content: "";
+      }
+
+      .step-icon {
+        z-index: 1;
+        display: grid;
+        width: 21px;
+        height: 21px;
+        place-items: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 50%;
+        color: var(--ink-secondary);
+        background: var(--surface);
+      }
+
+      .step-icon svg {
+        width: 11px;
+        height: 11px;
+        stroke-width: 2.2;
+      }
+
+      .trace-step.current .step-icon {
+        color: white;
+        border-color: var(--orange);
+        background: var(--orange);
+        box-shadow: 0 0 0 4px color-mix(in oklch, var(--orange) 12%, transparent);
+      }
+
+      .step-copy strong,
+      .step-copy span {
+        display: block;
+      }
+
+      .step-copy strong {
+        margin-top: 1px;
+        font-size: 12px;
+      }
+
+      .step-copy span {
+        margin-top: 2px;
+        color: var(--ink-tertiary);
+        font-size: 10px;
+      }
+
+      .run-policy {
+        display: grid;
+        gap: 8px;
+        margin-top: 4px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: color-mix(in oklch, var(--surface) 78%, transparent);
+      }
+
+      .policy-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .policy-title svg {
+        width: 13px;
+        color: var(--green);
+      }
+
+      .run-policy p {
+        margin: 0;
+        color: var(--ink-tertiary);
+        font-size: 10px;
+        line-height: 1.45;
+      }
+
+      .analysis-panel {
+        min-width: 0;
+        padding: 20px 22px;
+      }
+
+      .finding-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .finding-heading h2 {
+        margin-bottom: 4px;
+        font-size: 17px;
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+      }
+
+      .finding-heading p {
+        max-width: 72ch;
+        margin-bottom: 0;
+        color: var(--ink-secondary);
+        font-size: 12px;
+      }
+
+      .risk-pill {
+        align-self: start;
+        color: var(--red);
+        border-color: color-mix(in oklch, var(--red) 20%, transparent);
+        background: var(--red-soft);
+      }
+
+      .evidence-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .reference-card {
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--surface-raised);
+      }
+
+      .reference-meta {
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .reference-title {
+        min-width: 0;
+      }
+
+      .reference-title strong,
+      .reference-title span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .reference-title strong {
+        font-size: 11px;
+      }
+
+      .reference-title span {
+        color: var(--ink-tertiary);
+        font-size: 10px;
+      }
+
+      .file-type {
+        padding: 3px 6px;
+        color: var(--ink-secondary);
+        border-color: var(--line);
+        background: var(--canvas);
+        font-size: 9px;
+        letter-spacing: 0.04em;
+      }
+
+      .document-excerpt {
+        position: relative;
+        min-height: 93px;
+        overflow: hidden;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        color: var(--ink-secondary);
+        background:
+          linear-gradient(90deg, transparent 24px, color-mix(in oklch, var(--blue) 8%, transparent) 25px, transparent 26px),
+          repeating-linear-gradient(0deg, transparent 0 18px, var(--line) 19px),
+          var(--canvas);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 9px;
+        line-height: 1.55;
+      }
+
+      .document-excerpt strong {
+        display: inline-block;
+        margin: 14px 0 3px 20px;
+        padding: 2px 4px;
+        color: var(--ink);
+        background: color-mix(in oklch, var(--orange) 21%, white);
+        box-shadow: 0 0 0 1px color-mix(in oklch, var(--orange) 32%, transparent);
+      }
+
+      .document-excerpt span {
+        display: block;
+        margin-left: 20px;
+      }
+
+      .citation {
+        margin-top: 9px;
+        color: var(--ink-tertiary);
+        font-size: 9px;
+      }
+
+      .conflict-bridge {
+        position: relative;
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 12px;
+        min-height: 31px;
+        color: var(--red);
+        font-size: 10px;
+        font-weight: 730;
+        text-align: center;
+      }
+
+      .conflict-bridge::before,
+      .conflict-bridge::after {
+        height: 1px;
+        background: color-mix(in oklch, var(--red) 24%, transparent);
+        content: "";
+      }
+
+      .impact-section {
+        margin-top: 16px;
+      }
+
+      .impact-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 9px;
+      }
+
+      .impact-header h3 {
+        margin: 0;
+        font-size: 12px;
+      }
+
+      .assumption-note {
+        color: var(--ink-tertiary);
+        font-size: 9px;
+      }
+
+      .impact-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .impact-card {
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: color-mix(in oklch, var(--surface) 88%, var(--canvas));
+      }
+
+      .impact-card .label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--ink-tertiary);
+        font-size: 9px;
+        font-weight: 680;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .metric {
+        align-items: baseline;
+        gap: 5px;
+        margin-bottom: 3px;
+      }
+
+      .metric strong {
+        font-size: 18px;
+        line-height: 1;
+        letter-spacing: -0.035em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .metric span {
+        color: var(--ink-secondary);
+        font-size: 10px;
+      }
+
+      .impact-card p {
+        margin: 0;
+        color: var(--ink-tertiary);
+        font-size: 9px;
+        line-height: 1.45;
+      }
+
+      .activity-path {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        overflow: hidden;
+        margin-top: 9px;
+      }
+
+      .activity-tag {
+        max-width: 90px;
+        overflow: hidden;
+        padding: 3px 6px;
+        color: var(--ink-secondary);
+        border-color: var(--line);
+        background: var(--surface);
+        font-size: 8px;
+        text-overflow: ellipsis;
+      }
+
+      .path-arrow {
+        color: var(--ink-tertiary);
+        font-size: 9px;
+      }
+
+      .confidence-section {
+        margin-top: 15px;
+      }
+
+      .confidence-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .confidence-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 5px 10px;
+        padding: 9px 10px;
+        border-radius: var(--radius-sm);
+        background: var(--canvas);
+      }
+
+      .confidence-row strong,
+      .confidence-row span {
+        font-size: 9px;
+      }
+
+      .confidence-row span {
+        color: var(--ink-secondary);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .bar {
+        grid-column: 1 / -1;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 99px;
+        background: var(--line-strong);
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--green);
+      }
+
+      .decision-panel {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--line);
+      }
+
+      .decision-panel h2 {
+        margin-bottom: 5px;
+        font-size: 16px;
+        letter-spacing: -0.025em;
+      }
+
+      .decision-intro {
+        margin-bottom: 16px;
+        color: var(--ink-secondary);
+        font-size: 11px;
+      }
+
+      .draft-card {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--surface-raised);
+      }
+
+      .decision-meta {
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 9px;
+      }
+
+      .decision-meta strong {
+        font-size: 11px;
+      }
+
+      .confidence-pill {
+        padding: 3px 7px;
+        color: var(--green);
+        border-color: color-mix(in oklch, var(--green) 18%, transparent);
+        background: var(--green-soft);
+        font-size: 9px;
+      }
+
+      .draft-card p {
+        margin-bottom: 10px;
+        color: var(--ink-secondary);
+        font-size: 10px;
+        line-height: 1.55;
+      }
+
+      .draft-card ul {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding-left: 16px;
+        color: var(--ink-secondary);
+        font-size: 10px;
+      }
+
+      .review-checks {
+        display: grid;
+        gap: 8px;
+        margin: 14px 0;
+      }
+
+      .check {
+        display: grid;
+        grid-template-columns: 16px 1fr;
+        gap: 8px;
+        align-items: start;
+        color: var(--ink-secondary);
+        font-size: 10px;
+      }
+
+      .check-icon {
+        display: grid;
+        width: 16px;
+        height: 16px;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--green);
+        background: var(--green-soft);
+        font-size: 9px;
+        font-weight: 800;
+      }
+
+      .check.pending .check-icon {
+        color: var(--orange-dark);
+        background: var(--orange-soft);
+      }
+
+      .approval-note {
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .approval-note p {
+        margin-bottom: 10px;
+        color: var(--ink-tertiary);
+        font-size: 9px;
+        line-height: 1.5;
+      }
+
+      .button-row {
+        gap: 7px;
+      }
+
+      .button {
+        min-height: 38px;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        transition: background-color 150ms ease, border-color 150ms ease, transform 100ms ease;
+      }
+
+      .button:active {
+        transform: translateY(1px);
+      }
+
+      .button-primary {
+        flex: 1;
+        color: white;
+        background: var(--ink);
+      }
+
+      .button-primary:hover {
+        background: color-mix(in oklch, var(--ink) 88%, black);
+      }
+
+      .button-secondary {
+        padding: 0 12px;
+        color: var(--ink-secondary);
+        border-color: var(--line-strong);
+        background: transparent;
+      }
+
+      .button-secondary:hover {
+        border-color: var(--ink-tertiary);
+        background: var(--surface);
+      }
+
+      .button[disabled] {
+        cursor: default;
+        color: var(--ink-tertiary);
+        background: var(--line);
+      }
+
+      .footer {
+        justify-content: space-between;
+        gap: 16px;
+        padding: 11px 4px 0;
+        color: var(--ink-tertiary);
+        font-size: 9px;
+      }
+
+      .footer a {
+        color: var(--ink-secondary);
+        text-underline-offset: 2px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 10;
+        max-width: 340px;
+        padding: 11px 13px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        color: white;
+        background: var(--ink);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(8px);
+        transition: opacity 180ms ease, transform 180ms ease;
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1080px) {
+        .workspace {
+          grid-template-columns: 190px minmax(500px, 1fr);
+        }
+
+        .decision-panel {
+          grid-column: 1 / -1;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 1fr;
+          gap: 18px;
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .approval-note {
+          margin-top: 0;
+          padding-top: 0;
+          border-top: 0;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .app-shell {
+          padding: 12px;
+        }
+
+        .topbar-meta .run-copy,
+        .status-line .run-meta {
+          display: none;
+        }
+
+        .header {
+          grid-template-columns: 1fr;
+          padding-top: 19px;
+        }
+
+        .status-line {
+          align-items: flex-start;
+        }
+
+        .workspace,
+        .decision-panel {
+          display: block;
+        }
+
+        .trace-nav,
+        .analysis-panel,
+        .decision-panel {
+          padding: 16px;
+        }
+
+        .trace-nav {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .trace-list {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(88px, 1fr));
+          overflow-x: auto;
+          padding-bottom: 8px;
+        }
+
+        .trace-step {
+          display: block;
+          min-height: 0;
+          padding-right: 12px;
+        }
+
+        .trace-step:not(:last-child)::after {
+          top: 10px;
+          right: 0;
+          bottom: auto;
+          left: 21px;
+          width: auto;
+          height: 1px;
+        }
+
+        .step-copy {
+          margin-top: 8px;
+        }
+
+        .run-policy {
+          display: none;
+        }
+
+        .evidence-grid,
+        .impact-grid,
+        .confidence-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .conflict-bridge {
+          grid-column: auto;
+        }
+
+        .decision-panel {
+          border-top: 1px solid var(--line);
+        }
+
+        .approval-note {
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px solid var(--line);
+        }
+
+        .footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 6mm;
+        }
+
+        html,
+        body {
+          width: 285mm;
+          height: 198mm;
+          background: white;
+        }
+
+        body {
+          zoom: 0.76;
+        }
+
+        .app-shell {
+          width: 100%;
+          min-height: 0;
+          padding: 0;
+        }
+
+        .workspace {
+          min-height: 635px;
+          box-shadow: none;
+        }
+
+        .header {
+          padding-top: 15px;
+          padding-bottom: 14px;
+        }
+
+        .button {
+          pointer-events: none;
+        }
+
+        .toast {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <nav class="topbar" aria-label="Concept navigation">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">CC</div>
+          <div class="brand-copy">
+            <strong>CivCore</strong>
+            <span>Risk review · Concept</span>
+          </div>
+        </div>
+        <div class="topbar-meta">
+          <span class="run-copy">Fictional project data</span>
+          <span class="concept-pill">Permissionless product study</span>
+        </div>
+      </nav>
+
+      <header class="header">
+        <div>
+          <p class="eyebrow">Constructibility issue · RR-0248</p>
+          <h1>Permanent lining thickness conflicts at cross-passage CP-07</h1>
+          <div class="project-line">
+            <span>North Portal Connector</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span>Bid review</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span>Civil / structural</span>
+          </div>
+        </div>
+        <div class="status-line">
+          <span class="status-pill" id="status-pill">Awaiting human review</span>
+          <span class="run-meta">Run 4f28 · 18 Sep 2026, 14:32 UTC · 42 s</span>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Agent trace review workspace">
+        <aside class="trace-nav" aria-label="Agent trace">
+          <div class="section-label">Agent trace</div>
+          <ol class="trace-list">
+            <li class="trace-step">
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6" /></svg>
+              </span>
+              <div class="step-copy"><strong>Ingested</strong><span>11 files · 386 pages</span></div>
+            </li>
+            <li class="trace-step">
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6" /></svg>
+              </span>
+              <div class="step-copy"><strong>Retrieved</strong><span>34 relevant references</span></div>
+            </li>
+            <li class="trace-step">
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6" /></svg>
+              </span>
+              <div class="step-copy"><strong>Compared</strong><span>1 blocking discrepancy</span></div>
+            </li>
+            <li class="trace-step">
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6" /></svg>
+              </span>
+              <div class="step-copy"><strong>Simulated</strong><span>Time + cost range</span></div>
+            </li>
+            <li class="trace-step current">
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4l2.5 1.5M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9Z" /></svg>
+              </span>
+              <div class="step-copy"><strong>Approval gate</strong><span>Construction lead</span></div>
+            </li>
+          </ol>
+
+          <div class="run-policy">
+            <div class="policy-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></svg>
+              External actions locked
+            </div>
+            <p>The agent may prepare an RFI draft. A named reviewer must approve before anything leaves the workspace.</p>
+          </div>
+        </aside>
+
+        <article class="analysis-panel">
+          <div class="finding-heading">
+            <div>
+              <h2>Drawing and specification prescribe different minimum thicknesses</h2>
+              <p>Detail 6/T-402 shows a 300 mm permanent lining. Section 03 37 13 requires 350 mm at cross-passages. Both references apply to CP-07 in the current bid set.</p>
+            </div>
+            <span class="risk-pill">Critical-path risk</span>
+          </div>
+
+          <div class="evidence-grid">
+            <section class="reference-card" aria-label="Drawing evidence">
+              <div class="reference-meta">
+                <div class="reference-title">
+                  <strong>T-402 · Cross-passage details</strong>
+                  <span>Revision C · 12 Sep 2026</span>
+                </div>
+                <span class="file-type">DRAWING</span>
+              </div>
+              <div class="document-excerpt" aria-label="Excerpt from drawing T-402">
+                <span>CP-07 / SECTION B-B</span>
+                <strong>300 mm PERMANENT LINING</strong>
+                <span>TYP. U.N.O. · DETAIL 6</span>
+              </div>
+              <div class="citation">Source: T-402, Rev C · detail 6 · sheet coordinates D4–F7</div>
+            </section>
+
+            <section class="reference-card" aria-label="Specification evidence">
+              <div class="reference-meta">
+                <div class="reference-title">
+                  <strong>03 37 13 · Shotcrete</strong>
+                  <span>Issued for bid · 08 Sep 2026</span>
+                </div>
+                <span class="file-type">SPEC</span>
+              </div>
+              <div class="document-excerpt" aria-label="Excerpt from specification 03 37 13">
+                <span>3.4 CROSS-PASSAGE LINING</span>
+                <strong>350 mm MINIMUM THICKNESS</strong>
+                <span>including CP-01 through CP-12</span>
+              </div>
+              <div class="citation">Source: 03 37 13, §3.4.2 · page 48 · lines 11–16</div>
+            </section>
+
+            <div class="conflict-bridge" aria-label="Detected conflict">50 mm discrepancy · no governing precedence located</div>
+          </div>
+
+          <section class="impact-section" aria-labelledby="impact-heading">
+            <div class="impact-header">
+              <h3 id="impact-heading">Potential implication if 350 mm governs</h3>
+              <span class="assumption-note">Estimate only · based on bid quantities and baseline v12</span>
+            </div>
+            <div class="impact-grid">
+              <div class="impact-card">
+                <span class="label">Schedule exposure</span>
+                <div class="metric"><strong>3–5</strong><span>working days</span></div>
+                <p>Rebar redesign and form adjustment precede the CP-07 lining pour.</p>
+                <div class="activity-path" aria-label="Affected activity path">
+                  <span class="activity-tag">Design release</span><span class="path-arrow">→</span><span class="activity-tag">CP-07 lining</span>
+                </div>
+              </div>
+              <div class="impact-card">
+                <span class="label">Direct cost exposure</span>
+                <div class="metric"><strong>$38k–$57k</strong></div>
+                <p>Additional concrete, reinforcing steel, engineering, and formwork.</p>
+                <div class="activity-path" aria-label="Cost basis">
+                  <span class="activity-tag">+24 m³</span><span class="path-arrow">·</span><span class="activity-tag">Bid rates</span>
+                </div>
+              </div>
+              <div class="impact-card">
+                <span class="label">Decision window</span>
+                <div class="metric"><strong>6</strong><span>calendar days</span></div>
+                <p>Resolve before rebar shop drawings are released for fabrication.</p>
+                <div class="activity-path" aria-label="Decision constraint">
+                  <span class="activity-tag">Required by</span><span class="path-arrow">→</span><span class="activity-tag">24 Sep</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="confidence-section" aria-labelledby="confidence-heading">
+            <div class="impact-header">
+              <h3 id="confidence-heading">Confidence by claim</h3>
+              <span class="assumption-note">Calibrated separately to show where review matters</span>
+            </div>
+            <div class="confidence-grid">
+              <div class="confidence-row">
+                <strong>Conflict detection</strong><span>94%</span>
+                <div class="bar"><span style="width: 94%"></span></div>
+              </div>
+              <div class="confidence-row">
+                <strong>Schedule mapping</strong><span>81%</span>
+                <div class="bar"><span style="width: 81%; background: var(--blue)"></span></div>
+              </div>
+              <div class="confidence-row">
+                <strong>Cost range</strong><span>67%</span>
+                <div class="bar"><span style="width: 67%; background: var(--orange)"></span></div>
+              </div>
+            </div>
+          </section>
+        </article>
+
+        <aside class="decision-panel" aria-label="Human approval">
+          <div>
+            <p class="eyebrow">Recommended next action</p>
+            <h2>Request design clarification</h2>
+            <p class="decision-intro">Confirm the governing lining thickness before the CP-07 rebar package is released.</p>
+
+            <section class="draft-card" aria-label="RFI draft summary">
+              <div class="decision-meta">
+                <strong>RFI draft · CP-07 lining</strong>
+                <span class="confidence-pill">Evidence linked</span>
+              </div>
+              <p>Please confirm whether the 300 mm lining shown on T-402 or the 350 mm minimum in specification 03 37 13 governs at CP-07.</p>
+              <ul>
+                <li>2 source references attached</li>
+                <li>Schedule activities linked</li>
+                <li>Cost estimate marked provisional</li>
+              </ul>
+            </section>
+
+            <div class="review-checks" aria-label="Review checks">
+              <div class="check"><span class="check-icon">✓</span><span>Both sources are current bid revisions</span></div>
+              <div class="check"><span class="check-icon">✓</span><span>No addendum resolves the discrepancy</span></div>
+              <div class="check pending"><span class="check-icon">!</span><span>Cost range needs estimator confirmation</span></div>
+            </div>
+          </div>
+
+          <div class="approval-note">
+            <p>Approval creates a draft in the project workspace. It does not transmit an RFI or alter the baseline schedule.</p>
+            <div class="button-row">
+              <button class="button button-primary" id="approve-button" type="button">Approve RFI draft</button>
+              <button class="button button-secondary" id="correct-button" type="button">Flag issue</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <footer class="footer">
+        <span>Fictional data and assumptions for demonstration only. Not engineering advice.</span>
+        <span>Product concept by Osa · informed by <a href="https://civcore.com/" target="_blank" rel="noreferrer">CivCore’s public product materials</a></span>
+      </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const toast = document.querySelector("#toast");
+      const statusPill = document.querySelector("#status-pill");
+      const approveButton = document.querySelector("#approve-button");
+      const correctButton = document.querySelector("#correct-button");
+      let toastTimer;
+
+      const showToast = (message) => {
+        window.clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("visible");
+        toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 3200);
+      };
+
+      approveButton.addEventListener("click", () => {
+        statusPill.textContent = "Draft approved for workspace";
+        approveButton.textContent = "Draft approved";
+        approveButton.disabled = true;
+        showToast("RFI draft approved. No external message was sent.");
+      });
+
+      correctButton.addEventListener("click", () => {
+        showToast("Issue flagged for correction before approval.");
+      });
+    </script>
+  </body>
+</html>

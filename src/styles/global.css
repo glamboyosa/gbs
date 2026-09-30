@@ -60,7 +60,7 @@ p, li { text-wrap: pretty; }
 .intro-panel h1 { max-width: 670px; margin: 62px 0 18px; font-size: clamp(42px, 6vw, 78px); font-weight: 500; letter-spacing: -0.065em; line-height: 0.94; }
 .intro-panel h1 em { color: #b5a5ff; font-family: "Lacquer", system-ui; font-size: 0.88em; font-style: normal; font-weight: 400; letter-spacing: -0.035em; }
 .intro-panel > p { position: relative; z-index: 1; max-width: 630px; margin: 0; color: #bbb8b4; font-size: 15px; line-height: 1.65; }
-.intro-actions { position: relative; z-index: 1; display: flex; gap: 8px; margin-top: 30px; }
+.intro-actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 600; transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out; }
 .button-primary { background: white; color: var(--ink); }
 .button-quiet { background: rgba(255, 255, 255, 0.09); color: white; }

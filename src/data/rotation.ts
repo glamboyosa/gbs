@@ -154,6 +154,16 @@ export const rotationItems: RotationItem[] = [
     price: "£134 / 60ml",
     priceLabel: "Retail",
   },
+  {
+    name: "AirPods Pro 3",
+    brand: "Apple",
+    category: "accessories",
+    image: "/images/rotation/accessories/airpods-pro-3.png",
+    href: "https://www.apple.com/airpods-pro/",
+    note: "White earbuds with a USB-C charging case.",
+    price: "$249",
+    priceLabel: "Retail",
+  },
 ];
 
 export const featuredRotation = rotationItems.filter((item) => item.featured);

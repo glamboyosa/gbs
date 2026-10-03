@@ -1,12 +1,14 @@
 ---
 import { rotationItems } from "@/data/rotation";
+const airPods = rotationItems.find((item) => item.name === "AirPods Pro 3");
 const selection = [
   rotationItems[1],
   rotationItems[2],
   rotationItems[0],
   rotationItems[7],
+  ...(airPods ? [airPods] : []),
   ...rotationItems.filter((item) => item.featured && item !== rotationItems[2]),
-].slice(0, 5);
+].slice(0, 6);
 ---
 <section class="panel carousel-panel stagger-item" aria-label="The rotation" aria-roledescription="carousel">
   <div class="panel-label">
@@ -16,7 +18,7 @@ const selection = [
       <div class="carousel-arrows"><button type="button" data-step="-1" aria-label="Previous item (L key)">‹</button><button type="button" data-step="1" aria-label="Next item (R key)">›</button></div>
     </div>
   </div>
-  <div class="carousel-track" tabindex="0" aria-label="Clothes and fragrances. Swipe to browse.">
+  <div class="carousel-track" tabindex="0" aria-label="Clothes, gear and fragrances. Swipe to browse.">
     {selection.map((item) => <a class="carousel-slide" href="/clothing" aria-label={`${item.brand} ${item.name}, view archive`}>
       <img src={item.image} alt={`${item.brand} ${item.name}`} width="420" height="420" loading="lazy" />
       <span class="carousel-caption"><small>{item.brand}</small><strong>{item.name}</strong></span>

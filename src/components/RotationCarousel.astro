@@ -1,14 +1,14 @@
 ---
 import { rotationItems } from "@/data/rotation";
-const airPods = rotationItems.find((item) => item.name === "AirPods Pro 3");
-const selection = [
-  rotationItems[1],
-  rotationItems[2],
-  rotationItems[0],
-  rotationItems[7],
-  ...(airPods ? [airPods] : []),
-  ...rotationItems.filter((item) => item.featured && item !== rotationItems[2]),
-].slice(0, 6);
+const homepageRotation = [
+  "Arsenal 26/27 Stadium Jersey",
+  "Mojave Ghost Absolu",
+  "Radio Camera Bag",
+  "Adizero Evo SL",
+  "AirPods Pro 3",
+  "Orphéon Eau de Toilette",
+];
+const selection = homepageRotation.flatMap((name) => rotationItems.filter((item) => item.name === name));
 ---
 <section class="panel carousel-panel stagger-item" aria-label="The rotation" aria-roledescription="carousel">
   <div class="panel-label">

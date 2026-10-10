@@ -164,6 +164,16 @@ export const rotationItems: RotationItem[] = [
     price: "$249",
     priceLabel: "Retail",
   },
+  {
+    name: "Arsenal 26/27 Stadium Jersey",
+    brand: "adidas Football",
+    category: "tops",
+    image: "/images/rotation/clothing/adidas-arsenal-26-27-stadium.jpg",
+    href: "https://www.asos.com/adidas-performance/adidas-football-arsenal-26-27-stadium-jersey-in-red/prd/210032964",
+    note: "Red with a checked shoulder graphic.",
+    price: "$126.33",
+    priceLabel: "Retail",
+  },
 ];
 
 export const featuredRotation = rotationItems.filter((item) => item.featured);

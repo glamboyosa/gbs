@@ -1,5 +1,7 @@
 import { Redis } from "@upstash/redis";
 
+import { parseDiaryEntries } from "./letterboxd-feed";
+
 const redis = new Redis({
   url: import.meta.env.UPSTASH_REDIS_REST_URL,
   token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
@@ -19,26 +21,18 @@ interface LetterboxdCountState {
   latestEntryKey: string;
 }
 
-interface LetterboxdDiaryEntry {
-  key: string;
-  watchedYear: number;
+export interface LetterboxdSummary {
+  yearCount: number;
+  latestFilm: {
+    title: string;
+    url: string;
+  } | null;
 }
 
 /**
- * Extracts stable diary entry keys and watched years from Letterboxd's public RSS feed.
+ * Returns the current year's diary count and latest film from Letterboxd's public RSS feed.
  */
-const parseDiaryEntries = (feed: string): LetterboxdDiaryEntry[] => {
-  return Array.from(feed.matchAll(/<item>([\s\S]*?)<\/item>/g)).flatMap(([, item]) => {
-    const link = item.match(/<link>([^<]+)<\/link>/)?.[1];
-    const watchedDate = item.match(/<letterboxd:watchedDate>((\d{4})-[^<]+)<\/letterboxd:watchedDate>/);
-    return link && watchedDate ? [{ key: `${link}|${watchedDate[1]}`, watchedYear: Number(watchedDate[2]) }] : [];
-  });
-};
-
-/**
- * Returns the current year's diary count and advances it from new RSS entries.
- */
-export const getLetterboxdYearCount = async (): Promise<number> => {
+export const getLetterboxdSummary = async (): Promise<LetterboxdSummary> => {
   const response = await fetch(feedUrl, {
     cache: "no-store",
     headers: { Accept: "application/rss+xml" },
@@ -48,18 +42,20 @@ export const getLetterboxdYearCount = async (): Promise<number> => {
 
   const currentYear = new Date().getFullYear();
   const entries = parseDiaryEntries(await response.text()).filter((entry) => entry.watchedYear === currentYear);
-  if (!entries.length) return 0;
+  if (!entries.length) return { yearCount: 0, latestFilm: null };
+
+  const latestFilm = { title: entries[0].title, url: entries[0].url };
 
   const stored = await redis.get<LetterboxdCountState>(stateKey);
   const state = stored?.year === currentYear ? stored : currentYear === initialState.year ? initialState : null;
   if (!state) {
     const nextState = { year: currentYear, count: entries.length, latestEntryKey: entries[0].key };
     await redis.set(stateKey, nextState);
-    return nextState.count;
+    return { yearCount: nextState.count, latestFilm };
   }
 
   const previousEntryIndex = entries.findIndex((entry) => entry.key === state.latestEntryKey);
-  if (previousEntryIndex <= 0) return state.count;
+  if (previousEntryIndex <= 0) return { yearCount: state.count, latestFilm };
 
   const nextState = {
     year: currentYear,
@@ -67,5 +63,5 @@ export const getLetterboxdYearCount = async (): Promise<number> => {
     latestEntryKey: entries[0].key,
   };
   await redis.set(stateKey, nextState);
-  return nextState.count;
+  return { yearCount: nextState.count, latestFilm };
 };

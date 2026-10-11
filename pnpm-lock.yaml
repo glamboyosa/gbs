@@ -32,6 +32,9 @@ importers:
       framer-motion:
         specifier: ^11.12.0
         version: 11.18.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      psn-api:
+        specifier: ^2.18.1
+        version: 2.18.1
       react:
         specifier: ^19.0.0
         version: 19.2.8
@@ -2103,6 +2106,10 @@ packages:
 
   property-information@7.2.0:
     resolution: {integrity: sha512-IAtzIB6sUiWaJYrX9smp3V46pBGbBeLFRGdh25kg1334VcBlD8HzhPeNIWQH9zhGmo2itIe25EHt9dQP7G5hmg==}
+
+  psn-api@2.18.1:
+    resolution: {integrity: sha512-D0oVrJK+hVwJFARp2Io/auqJwjRx2t7x4Cke7mYNFbrOUQxSBONl0fHr4eVK5Bai89RNyaAsLPLFmgIw9pxzmQ==}
+    engines: {node: '>=20', pnpm: '>=10'}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -4767,6 +4774,8 @@ snapshots:
       sisteransi: 1.0.5
 
   property-information@7.2.0: {}
+
+  psn-api@2.18.1: {}
 
   punycode@2.3.1:
     optional: true

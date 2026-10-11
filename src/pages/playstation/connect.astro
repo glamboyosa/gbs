@@ -1,0 +1,55 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { connectPlayStation, getPlayStationSummary } from "@/server/playstation";
+import "@/styles/global.css";
+
+const requestUrl = new URL(Astro.request.url);
+const isLocal = requestUrl.hostname === "127.0.0.1" || requestUrl.hostname === "localhost" || requestUrl.hostname === "[::1]";
+if (!isLocal) return new Response("Not found", { status: 404 });
+
+let errorMessage = "";
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const npsso = formData.get("npsso");
+  if (typeof npsso !== "string") {
+    errorMessage = "Paste the NPSSO value from Sony.";
+  } else {
+    try {
+      await connectPlayStation(npsso);
+      try {
+        await getPlayStationSummary();
+      } catch {}
+      return Astro.redirect("/?playstation=connected");
+    } catch {
+      errorMessage = "PlayStation could not be connected. Generate a fresh NPSSO and try again.";
+    }
+  }
+}
+---
+
+<Layout title="Connect PlayStation | Osa" description="Connect Osa's PlayStation activity locally.">
+  <main class="connect-shell">
+    <section class="connect-card">
+      <p class="eyebrow">LOCAL SETUP</p>
+      <h1>Connect PlayStation.</h1>
+      <p class="connect-intro">Sony does not provide an RSS feed for recent games. This exchanges a temporary NPSSO for renewable tokens and stores those tokens in Redis. The NPSSO itself is never saved.</p>
+
+      <ol class="connect-steps">
+        <li><a href="https://www.playstation.com/" target="_blank" rel="noopener noreferrer">Sign in to PlayStation ↗</a></li>
+        <li><a href="https://ca.account.sony.com/api/v1/ssocookie" target="_blank" rel="noopener noreferrer">Open Sony’s NPSSO page in the same browser ↗</a></li>
+        <li>Copy only the value between the quotation marks and paste it below.</li>
+      </ol>
+
+      <form method="post" autocomplete="off">
+        <label for="npsso">NPSSO</label>
+        <div class="connect-input-row">
+          <input id="npsso" name="npsso" type="password" required minlength="32" spellcheck="false" autocapitalize="none" autocomplete="off" />
+          <button class="button button-primary pressable" type="submit">Connect</button>
+        </div>
+        {errorMessage && <p class="connect-error" role="alert">{errorMessage}</p>}
+      </form>
+
+      <p class="connect-note">Treat the NPSSO like a password. This page is available only on localhost.</p>
+    </section>
+  </main>
+</Layout>

@@ -46,3 +46,17 @@ export type StravaSummary = {
   movingTimeSeconds: number;
   elevationMeters: number;
 };
+
+export type PlayStationToken = {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: number;
+  refreshTokenExpiresAt: number;
+};
+
+export type PlayStationSummary = {
+  title: string;
+  imageUrl: string | null;
+  lastPlayedAt: string;
+  platform: "PS4" | "PS5" | null;
+};

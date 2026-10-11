@@ -19,6 +19,7 @@
     "astro-google-fonts-optimizer": "^0.2.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.12.0",
+    "psn-api": "^2.18.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "swr": "^2.2.5",

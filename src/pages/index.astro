@@ -6,14 +6,22 @@ import ProjectFolder from "@/components/ProjectFolder.astro";
 import StravaStats from "@/components/StravaStats.astro";
 import Layout from "@/layouts/Layout.astro";
 import { getLetterboxdSummary, type LetterboxdSummary } from "@/server/letterboxd";
+import { getPlayStationSummary } from "@/server/playstation";
+import type { PlayStationSummary } from "@/types";
 import "@/styles/global.css";
 
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
 let letterboxdSummary: LetterboxdSummary = { yearCount: 125, latestFilm: null };
+let playStationSummary: PlayStationSummary | null = null;
 try {
   letterboxdSummary = await getLetterboxdSummary();
 } catch (error) {
   console.error("Failed to load Letterboxd summary", error);
+}
+try {
+  playStationSummary = await getPlayStationSummary();
+} catch (error) {
+  console.error("Failed to load PlayStation summary", error);
 }
 ---
 
@@ -124,12 +132,20 @@ try {
 
     <footer class="site-footer">
       <span>© {new Date().getFullYear()} Osa Ogbemudia</span>
-      <span class="letterboxd-summary">
+      <span class="activity-summary">
         <a href="https://letterboxd.com/glamboyosa/" target="_blank" rel="noopener noreferrer">{letterboxdSummary.yearCount} films this year</a>
         {letterboxdSummary.latestFilm && (
           <>
             <span aria-hidden="true">·</span>
             <a href={letterboxdSummary.latestFilm.url} target="_blank" rel="noopener noreferrer">Last watched: {letterboxdSummary.latestFilm.title} ↗</a>
+          </>
+        )}
+        {playStationSummary && (
+          <>
+            <span aria-hidden="true">·</span>
+            <a href="https://profile.playstation.com/glamboyosa" target="_blank" rel="noopener noreferrer">
+              Last played on PlayStation: {playStationSummary.title}{playStationSummary.platform ? ` on ${playStationSummary.platform}` : ""} ↗
+            </a>
           </>
         )}
       </span>

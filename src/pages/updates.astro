@@ -1,0 +1,35 @@
+---
+import SiteHeader from "@/components/SiteHeader.astro";
+import Layout from "@/layouts/Layout.astro";
+import { updates } from "@/data/updates";
+import "@/styles/global.css";
+---
+
+<Layout title="Updates | Osa Ogbemudia" description="Recent changes across Osa's projects.">
+  <div class="page-shell neutral-shell">
+    <SiteHeader />
+
+    <main class="updates-page">
+      <div class="updates-intro">
+        <p class="eyebrow">PROJECT UPDATES</p>
+        <h1>What’s new.</h1>
+        <p>A short record of what I’ve shipped across my projects.</p>
+      </div>
+
+      <ol class="updates-list">
+        {updates.map((update) => (
+          <li class="panel update-entry">
+            <div class="update-meta"><time datetime={update.date}>{update.dateLabel}</time><span>{update.project} · {update.reference}</span></div>
+            <div class="update-body">
+              <div>
+                <h2>{update.title}</h2>
+                <p>{update.description}</p>
+              </div>
+              <a href={update.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${update.project} ${update.reference}: ${update.linkText}`}>{update.linkText} ↗</a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </main>
+  </div>
+</Layout>

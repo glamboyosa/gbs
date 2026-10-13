@@ -49,6 +49,21 @@ p, li { text-wrap: pretty; }
 .pressable:active { scale: 0.96; }
 
 .dashboard { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
+.updates-banner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px 22px; min-height: 58px; margin-bottom: 14px; padding: 12px 20px; border-radius: 16px; background: var(--card); box-shadow: var(--shadow-border); color: var(--ink); transition: box-shadow 180ms ease-out, translate 180ms ease-out; }
+.updates-banner-label { color: var(--purple); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; white-space: nowrap; }
+.updates-banner-title { font-size: 13px; font-weight: 500; }
+.updates-banner-link { font-size: 11px; font-weight: 600; white-space: nowrap; }
+.updates-page { padding: 68px 0 100px; }
+.updates-intro { max-width: 650px; margin-bottom: 46px; }
+.updates-intro h1 { margin: 16px 0; font-size: clamp(56px, 9vw, 108px); font-weight: 500; letter-spacing: -0.075em; line-height: 0.9; }
+.updates-intro > p:last-child { max-width: 480px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.updates-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.update-entry { padding: 26px; }
+.update-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.update-body { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-top: 22px; }
+.update-body h2 { max-width: 660px; margin: 0 0 10px; font-size: clamp(24px, 3vw, 36px); font-weight: 600; letter-spacing: -0.045em; line-height: 1.12; }
+.update-body p { max-width: 650px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.update-body a { flex: none; min-height: 44px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
 .panel { position: relative; min-width: 0; overflow: hidden; border-radius: 24px; background: var(--card); box-shadow: var(--shadow-border); transition: box-shadow 180ms ease-out, translate 180ms ease-out; }
 .panel-label { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.11em; }
 
@@ -107,6 +122,7 @@ p, li { text-wrap: pretty; }
 .project-list strong { font-size: 15px; }
 .project-list small { margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 400; }
 .project-list i { font-style: normal; }
+.more-work-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--purple); font-size: 10px; letter-spacing: 0; text-transform: none; }
 
 .writing-panel { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; min-height: 332px; padding: 26px; background: var(--acid); }
 .writing-glyph { position: absolute; top: 25px; right: 25px; color: rgba(24, 23, 22, 0.1); font-family: Georgia, serif; font-size: 150px; line-height: 1; }
@@ -212,6 +228,12 @@ p, li { text-wrap: pretty; }
 
 @media (max-width: 700px) {
   .page-shell, .collection-shell { width: min(100% - 24px, 1240px); padding-top: 12px; }
+  .updates-banner { grid-template-columns: 1fr auto; padding: 16px; }
+  .updates-banner-label { grid-column: 1 / -1; }
+  .updates-banner-title { line-height: 1.4; }
+  .updates-page { padding: 44px 0 70px; }
+  .update-body { display: block; }
+  .update-body a { margin-top: 14px; }
   .site-header { align-items: flex-start; margin-bottom: 18px; }
   .site-header nav { max-width: calc(100% - 64px); overflow-x: auto; scrollbar-width: none; }
   .nav-link { min-height: 40px; padding: 0 10px; font-size: 11px; }
@@ -344,6 +366,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
   .rotation-panel:hover .rotation-stage img:nth-child(2) { translate: 7px -7px; rotate: 11deg; }
   .rotation-panel:hover .rotation-stage img:nth-child(3) { translate: 0 -10px; }
   .project-list a:hover { padding-left: 7px; color: var(--purple); }
+  .more-work-link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .writing-links a:hover { padding-left: 7px; color: #4b31be; }
   .site-footer a:hover { color: var(--ink); text-decoration-color: currentColor; }
   .filter-pill:hover { color: var(--ink); }
@@ -351,6 +374,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
   .product-image:hover img { transform: translateY(-6px) scale(1.025); }
   .inventory-card li a:hover { color: #4b31be; }
   .neutral-shell .nav-link:hover { background: var(--paper-deep); }
+  .updates-banner:hover { translate: 0 -2px; box-shadow: var(--shadow-border-hover); }
   .neutral-shell .button-primary:hover { background: #6541d8; }
   .neutral-shell .writing-links a:hover { color: var(--purple); }
   .neutral-shell .uses-panel:hover .tool-cloud span:nth-child(odd) { transform: translateY(-4px) rotate(-3deg); box-shadow: var(--shadow-border); }

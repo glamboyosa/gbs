@@ -8,6 +8,7 @@ import Layout from "@/layouts/Layout.astro";
 import { getLetterboxdSummary, type LetterboxdSummary } from "@/server/letterboxd";
 import { getPlayStationSummary } from "@/server/playstation";
 import type { PlayStationSummary } from "@/types";
+import { updates } from "@/data/updates";
 import "@/styles/global.css";
 
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
@@ -31,6 +32,12 @@ try {
 >
   <div class="page-shell neutral-shell">
     <SiteHeader current="home" />
+
+    <a class="updates-banner pressable" href="/updates">
+      <span class="updates-banner-label">LATEST · {updates[0].project} {updates[0].reference}</span>
+      <span class="updates-banner-title">{updates[0].title}</span>
+      <span class="updates-banner-link">All updates <span aria-hidden="true">↗</span></span>
+    </a>
 
     <main class="dashboard">
       <section class="panel intro-panel stagger-item">
@@ -62,12 +69,12 @@ try {
       <RotationCarousel />
 
       <section class="panel making-panel stagger-item">
-        <div class="panel-label"><span>MAKING</span><span>06</span></div>
+        <div class="panel-label"><span>MAKING · 06</span><a class="more-work-link" href="https://animations.glamboyosa.xyz" target="_blank" rel="noopener noreferrer">Animations ↗</a></div>
         <ProjectFolder />
         <div class="project-list">
           <a href="https://katalepsis.glamboyosa.xyz" target="_blank" rel="noopener noreferrer">
             <span class="project-index">01</span>
-            <span><strong>katalepsis</strong><small>Tests your preview deploys and shows you what broke.</small></span>
+            <span><strong>Katalepsis</strong><small>Tests your preview deploys and shows you what broke.</small></span>
             <i>↗</i>
           </a>
           <a href="https://docket.glamboyosa.xyz" target="_blank" rel="noopener noreferrer">

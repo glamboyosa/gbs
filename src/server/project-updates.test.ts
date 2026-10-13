@@ -156,6 +156,21 @@ test("daily refresh publishes a selected public commit and keeps its source link
   assert.equal(updates[0].url, `https://github.com/glamboyosa/docket/commit/${"a".repeat(40)}`);
 });
 
+test("refresh publishes with the working OpenRouter selection model", async () => {
+  const store = makeStore();
+  const fetcher: typeof fetch = async (input, init) => {
+    const url = String(input);
+    if (url.endsWith(".atom")) return new Response(fixture[url.split("/")[4] as keyof typeof fixture]);
+    const request = JSON.parse(String(init?.body));
+    const content = request.model === "openai/gpt-4.1-mini" ? JSON.stringify({ sha: "a".repeat(40) }) : "{}";
+    return Response.json({ choices: [{ message: { content } }] });
+  };
+
+  const result = await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" });
+  assert.equal(result, "published");
+  assert.equal((await getProjectUpdates(store))[0].title, "Add document review");
+});
+
 test("invalid OpenRouter choice falls back to OpenAI without publishing an invented commit", async () => {
   const store = makeStore();
   const used: string[] = [];

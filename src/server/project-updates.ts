@@ -127,7 +127,7 @@ export const refreshProjectUpdates = async (options: RefreshOptions = {}): Promi
     let selected: Commit | null | undefined;
     if (openRouterKey) {
       try {
-        selected = await chooseCommit(fetcher, openRouterKey, "https://openrouter.ai/api/v1/chat/completions", "qwen/qwen3.5-flash-02-23", commits);
+        selected = await chooseCommit(fetcher, openRouterKey, "https://openrouter.ai/api/v1/chat/completions", "openai/gpt-4.1-mini", commits);
       } catch {
         selected = undefined;
       }

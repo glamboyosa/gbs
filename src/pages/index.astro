@@ -8,10 +8,11 @@ import Layout from "@/layouts/Layout.astro";
 import { getLetterboxdSummary, type LetterboxdSummary } from "@/server/letterboxd";
 import { getPlayStationSummary } from "@/server/playstation";
 import type { PlayStationSummary } from "@/types";
-import { updates } from "@/data/updates";
+import { getProjectUpdates } from "@/server/project-updates";
 import "@/styles/global.css";
 
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
+const updates = await getProjectUpdates();
 let letterboxdSummary: LetterboxdSummary = { yearCount: 125, latestFilm: null };
 let playStationSummary: PlayStationSummary | null = null;
 try {

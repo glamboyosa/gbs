@@ -1,8 +1,10 @@
 ---
 import SiteHeader from "@/components/SiteHeader.astro";
 import Layout from "@/layouts/Layout.astro";
-import { updates } from "@/data/updates";
+import { getProjectUpdates } from "@/server/project-updates";
 import "@/styles/global.css";
+
+const updates = await getProjectUpdates();
 ---
 
 <Layout title="Updates | Osa Ogbemudia" description="Recent changes across Osa's projects.">
@@ -23,7 +25,7 @@ import "@/styles/global.css";
             <div class="update-body">
               <div>
                 <h2>{update.title}</h2>
-                <p>{update.description}</p>
+                {update.description && <p>{update.description}</p>}
               </div>
               <a href={update.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${update.project} ${update.reference}: ${update.linkText}`}>{update.linkText} ↗</a>
             </div>

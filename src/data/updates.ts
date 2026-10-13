@@ -1,4 +1,15 @@
-export const updates = [
+export interface ProjectUpdate {
+  date: string;
+  dateLabel: string;
+  project: string;
+  reference: string;
+  title: string;
+  description?: string;
+  url: string;
+  linkText: string;
+}
+
+export const updates: ProjectUpdate[] = [
   {
     date: "2026-10-13",
     dateLabel: "13 Oct 2026",

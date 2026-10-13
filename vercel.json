@@ -5,6 +5,10 @@
     {
       "path": "/api/playstation/refresh",
       "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/updates/refresh",
+      "schedule": "0 22 * * *"
     }
   ]
 }

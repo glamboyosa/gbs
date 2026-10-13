@@ -9,5 +9,5 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   const result = await refreshProjectUpdates();
-  return Response.json({ result }, { status: result === "unconfigured" ? 503 : 200 });
+  return Response.json({ result }, { status: result === "unconfigured" || result === "busy" ? 503 : 200 });
 };

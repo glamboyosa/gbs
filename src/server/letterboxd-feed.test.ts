@@ -11,11 +11,13 @@ test("parses ordered Letterboxd diary entries", () => {
           <link>https://letterboxd.com/glamboyosa/film/digger-2026/</link>
           <letterboxd:watchedDate>2026-10-10</letterboxd:watchedDate>
           <letterboxd:filmTitle>Digger</letterboxd:filmTitle>
+          <letterboxd:filmYear>2026</letterboxd:filmYear>
         </item>
         <item>
           <link>https://letterboxd.com/glamboyosa/film/dungeons-and-dragons-honor-among-thieves/</link>
           <letterboxd:watchedDate>2026-10-09</letterboxd:watchedDate>
           <letterboxd:filmTitle>Dungeons &amp; Dragons: Honor Among Thieves</letterboxd:filmTitle>
+          <letterboxd:filmYear>2023</letterboxd:filmYear>
         </item>
       </channel>
     </rss>
@@ -26,15 +28,30 @@ test("parses ordered Letterboxd diary entries", () => {
       key: "https://letterboxd.com/glamboyosa/film/digger-2026/|2026-10-10",
       watchedYear: 2026,
       title: "Digger",
+      filmYear: 2026,
       url: "https://letterboxd.com/glamboyosa/film/digger-2026/",
     },
     {
       key: "https://letterboxd.com/glamboyosa/film/dungeons-and-dragons-honor-among-thieves/|2026-10-09",
       watchedYear: 2026,
       title: "Dungeons & Dragons: Honor Among Thieves",
+      filmYear: 2023,
       url: "https://letterboxd.com/glamboyosa/film/dungeons-and-dragons-honor-among-thieves/",
     },
   ]);
+});
+
+test("keeps diary entries when the film release year is missing or invalid", () => {
+  const feed = `
+    <item>
+      <link>https://letterboxd.com/glamboyosa/film/unknown/</link>
+      <letterboxd:watchedDate>2026-10-10</letterboxd:watchedDate>
+      <letterboxd:filmTitle>Unknown</letterboxd:filmTitle>
+      <letterboxd:filmYear>not-a-year</letterboxd:filmYear>
+    </item>
+  `;
+
+  assert.equal(parseDiaryEntries(feed)[0]?.filmYear, undefined);
 });
 
 test("ignores RSS items without a watched date, title, or link", () => {

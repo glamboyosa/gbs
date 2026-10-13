@@ -148,7 +148,7 @@ try {
         {letterboxdSummary.latestFilm && (
           <>
             <span aria-hidden="true">·</span>
-            <a href={letterboxdSummary.latestFilm.url} target="_blank" rel="noopener noreferrer">Last watched: {letterboxdSummary.latestFilm.title} ↗</a>
+            <a href={letterboxdSummary.latestFilm.url} target="_blank" rel="noopener noreferrer">Last watched: {letterboxdSummary.latestFilm.title}{letterboxdSummary.latestFilm.filmYear ? ` (${letterboxdSummary.latestFilm.filmYear})` : ""} ↗</a>
           </>
         )}
         {playStationSummary && (

@@ -25,6 +25,7 @@ export interface LetterboxdSummary {
   yearCount: number;
   latestFilm: {
     title: string;
+    filmYear?: number;
     url: string;
   } | null;
 }
@@ -44,7 +45,7 @@ export const getLetterboxdSummary = async (): Promise<LetterboxdSummary> => {
   const entries = parseDiaryEntries(await response.text()).filter((entry) => entry.watchedYear === currentYear);
   if (!entries.length) return { yearCount: 0, latestFilm: null };
 
-  const latestFilm = { title: entries[0].title, url: entries[0].url };
+  const latestFilm = { title: entries[0].title, filmYear: entries[0].filmYear, url: entries[0].url };
 
   const stored = await redis.get<LetterboxdCountState>(stateKey);
   const state = stored?.year === currentYear ? stored : currentYear === initialState.year ? initialState : null;

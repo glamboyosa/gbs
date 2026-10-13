@@ -2,6 +2,7 @@ export interface LetterboxdDiaryEntry {
   key: string;
   watchedYear: number;
   title: string;
+  filmYear?: number;
   url: string;
 }
 
@@ -52,12 +53,15 @@ export const parseDiaryEntries = (feed: string): LetterboxdDiaryEntry[] => {
     const watchedYear = watchedDate ? parseWatchedYear(watchedDate) : null;
     const encodedTitle = item.match(/<letterboxd:filmTitle>([^<]+)<\/letterboxd:filmTitle>/)?.[1];
     const title = encodedTitle ? decodeXmlText(encodedTitle) : null;
+    const filmYearText = item.match(/<letterboxd:filmYear>(\d{4})<\/letterboxd:filmYear>/)?.[1];
+    const filmYear = filmYearText && Number(filmYearText) > 0 ? Number(filmYearText) : undefined;
 
     return url && watchedDate && watchedYear !== null && title
       ? [{
           key: `${url}|${watchedDate}`,
           watchedYear,
           title,
+          ...(filmYear ? { filmYear } : {}),
           url,
         }]
       : [];

@@ -78,6 +78,14 @@ const toUpdate = (commit: Commit): ProjectUpdate => ({
   linkText: "Commit",
 });
 
+export const getHomepageUpdate = (history: ProjectUpdate[], now = new Date()): ProjectUpdate | null => {
+  const latest = history[0];
+  if (!latest) return null;
+  const today = Date.parse(`${now.toISOString().slice(0, 10)}T00:00:00Z`);
+  const ageInDays = (today - Date.parse(`${latest.date}T00:00:00Z`)) / 86_400_000;
+  return Number.isInteger(ageInDays) && ageInDays >= 0 && ageInDays <= 14 ? latest : null;
+};
+
 export const getProjectUpdates = async (store = configuredStore(), options: Omit<RefreshOptions, "store"> = {}): Promise<ProjectUpdate[]> => {
   if (!store) return updates;
   try {

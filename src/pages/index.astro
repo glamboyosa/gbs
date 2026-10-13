@@ -8,11 +8,12 @@ import Layout from "@/layouts/Layout.astro";
 import { getLetterboxdSummary, type LetterboxdSummary } from "@/server/letterboxd";
 import { getPlayStationSummary } from "@/server/playstation";
 import type { PlayStationSummary } from "@/types";
-import { getProjectUpdates } from "@/server/project-updates";
+import { getHomepageUpdate, getProjectUpdates } from "@/server/project-updates";
 import "@/styles/global.css";
 
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
 const updates = await getProjectUpdates();
+const bannerUpdate = getHomepageUpdate(updates);
 let letterboxdSummary: LetterboxdSummary = { yearCount: 125, latestFilm: null };
 let playStationSummary: PlayStationSummary | null = null;
 try {
@@ -34,11 +35,13 @@ try {
   <div class="page-shell neutral-shell">
     <SiteHeader current="home" />
 
-    <a class="updates-banner pressable" href="/updates">
-      <span class="updates-banner-label">LATEST · {updates[0].project} {updates[0].reference}</span>
-      <span class="updates-banner-title">{updates[0].title}</span>
-      <span class="updates-banner-link">All updates <span aria-hidden="true">↗</span></span>
-    </a>
+    {bannerUpdate && (
+      <a class="updates-banner pressable" href="/updates">
+        <span class="updates-banner-label">LATEST · {bannerUpdate.project} {bannerUpdate.reference}</span>
+        <span class="updates-banner-title">{bannerUpdate.title}</span>
+        <span class="updates-banner-link">All updates <span aria-hidden="true">↗</span></span>
+      </a>
+    )}
 
     <main class="dashboard">
       <section class="panel intro-panel stagger-item">

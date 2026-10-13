@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { getProjectUpdates, refreshProjectUpdates } from "./project-updates.ts";
+import { getHomepageUpdate, getProjectUpdates, refreshProjectUpdates } from "./project-updates.ts";
 
 const feed = (repo: string, sha: string, title: string, updated: string) => `
   <feed><entry>
@@ -233,4 +233,13 @@ test("refresh catches up with commits still in the feed after a missed week", as
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-25T22:00:00Z"), openRouterKey: "test-key" }), "published");
   assert.equal((await getProjectUpdates(store))[0].project, "Docket");
+});
+
+test("homepage stops featuring an update after 14 calendar days while history keeps it", async () => {
+  const history = await getProjectUpdates(null);
+  const latest = history[0];
+
+  assert.equal(getHomepageUpdate(history, new Date("2026-10-27T23:59:59Z")), latest);
+  assert.equal(getHomepageUpdate(history, new Date("2026-10-28T00:00:00Z")), null);
+  assert.equal(history[0], latest);
 });

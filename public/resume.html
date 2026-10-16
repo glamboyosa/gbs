@@ -390,7 +390,8 @@
       </div>
       <div class="job-company"><a href="https://conservationmetrics.com/" class="co-name">Conservation Metrics International</a> · Santa Cruz, USA · Remote</div>
       <ul class="bullets">
-        <li>Designed and benchmarked a PostGIS wildfire ETL pipeline that processed 124.9 million NASA FIRMS detections across eight years and materialized 4.32 million spatial relationships. Added idempotent ingestion and atomic publication, cutting API response time by 92%.</li>
+        <li>Rebuilt a conservation dashboard's wildfire ETL pipeline on PostGIS: 124.5 million NASA FIRMS detections in year-partitioned tables, matched to 102 territories and 150 groupings (4.3 million spatial matches) without blocking dashboard reads. Cut API response time by 92%.</li>
+        <li>Found and fixed a roughly 3x overcount in the dashboard's fire statistics caused by duplicate rows and low-confidence detections. The new counts match the deduplicated legacy data exactly for every year from 2019 to 2025, and reloading a year reproduces identical results.</li>
         <li>Replaced a single JSON blob per dataset with a relational record for each dashboard view, enabling independent queries and updates; migrated existing data transactionally.</li>
         <li>Built a Mapbox GL alerts pipeline with projected Postgres queries, minimal GeoJSON, point and polygon-centroid clustering, and on-click record loading, keeping large maps responsive without sending full survey records.</li>
         <li>Drove infrastructure migration from hosted PostgreSQL to on-VM services, enabling partners to self-host.</li>

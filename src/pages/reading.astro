@@ -16,7 +16,7 @@ const comics = reading.books.filter((book) => book.category === "comics");
       <header class="reading-hero">
         <p class="eyebrow">READING · 2026</p>
         <h1>On the shelf<span>.</span></h1>
-        <p>Books and comics I picked up this year. Some finished, some still in rotation.</p>
+        <p>Books and comics I picked up this year.</p>
       </header>
 
       <section class="reading-section" aria-labelledby="reading-fiction-title">
@@ -27,15 +27,19 @@ const comics = reading.books.filter((book) => book.category === "comics");
         <div class="reading-book-grid">
           {fiction.map((book) => (
             <article class="reading-book">
-              <BookCover title={book.title} coverId={book.coverId} />
+              <a class="reading-book-cover-link" href={book.bookUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${book.title} on Goodreads`}>
+                <BookCover title={book.title} coverId={book.coverId} />
+              </a>
               <div class="reading-book-info">
-                <h3>{book.title}</h3>
-                {book.creator && <p>{book.creator}</p>}
+                <h3><a href={book.bookUrl} target="_blank" rel="noopener noreferrer">{book.title}</a></h3>
+                {book.creator && <p><a href={book.authorUrl} target="_blank" rel="noopener noreferrer" aria-label={`Read about ${book.creator}`}>{book.creator} ↗</a></p>}
                 {book.id === reading.currentlyReading ? (
                   <span>Currently reading</span>
                 ) : reading.inRotation.includes(book.id) ? (
                   <span>In rotation</span>
-                ) : null}
+                ) : (
+                  <span>{book.status ?? "Read"}</span>
+                )}
               </div>
             </article>
           ))}
@@ -52,7 +56,7 @@ const comics = reading.books.filter((book) => book.category === "comics");
             <div class="reading-comic">
               <span>{(index + 1).toString().padStart(2, "0")}</span>
               <strong>{book.title}</strong>
-              {book.creator && <small>{book.creator}</small>}
+              <small>{book.years} · Read{book.creator && ` · ${book.creator}`}</small>
             </div>
           ))}
         </div>

@@ -10,7 +10,7 @@ const { title, coverId, loading = "lazy" } = Astro.props;
 
 <div class:list={["book-cover", { "book-cover-placeholder": !coverId }]}>
   {coverId ? (
-    <img src={`https://covers.openlibrary.org/b/id/${coverId}-M.jpg`} alt="" width="180" height="270" loading={loading} />
+    <img src={`https://covers.openlibrary.org/b/id/${coverId}-L.jpg`} alt="" width="180" height="270" loading={loading} />
   ) : (
     <span>{title}</span>
   )}

@@ -4,7 +4,9 @@ import SiteHeader from "@/components/SiteHeader.astro";
 import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
 import StravaStats from "@/components/StravaStats.astro";
+import BookCover from "@/components/BookCover.astro";
 import Layout from "@/layouts/Layout.astro";
+import reading from "@/data/reading.json";
 import { getLetterboxdSummary, type LetterboxdSummary } from "@/server/letterboxd";
 import { getPlayStationSummary } from "@/server/playstation";
 import type { PlayStationSummary } from "@/types";
@@ -14,6 +16,10 @@ import "@/styles/global.css";
 const accessToken = Astro.cookies.get("spotify_access_token")?.value;
 const updates = await getProjectUpdates();
 const bannerUpdate = getHomepageUpdate(updates);
+const currentBook = reading.books.find((book) => book.id === reading.currentlyReading);
+const inRotation = reading.inRotation
+  .filter((id) => id !== reading.currentlyReading)
+  .flatMap((id) => reading.books.filter((book) => book.id === id));
 let letterboxdSummary: LetterboxdSummary = { yearCount: 125, latestFilm: null };
 let playStationSummary: PlayStationSummary | null = null;
 try {
@@ -131,6 +137,33 @@ try {
           </a>
         </div>
       </section>
+
+      {currentBook && (
+        <section class="panel reading-panel stagger-item" aria-labelledby="reading-title">
+          <div class="panel-label"><span>READING</span><a href="/reading">The whole shelf ↗</a></div>
+          <div class="reading-panel-body">
+            <div class="reading-current">
+              <BookCover title={currentBook.title} coverId={currentBook.coverId} loading="eager" />
+              <div>
+                <p class="eyebrow">CURRENTLY READING</p>
+                <h2 id="reading-title">{currentBook.title}</h2>
+                <p>{currentBook.creator}</p>
+              </div>
+            </div>
+            <div class="reading-rotation">
+              <p class="eyebrow">IN ROTATION</p>
+              <div class="reading-rail">
+                {inRotation.map((book) => (
+                  <div class="reading-rail-item">
+                    <BookCover title={book.title} coverId={book.coverId} />
+                    <span>{book.title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <a class="panel uses-panel stagger-item" href="/uses">
         <div class="panel-label"><span>WHAT I USE</span><span>↗</span></div>

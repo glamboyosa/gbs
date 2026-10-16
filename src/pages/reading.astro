@@ -1,0 +1,66 @@
+---
+import BookCover from "@/components/BookCover.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import reading from "@/data/reading.json";
+import Layout from "@/layouts/Layout.astro";
+import "@/styles/global.css";
+
+const fiction = reading.books.filter((book) => book.category === "fiction");
+const comics = reading.books.filter((book) => book.category === "comics");
+---
+
+<Layout title="On the shelf | Osa" description="Books, comics and manga on Osa’s shelf in 2026.">
+  <div class="page-shell neutral-shell">
+    <SiteHeader current="reading" />
+    <main class="reading-page">
+      <header class="reading-hero">
+        <p class="eyebrow">READING · 2026</p>
+        <h1>On the shelf<span>.</span></h1>
+        <p>Books and comics I picked up this year. Some finished, some still in rotation.</p>
+      </header>
+
+      <section class="reading-section" aria-labelledby="reading-fiction-title">
+        <div class="reading-section-heading">
+          <h2 id="reading-fiction-title">Fiction</h2>
+          <span>{fiction.length.toString().padStart(2, "0")}</span>
+        </div>
+        <div class="reading-book-grid">
+          {fiction.map((book) => (
+            <article class="reading-book">
+              <BookCover title={book.title} coverId={book.coverId} />
+              <div class="reading-book-info">
+                <h3>{book.title}</h3>
+                {book.creator && <p>{book.creator}</p>}
+                {book.id === reading.currentlyReading ? (
+                  <span>Currently reading</span>
+                ) : reading.inRotation.includes(book.id) ? (
+                  <span>In rotation</span>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="reading-section" aria-labelledby="reading-comics-title">
+        <div class="reading-section-heading">
+          <h2 id="reading-comics-title">Comics &amp; manga</h2>
+          <span>{comics.length.toString().padStart(2, "0")}</span>
+        </div>
+        <div class="reading-comics-list">
+          {comics.map((book, index) => (
+            <div class="reading-comic">
+              <span>{(index + 1).toString().padStart(2, "0")}</span>
+              <strong>{book.title}</strong>
+              {book.creator && <small>{book.creator}</small>}
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer collection-footer">
+      <a href="/">← Back home</a>
+      <a href="https://openlibrary.org/" target="_blank" rel="noopener noreferrer">Cover images via Open Library ↗</a>
+    </footer>
+  </div>
+</Layout>

@@ -315,6 +315,57 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 .neutral-shell .inventory-card { min-height: 380px; }
 .neutral-shell .inventory-card > div:nth-child(2) { margin-top: 40px; }
 .neutral-shell .tool-cloud span { transition: transform 200ms ease-out, box-shadow 200ms ease-out; }
+.reading-panel { grid-column: span 12; padding: 26px; }
+.reading-panel .panel-label a { min-height: 44px; display: inline-flex; align-items: center; }
+.reading-panel-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 30px; align-items: end; margin-top: 24px; }
+.reading-current { display: flex; align-items: center; gap: 22px; min-width: 0; }
+.reading-current .book-cover { flex: 0 0 108px; }
+.reading-current h2 { margin: 11px 0 5px; font-size: clamp(22px, 3vw, 34px); font-weight: 600; letter-spacing: -0.05em; line-height: 1.05; }
+.reading-current p:last-child { margin: 0; color: var(--muted); font-size: 12px; }
+.reading-rotation { min-width: 0; }
+.reading-rotation > .eyebrow { margin: 0 0 14px; }
+.reading-rail { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; }
+.reading-rail-item { flex: 0 0 90px; min-width: 0; }
+.reading-rail-item .book-cover { width: 78px; }
+.reading-rail-item > span { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.book-cover { display: grid; width: 100%; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 4px; background: var(--paper-deep); box-shadow: 0 2px 9px rgba(0, 0, 0, 0.16); place-items: center; }
+.book-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.book-cover-placeholder { padding: 12px; color: var(--ink); text-align: center; }
+.book-cover-placeholder span { font-family: Georgia, serif; font-size: clamp(12px, 1.5vw, 20px); line-height: 1.15; }
+.reading-page { padding: 62px 0 90px; }
+.reading-hero { margin-bottom: 70px; }
+.reading-hero h1 { margin: 16px 0 22px; font-size: clamp(56px, 9vw, 108px); font-weight: 500; letter-spacing: -0.075em; line-height: 0.9; }
+.reading-hero h1 span { color: var(--purple); }
+.reading-hero > p:last-child { max-width: 520px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.reading-section + .reading-section { margin-top: 80px; }
+.reading-section-heading { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; padding-bottom: 13px; border-bottom: 1px solid var(--divider); }
+.reading-section-heading h2 { margin: 0; font-size: 27px; font-weight: 600; letter-spacing: -0.045em; }
+.reading-section-heading span { color: var(--muted); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+.reading-book-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 34px 20px; }
+.reading-book { min-width: 0; }
+.reading-book .book-cover { max-width: 180px; }
+.reading-book-info { padding-top: 12px; }
+.reading-book-info h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.reading-book-info p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+.reading-book-info span { display: inline-block; margin-top: 9px; color: var(--purple); font-size: 10px; font-weight: 700; }
+.reading-comics-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; }
+.reading-comic { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 10px; align-items: baseline; min-height: 64px; padding: 17px 0; border-bottom: 1px solid var(--divider); }
+.reading-comic > span { color: var(--muted); font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; }
+.reading-comic strong { font-size: 14px; font-weight: 500; }
+.reading-comic small { grid-column: 2; color: var(--muted); font-size: 11px; }
+@media (max-width: 900px) {
+  .reading-panel-body { grid-template-columns: 1fr; gap: 28px; }
+  .reading-book-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .reading-panel { grid-column: 1; padding: 20px; }
+  .reading-current { gap: 16px; }
+  .reading-current .book-cover { flex-basis: 86px; }
+  .reading-page { padding: 45px 0 70px; }
+  .reading-hero { margin-bottom: 52px; }
+  .reading-book-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 14px; }
+  .reading-comics-list { grid-template-columns: 1fr; }
+}
 .making-panel .project-list { margin-top: 8px; }
 .project-folder { display: grid; min-height: 245px; padding-top: 45px; place-items: center; }
 .folder-toggle { position: relative; width: 250px; height: 160px; background: transparent; perspective: 800px; }

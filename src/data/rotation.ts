@@ -26,7 +26,7 @@ export const rotationItems: RotationItem[] = [
     image: "/images/rotation/scents/byredo-mojave-ghost-absolu.jpg",
     href: "https://www.byredo.com/eu_en/p/mojave-absolu",
     note: "Pear, violet and sandalwood.",
-    price: "£195 / 50ml",
+    price: "£270 / 100ml",
     priceLabel: "Retail",
     featured: true,
   },

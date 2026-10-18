@@ -157,6 +157,16 @@ export const rotationItems: RotationItem[] = [
     priceLabel: "Retail",
   },
   {
+    name: "Canvas Tote Bag",
+    brand: "New Balance",
+    category: "accessories",
+    image: "/images/rotation/accessories/new-balance-canvas-tote.jpg",
+    href: "https://www.asos.com/search/?q=new+balance+canvas+tote+bag+in+blue",
+    note: "Blue canvas with the New Balance Athletics arch logo.",
+    price: "$60.01",
+    priceLabel: "Retail",
+  },
+  {
     name: "Bois Impérial",
     brand: "Essential Parfums",
     category: "scent",
@@ -174,6 +184,16 @@ export const rotationItems: RotationItem[] = [
     href: "https://www.gucci.com/us/en/pr/beauty/fragrances/fragrances-for-men/gucci-guilty-for-men/gucci-guilty-elixir-de-parfum-pour-homme-60ml-p-765589999990099",
     note: "Iris, vanilla and amber.",
     price: "£134 / 60ml",
+    priceLabel: "Retail",
+  },
+  {
+    name: "Waitress Cord Trucker Cap",
+    brand: "ICECREAM",
+    category: "accessories",
+    image: "/images/rotation/accessories/icecream-waitress-cord-cap.jpg",
+    href: "https://www.asos.com/search/?q=icecream+waitress+cord+trucker+baseball+cap",
+    note: "Black corduroy with the white waitress logo.",
+    price: "$78.96",
     priceLabel: "Retail",
   },
   {

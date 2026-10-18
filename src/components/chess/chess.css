@@ -1,0 +1,1303 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+.chess-app {
+  --z-piece: 2;
+  --z-drag: 5;
+  --z-focus: 6;
+  --z-nav: 10;
+  --z-toast: 20;
+  --paper: #f7f4ec;
+  --ink: #33382c;
+  --muted: #777a6b;
+  --line: #dedfd1;
+  --orange: #c65b38;
+  --sage: #e8eddf;
+  font-family: "DM Sans", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  margin: 0;
+  background: #f7f4ec;
+}
+.chess-app *,
+.chess-app *::before,
+.chess-app *::after {
+  box-sizing: border-box;
+}
+.chess-app button,
+.chess-app select,
+.chess-app input {
+  font: inherit;
+}
+.chess-app button,
+.chess-app a,
+.chess-app input,
+.chess-app select {
+  -webkit-tap-highlight-color: transparent;
+}
+.chess-app button {
+  cursor: pointer;
+  color: inherit;
+}
+.chess-app button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.chess-app button:focus-visible,
+.chess-app a:focus-visible,
+.chess-app select:focus-visible,
+.chess-app input:focus-visible {
+  outline: 3px solid #33382c;
+  outline-offset: 4px;
+}
+.chess-app a {
+  color: inherit;
+  text-decoration: none;
+}
+.club-header {
+  max-width: 1320px;
+  padding: 25px 48px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.club-wordmark {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-family: "Manrope", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+.brand-mark {
+  width: 35px;
+  height: 39px;
+  background: var(--ink);
+  color: var(--paper);
+  display: grid;
+  place-items: center;
+  border-radius: 9px 9px 15px 15px;
+  font-size: 30px;
+  font-family: serif;
+}
+.wordmark-dot {
+  color: var(--orange);
+}
+.club-header nav {
+  display: flex;
+  gap: 6px;
+}
+.club-header nav button {
+  border: 0;
+  background: none;
+  padding: 12px 17px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.club-header nav button span {
+  margin-right: 4px;
+  font-size: 17px;
+}
+.club-header nav button.nav-active {
+  background: var(--sage);
+}
+.back-gbs {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted) !important;
+}
+.chess-app main {
+  max-width: 1192px;
+  padding: 0 32px;
+  margin: auto;
+}
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  padding: 47px 0 37px;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.7px;
+  line-height: 1.6;
+}
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #819164;
+  border-radius: 50%;
+  margin: 0 6px 1px 0;
+}
+.chess-app h1 {
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(32px, 3.5vw, 47px);
+  letter-spacing: -2px;
+  line-height: 1.18;
+  font-weight: 600;
+  margin: 14px 0 13px;
+}
+.chess-app h1 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  color: var(--orange);
+  letter-spacing: -1.8px;
+}
+.welcome p {
+  font-size: 13px;
+  color: #676c5d;
+  margin: 0;
+  line-height: 1.7;
+  max-width: 490px;
+}
+.progress-pill {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 17px 21px;
+  min-width: 235px;
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  column-gap: 10px;
+  background: #fbfaf5;
+}
+.streak-icon {
+  color: var(--orange);
+  font-size: 37px;
+  line-height: 1.1;
+}
+.progress-pill b {
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+}
+.progress-pill div > span {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+.progress-pill .tiny-progress {
+  height: 4px;
+  background: #e9e8de;
+  grid-column: 2;
+  margin-top: 9px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-pill .tiny-progress span {
+  margin: 0;
+  height: 100%;
+  background: #87966e;
+}
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.13fr) minmax(0, 1fr);
+  gap: 58px;
+  align-items: start;
+}
+.board-card {
+  background: #fffdf7;
+  padding: 20px 24px 0;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  box-shadow: 0 5px 18px #3f462408;
+  min-width: 0;
+}
+.board-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 18px;
+}
+.opponent-avatar {
+  width: 35px;
+  height: 35px;
+  background: #e8ecdd;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+}
+.board-top b {
+  font-size: 12px;
+  display: block;
+  font-weight: 600;
+}
+.board-top > div:nth-child(2) {
+  flex: 1;
+}
+.board-top span:not(.board-tag) {
+  font-size: 10px;
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+.board-tag {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.mobile-mission {
+  display: none;
+}
+.board-frame {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  grid-template-rows: 1fr 20px;
+  padding-right: 5px;
+}
+.rank-labels {
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  align-items: center;
+  font-size: 9px;
+  color: #727765;
+}
+.file-labels {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  text-align: center;
+  align-items: end;
+  font-size: 9px;
+  color: #727765;
+}
+.chess-board {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border-radius: 4px;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 0 0 1px #92987a55;
+}
+.square {
+  border: 0;
+  padding: 0;
+  aspect-ratio: 1;
+  border-radius: 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.chess-app .square:disabled {
+  opacity: 1;
+}
+.light-square {
+  background: #ede9d6;
+}
+.dark-square {
+  background: #9da881;
+}
+.selected-square {
+  background: #e2bb65;
+  box-shadow: inset 0 0 0 3px #bd8539;
+}
+.last-square:not(.selected-square) {
+  box-shadow: inset 0 0 0 99px #e9c96750;
+}
+.hint-square {
+  box-shadow: inset 0 0 0 3px #bc6338;
+}
+.check-square {
+  background: #dc8e75;
+}
+.chess-app .square:focus-visible {
+  outline: 3px solid #262d21;
+  outline-offset: -3px;
+  z-index: var(--z-focus);
+}
+.board-piece {
+  position: absolute;
+  width: 12.5%;
+  height: 12.5%;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 1px #22241b32);
+  display: grid;
+  place-items: center;
+}
+.board-piece svg {
+  width: 89%;
+  height: 89%;
+}
+
+.move-dot {
+  position: absolute;
+  width: 24%;
+  height: 24%;
+  border-radius: 50%;
+  background: #35472b42;
+}
+.capture-ring {
+  position: absolute;
+  inset: 5%;
+  border: 5px solid #35472b55;
+  border-radius: 50%;
+}
+.board-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  padding: 15px 0 16px 15px;
+  gap: 8px;
+}
+.white-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fffaf0;
+  border: 1px solid #7d836f;
+  margin-right: 5px;
+}
+.board-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.board-tools button {
+  border: 0;
+  background: none;
+  font-size: 11px;
+  min-height: 44px;
+  padding: 5px;
+}
+.board-tools label {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.board-tools input {
+  accent-color: #65774b;
+  width: 14px;
+  height: 14px;
+}
+.coach-panel {
+  padding: 22px 0 0;
+}
+.chess-app h2 {
+  font-family: "Manrope", sans-serif;
+  font-size: 29px;
+  letter-spacing: -1px;
+  font-weight: 600;
+  margin: 13px 0 8px;
+  line-height: 1.2;
+}
+.coach-subtitle {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 19px !important;
+  color: #8a7050 !important;
+  margin: 0 0 25px !important;
+}
+.coach-panel > p:not(.coach-subtitle) {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #606754;
+  max-width: 410px;
+}
+.mission {
+  display: flex;
+  gap: 13px;
+  padding: 21px;
+  margin: 25px 0 19px;
+  border: 1px solid #d6ddc7;
+  border-radius: 12px;
+  background: #eaf0e1;
+}
+.mission-icon {
+  border-radius: 50%;
+  border: 1px solid #b8c8a3;
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 19px;
+}
+.mission b {
+  font-size: 12px;
+}
+.mission p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 6px 0 0;
+  color: #526043;
+}
+.mission-done {
+  background: #e1eccf;
+  border-color: #afc391;
+}
+.gentle-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 6px 0;
+}
+.gentle-note > span {
+  color: var(--orange);
+  font-size: 22px;
+}
+.coach-feedback {
+  border-top: 1px dashed #d4d7c8;
+  margin-top: 25px;
+  padding: 18px 0;
+  color: #6f7564;
+  font-size: 12px;
+  line-height: 1.8;
+  min-height: 86px;
+}
+.lesson-progress {
+  margin-top: 9px;
+  padding-top: 15px;
+}
+.lesson-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+.lesson-progress b {
+  font-weight: 500;
+}
+.progress-track {
+  height: 5px;
+  border-radius: 10px;
+  background: #e1e5d7;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.progress-track span {
+  height: 100%;
+  display: block;
+  background: #7c8c5f;
+}
+.lesson-progress small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: var(--ink);
+  color: #fff9e9 !important;
+  border: 0;
+  padding: 14px 19px;
+  border-radius: 9px;
+  font-size: 13px !important;
+  min-height: 48px;
+  width: 100%;
+}
+.difficulty-label {
+  font-size: 12px;
+  display: block;
+  margin: 19px 0 9px;
+}
+.coach-panel select {
+  padding: 12px;
+  border: 1px solid #c9ceba;
+  border-radius: 8px;
+  width: 100%;
+  background: #fffdf7;
+  color: var(--ink);
+  font-size: 16px;
+  min-height: 46px;
+}
+.learning-section {
+  margin-top: 53px;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+.section-heading h2 {
+  font-size: 26px;
+  margin-top: 5px;
+}
+.section-heading > span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.lesson-card {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  padding: 16px;
+  background: #faf9f3;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-height: 84px;
+}
+.lesson-card.current-lesson {
+  border-color: #8c9c70;
+  background: #eaf0e1;
+}
+.lesson-number {
+  font-size: 13px;
+  font-family: "Manrope", sans-serif;
+  color: #6e795d;
+  background: #eceee3;
+  min-width: 32px;
+  height: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+}
+.lesson-card > div {
+  flex: 1;
+}
+.lesson-card b {
+  font-size: 12px;
+  display: block;
+  font-weight: 600;
+}
+.lesson-card div > span {
+  color: var(--muted);
+  font-size: 10px;
+  display: block;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.lesson-arrow {
+  color: #879176;
+  font-size: 18px;
+}
+.daily-banner {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  background: #ede7da;
+  border-radius: 13px;
+  padding: 30px;
+  margin: 35px 0 45px;
+}
+.daily-art {
+  font-size: 75px;
+  color: var(--orange);
+  line-height: 1;
+}
+.daily-banner > div:nth-child(2) {
+  flex: 1;
+}
+.daily-banner h2 {
+  font-size: 24px;
+  margin: 6px 0 8px;
+}
+.daily-banner p {
+  font-size: 12px;
+  color: #736e60;
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0;
+}
+.daily-banner button {
+  background: #fffaf1;
+  border: 1px solid #d6cbb6;
+  border-radius: 7px;
+  padding: 14px 17px;
+  font-size: 12px;
+  min-height: 46px;
+  white-space: nowrap;
+}
+.daily-banner button span {
+  margin-left: 15px;
+}
+.chess-app footer {
+  max-width: 1128px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+  padding: 22px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
+  gap: 15px;
+}
+.footer-flower {
+  color: var(--orange);
+  font-size: 20px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.reward-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90vw;
+  background: #333e2e;
+  color: #fff9e9;
+  padding: 17px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 28px #23341f33;
+  z-index: var(--z-toast);
+  font-size: 14px;
+  animation: reward-in 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.reward-toast > span {
+  color: #e9c578;
+  margin-right: 7px;
+}
+@keyframes reward-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.promotion-dialog {
+  border: 1px solid #bfc8ad;
+  border-radius: 18px;
+  padding: 25px;
+  color: var(--ink);
+  background: #f7f4ec;
+  width: 360px;
+  max-width: calc(100% - 30px);
+}
+.promotion-dialog::backdrop {
+  background: #28302088;
+}
+.promotion-dialog p {
+  font-size: 14px;
+}
+.promotion-dialog > div {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+.promotion-dialog > div button {
+  flex: 1;
+  min-width: 0;
+  background: #e7eadb;
+  border: 1px solid #c5ccba;
+  border-radius: 9px;
+  padding: 6px;
+}
+.promotion-dialog svg {
+  width: 100%;
+}
+.promotion-dialog button span {
+  display: block;
+  text-transform: capitalize;
+  font-size: 11px;
+}
+.text-button {
+  background: none;
+  border: 0;
+  padding: 12px;
+  min-height: 44px;
+  text-decoration: underline;
+}
+.move-history {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.move-history h3 {
+  font-size: 12px;
+  font-weight: 600;
+}
+.move-history > p,
+.move-history details {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.move-history ol {
+  max-height: 140px;
+  overflow: auto;
+  padding-left: 28px;
+  font-size: 12px;
+}
+.move-history li {
+  padding: 5px 8px;
+}
+.move-history li:nth-child(odd) {
+  background: #e9ecdf;
+}
+.move-history li span {
+  display: inline-block;
+  width: 45%;
+}
+.move-history summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.engine-error,
+.storage-warning {
+  background: #f5e5d8;
+  border: 1px solid #dfb89c;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.engine-error button {
+  min-height: 44px;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+}
+.journey {
+  padding: 8px 0 45px;
+}
+.journey-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 45px;
+}
+.journey-stats article {
+  padding: 25px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffdf7;
+}
+.journey-stats article > span {
+  font-size: 26px;
+  color: var(--orange);
+}
+.journey-stats b {
+  font-size: 40px;
+  font-family: "Manrope", sans-serif;
+  display: block;
+  margin: 15px 0 0;
+}
+.journey-stats small {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.journey-stats p {
+  font-size: 12px;
+  color: var(--muted);
+}
+.journey > p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  max-width: 650px;
+}
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 28px 0;
+}
+.badge {
+  padding: 23px 15px;
+  border: 1px dashed #c8cdbd;
+  border-radius: 12px;
+  text-align: center;
+}
+.badge.earned {
+  background: #e9efdc;
+  border: 1px solid #b5c69b;
+}
+.badge > span {
+  font-size: 42px;
+  display: block;
+  color: #929d7f;
+  padding: 10px;
+}
+.badge b {
+  font-size: 13px;
+  display: block;
+  margin: 10px 0;
+}
+.badge p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.badge small {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #6a755a;
+}
+.journey-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  margin-top: 30px;
+}
+.journey-bottom p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.journey-bottom button {
+  width: auto;
+  min-width: 210px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .lesson-card:hover {
+    border-color: #9eaa87;
+    background: #eef0e5;
+  }
+  .board-tools button:not(:disabled):hover,
+  .club-header nav button:hover {
+    background: #e9ecdf;
+  }
+  .primary-button:hover {
+    background: #4c5940;
+  }
+  .daily-banner button:hover {
+    background: #fffdf7;
+  }
+  .square:not(:disabled):hover {
+    box-shadow: inset 0 0 0 2px #525c3f66;
+  }
+}
+@media (min-width: 1400px) {
+  .chess-app main {
+    max-width: 1250px;
+  }
+  .workbench {
+    gap: 72px;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 1000px) {
+  .club-header {
+    padding: 20px 28px;
+  }
+  .back-gbs {
+    display: none;
+  }
+  .workbench {
+    gap: 28px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+  .board-card {
+    padding: 15px 12px 0;
+  }
+  .board-tag {
+    display: none;
+  }
+  .board-tools {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .board-tools label {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .board-tools button {
+    flex: 1;
+  }
+  .coach-panel {
+    padding-top: 12px;
+  }
+  .lesson-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .daily-banner {
+    gap: 18px;
+    padding: 24px;
+  }
+  .daily-art {
+    font-size: 50px;
+  }
+  .daily-banner h2 {
+    font-size: 21px;
+  }
+  .chess-app footer {
+    margin: 0 32px;
+  }
+}
+@media (max-width: 700px) {
+  .club-header {
+    padding: 17px 20px;
+  }
+  .club-wordmark {
+    font-size: 19px;
+  }
+  .brand-mark {
+    width: 29px;
+    height: 32px;
+    font-size: 25px;
+  }
+  .club-header nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    background: #faf9f2f5;
+    border-top: 1px solid var(--line);
+    justify-content: space-around;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+    backdrop-filter: blur(8px);
+  }
+  .club-header nav button {
+    border-radius: 8px;
+    min-width: 85px;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  .club-header nav button span {
+    display: block;
+    font-size: 19px;
+    margin: 0 0 2px;
+  }
+  .back-gbs {
+    display: flex;
+    font-size: 9px;
+    max-width: 75px;
+    line-height: 1.5;
+    text-align: right;
+  }
+  .chess-app main {
+    padding: 0 18px;
+  }
+  .welcome {
+    padding: 27px 0 24px;
+    display: block;
+  }
+  .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.3px;
+  }
+  .chess-app h1 {
+    font-size: 36px;
+    letter-spacing: -1.8px;
+    margin-top: 10px;
+  }
+  .welcome p {
+    font-size: 12px;
+    max-width: 330px;
+  }
+  .progress-pill {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 10px;
+    min-width: 0;
+    width: 100%;
+    border-radius: 10px;
+  }
+  .streak-icon {
+    font-size: 29px;
+  }
+  .progress-pill b {
+    font-size: 11px;
+  }
+  .progress-pill div > span {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .progress-pill .tiny-progress {
+    margin: 0 0 0 auto;
+    width: 65px;
+  }
+  .workbench {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .board-card {
+    width: 100%;
+    padding: 15px 10px 0;
+    border-radius: 13px;
+  }
+  .board-top {
+    padding: 0 5px 12px;
+  }
+  .board-top b {
+    font-size: 11px;
+  }
+  .board-top span:not(.board-tag) {
+    font-size: 9px;
+  }
+  .opponent-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 23px;
+  }
+  .mobile-mission {
+    display: block;
+    padding: 0 6px 14px;
+    font-size: 12px;
+    line-height: 1.65;
+  }
+  .mobile-mission b {
+    font-weight: 600;
+  }
+  .mobile-mission p {
+    font-size: 11px;
+    color: #687359;
+    margin: 4px 0 0;
+  }
+  .board-frame {
+    grid-template-columns: 13px 1fr;
+    padding-right: 3px;
+  }
+  .board-bottom {
+    padding: 11px 3px 11px 13px;
+    font-size: 9px;
+  }
+  .board-tools {
+    flex-wrap: nowrap;
+    padding: 3px 0;
+    gap: 0;
+  }
+  .board-tools label {
+    width: auto;
+    min-height: 44px;
+    font-size: 9px;
+  }
+  .board-tools button {
+    font-size: 10px;
+    flex: auto;
+    padding: 4px;
+  }
+  .board-tools input {
+    width: 12px;
+    height: 12px;
+  }
+  .coach-panel {
+    padding: 25px 4px 0;
+    width: 100%;
+  }
+  .chess-app h2 {
+    font-size: 27px;
+    margin-top: 9px;
+  }
+  .coach-subtitle {
+    font-size: 18px !important;
+    margin-bottom: 17px !important;
+  }
+  .coach-panel > p:not(.coach-subtitle) {
+    font-size: 13px;
+    line-height: 1.8;
+    max-width: none;
+  }
+  .mission {
+    padding: 17px;
+    margin-top: 18px;
+  }
+  .coach-feedback {
+    margin-top: 18px;
+    min-height: 0;
+    padding: 14px 0;
+  }
+  .lesson-progress {
+    margin-top: 0;
+  }
+  .learning-section {
+    margin-top: 33px;
+  }
+  .section-heading {
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .section-heading h2 {
+    font-size: 25px;
+    margin-bottom: 0;
+  }
+  .section-heading > span {
+    font-size: 9px;
+    max-width: 90px;
+    line-height: 1.6;
+    text-align: right;
+  }
+  .lesson-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+  .lesson-card {
+    padding: 13px 15px;
+    min-height: 70px;
+  }
+  .lesson-card b {
+    font-size: 13px;
+  }
+  .lesson-card div > span {
+    font-size: 11px;
+  }
+  .lesson-number {
+    width: 34px;
+    height: 36px;
+  }
+  .daily-banner {
+    flex-wrap: wrap;
+    padding: 22px;
+    gap: 14px;
+    margin-top: 25px;
+    margin-bottom: 28px;
+  }
+  .daily-art {
+    font-size: 48px;
+  }
+  .daily-banner > div:nth-child(2) {
+    flex: 1;
+    min-width: 180px;
+  }
+  .daily-banner h2 {
+    font-size: 22px;
+  }
+  .daily-banner p {
+    font-size: 11px;
+  }
+  .daily-banner button {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+  }
+  .chess-app footer {
+    margin: 0 18px;
+    font-size: 9px;
+    padding: 18px 0 calc(100px + env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chess-app footer > span:last-child {
+    width: 100%;
+    font-style: italic;
+  }
+  .reward-toast {
+    bottom: calc(85px + env(safe-area-inset-bottom));
+    font-size: 12px;
+    padding: 15px 17px;
+  }
+  .journey-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  .journey-stats article {
+    padding: 20px;
+  }
+  .journey-stats b {
+    font-size: 33px;
+  }
+  .badge-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .badge {
+    padding: 16px 9px;
+  }
+  .badge b {
+    font-size: 12px;
+  }
+  .journey-bottom {
+    display: block;
+  }
+  .journey-bottom button {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chess-app *,
+  .chess-app *::before,
+  .chess-app *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.chess-app h1,
+.chess-app h2,
+.chess-app h3 {
+  text-wrap: balance;
+}
+.progress-pill,
+.lesson-progress,
+.journey-stats,
+.lesson-number,
+.move-history {
+  font-variant-numeric: tabular-nums;
+}
+.chess-app .mission {
+  min-height: 110px;
+}
+.chess-app footer a {
+  min-height: 44px;
+  min-width: 44px;
+  display: grid;
+  place-items: center;
+}
+.rank-labels,
+.file-labels,
+.daily-art,
+.footer-flower {
+  pointer-events: none;
+  user-select: none;
+}
+.primary-button,
+.daily-banner button,
+.lesson-card,
+.club-header nav button {
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    transform 150ms ease-out;
+}
+.primary-button:active,
+.daily-banner button:active {
+  transform: scale(0.96);
+}
+.chess-board {
+  scroll-margin-block: 30px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary-button:active,
+  .daily-banner button:active {
+    transform: none;
+  }
+}

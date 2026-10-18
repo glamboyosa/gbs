@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "test": "node --test --experimental-strip-types src/server/*.test.ts",
+    "test": "node --test --experimental-strip-types src/server/*.test.ts src/components/chess/*.test.ts",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -17,6 +17,7 @@
     "@upstash/redis": "^1.34.3",
     "astro": "^5.0.3",
     "astro-google-fonts-optimizer": "^0.2.2",
+    "chess.js": "1.4.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.12.0",
     "psn-api": "^2.18.1",

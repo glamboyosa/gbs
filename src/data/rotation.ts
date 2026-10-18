@@ -1,11 +1,33 @@
 import type { RotationItem } from "@/types";
+import adidasEvoSlImage from "@/assets/rotation/clothing/adidas-evo-sl.jpg";
+import coachRadioImage from "@/assets/rotation/clothing/coach-radio.jpg";
+import byredoMojaveGhostAbsoluImage from "@/assets/rotation/scents/byredo-mojave-ghost-absolu.jpg";
+import nikeVomero18Image from "@/assets/rotation/clothing/nike-vomero-18.png";
+import nialayaPantherRingImage from "@/assets/rotation/clothing/nialaya-panther-ring.jpg";
+import sonyWh1000xm5Image from "@/assets/rotation/accessories/sony-wh-1000xm5.jpg";
+import newBalance1000Image from "@/assets/rotation/clothing/new-balance-1000.jpg";
+import diptyqueOrpheonImage from "@/assets/rotation/scents/diptyque-orpheon.webp";
+import abercrombieScriptHeavyweightTeeImage from "@/assets/rotation/clothing/abercrombie-script-heavyweight-tee.jpg";
+import birkenstockTokioImage from "@/assets/rotation/clothing/birkenstock-tokio.jpg";
+import rainsHiloImage from "@/assets/rotation/clothing/rains-hilo.jpg";
+import goldfieldIngeniousGingerImage from "@/assets/rotation/scents/goldfield-ingenious-ginger.png";
+import sennheiserMomentum4Image from "@/assets/rotation/accessories/sennheiser-momentum-4.jpg";
+import uggGoldencoastImage from "@/assets/rotation/clothing/ugg-goldencoast.jpg";
+import essentialTheMuscImage from "@/assets/rotation/scents/essential-the-musc.jpg";
+import joMaloneHinokiImage from "@/assets/rotation/scents/jo-malone-hinoki.png";
+import newBalanceCanvasToteImage from "@/assets/rotation/accessories/new-balance-canvas-tote.jpg";
+import essentialBoisImperialImage from "@/assets/rotation/scents/essential-bois-imperial.jpg";
+import gucciGuiltyElixirImage from "@/assets/rotation/scents/gucci-guilty-elixir.jpg";
+import icecreamWaitressCordCapImage from "@/assets/rotation/accessories/icecream-waitress-cord-cap.jpg";
+import airpodsPro3Image from "@/assets/rotation/accessories/airpods-pro-3.jpg";
+import adidasArsenal2627StadiumImage from "@/assets/rotation/clothing/adidas-arsenal-26-27-stadium.jpg";
 
 export const rotationItems: RotationItem[] = [
   {
     name: "Adizero Evo SL",
     brand: "adidas",
     category: "shoes",
-    image: "/images/rotation/clothing/adidas-evo-sl.jpg",
+    image: adidasEvoSlImage,
     href: "https://www.adidas.com/us/adizero-evo-sl-shoes/JH6206.html",
     note: "Cloud white and core black.",
     price: "$125",
@@ -14,7 +36,7 @@ export const rotationItems: RotationItem[] = [
     name: "Radio Camera Bag",
     brand: "Coach",
     category: "accessories",
-    image: "/images/rotation/clothing/coach-radio.jpg",
+    image: coachRadioImage,
     href: "https://www.farfetch.com/uk/shopping/men/coach-radio-camera-leather-shoulder-bag-item-33211387.aspx",
     note: "Maple brown leather.",
     price: "$285.52",
@@ -23,7 +45,7 @@ export const rotationItems: RotationItem[] = [
     name: "Mojave Ghost Absolu",
     brand: "Byredo",
     category: "scent",
-    image: "/images/rotation/scents/byredo-mojave-ghost-absolu.jpg",
+    image: byredoMojaveGhostAbsoluImage,
     href: "https://www.byredo.com/eu_en/p/mojave-absolu",
     note: "Pear, violet and sandalwood.",
     price: "£270 / 100ml",
@@ -34,7 +56,7 @@ export const rotationItems: RotationItem[] = [
     name: "Vomero 18",
     brand: "Nike",
     category: "shoes",
-    image: "/images/rotation/clothing/nike-vomero-18.png",
+    image: nikeVomero18Image,
     href: "https://www.nike.ae/en/vomero-18-mens-road-running-shoes/NKHM6803-016.html",
     note: "Black, crimson and topaz gold.",
     price: "$164",
@@ -43,7 +65,7 @@ export const rotationItems: RotationItem[] = [
     name: "Panther Wrap Ring",
     brand: "Nialaya Jewelry",
     category: "accessories",
-    image: "/images/rotation/clothing/nialaya-panther-ring.jpg",
+    image: nialayaPantherRingImage,
     href: "https://www.nialaya.com/products/panther-wrap-ring-in-gold",
     note: "Gold-tone panther with clear crystals and green eyes.",
     price: "$134",
@@ -52,7 +74,7 @@ export const rotationItems: RotationItem[] = [
     name: "WH-1000XM5",
     brand: "Sony",
     category: "accessories",
-    image: "/images/rotation/accessories/sony-wh-1000xm5.jpg",
+    image: sonyWh1000xm5Image,
     href: "https://www.sony.co.uk/electronics/headband-headphones/wh-1000xm5",
     note: "Black over-ear noise cancelling headphones.",
     price: "$399.99",
@@ -62,7 +84,7 @@ export const rotationItems: RotationItem[] = [
     name: "1000 Sneakers",
     brand: "New Balance",
     category: "shoes",
-    image: "/images/rotation/clothing/new-balance-1000.jpg",
+    image: newBalance1000Image,
     href: "https://www.newbalance.com.br/tenis-new-balance-1000-masculino-1324667/p",
     note: "Black, silver and a little green.",
     price: "$136.80",
@@ -71,7 +93,7 @@ export const rotationItems: RotationItem[] = [
     name: "Orphéon Eau de Toilette",
     brand: "Diptyque",
     category: "scent",
-    image: "/images/rotation/scents/diptyque-orpheon.webp",
+    image: diptyqueOrpheonImage,
     href: "https://us.diptyqueparis.com/en-us/products/eau-de-toilette-orpheon-orphedt100",
     note: "Juniper, cedar and citrus.",
     price: "£145 / 100ml",
@@ -82,7 +104,7 @@ export const rotationItems: RotationItem[] = [
     name: "Premium Heavyweight Script Logo T-Shirt",
     brand: "Abercrombie & Fitch",
     category: "tops",
-    image: "/images/rotation/clothing/abercrombie-script-heavyweight-tee.jpg",
+    image: abercrombieScriptHeavyweightTeeImage,
     href: "https://www.asos.com/abercrombie-fitch/abercrombie-fitch-premium-heavyweight-t-shirt-with-script-logo-in-black/prd/211623033",
     note: "Black tee with a small script logo on the chest.",
     price: "$56",
@@ -92,7 +114,7 @@ export const rotationItems: RotationItem[] = [
     name: "Tokio Suede Mules",
     brand: "Birkenstock",
     category: "shoes",
-    image: "/images/rotation/clothing/birkenstock-tokio.jpg",
+    image: birkenstockTokioImage,
     href: "https://www.birkenstock.com/us/tokio-suede-leather/tokio-265588-suedeleather-0-eva-u_11866.html",
     note: "Faded purple suede.",
     price: "$121",
@@ -101,7 +123,7 @@ export const rotationItems: RotationItem[] = [
     name: "Hilo Weekend Bag",
     brand: "Rains",
     category: "accessories",
-    image: "/images/rotation/clothing/rains-hilo.jpg",
+    image: rainsHiloImage,
     href: "https://www.us.rains.com/collections/waterproof-duffel-bags/products/weekend-bag?variant=40577001062423",
     note: "Black waterproof holdall.",
     price: "$88",
@@ -110,7 +132,7 @@ export const rotationItems: RotationItem[] = [
     name: "Ingenious Ginger",
     brand: "Goldfield & Banks",
     category: "scent",
-    image: "/images/rotation/scents/goldfield-ingenious-ginger.png",
+    image: goldfieldIngeniousGingerImage,
     href: "https://uk.goldfieldandbanks.com/products/ingenious-ginger",
     note: "Bright ginger with warm amber.",
     price: "£155 / 100ml",
@@ -121,7 +143,7 @@ export const rotationItems: RotationItem[] = [
     name: "Momentum 4 Wireless",
     brand: "Sennheiser",
     category: "accessories",
-    image: "/images/rotation/accessories/sennheiser-momentum-4.jpg",
+    image: sennheiserMomentum4Image,
     href: "https://us.sennheiser-hearing.com/products/momentum-4-wireless",
     note: "Black over-ear headphones with a fabric headband.",
     price: "$349.95",
@@ -131,7 +153,7 @@ export const rotationItems: RotationItem[] = [
     name: "Goldencoast II Clogs",
     brand: "UGG",
     category: "shoes",
-    image: "/images/rotation/clothing/ugg-goldencoast.jpg",
+    image: uggGoldencoastImage,
     href: "https://www.notre-shop.com/products/goldencoast-clog-ii-in-chestnut",
     note: "Chestnut suede.",
     price: "$86",
@@ -140,7 +162,7 @@ export const rotationItems: RotationItem[] = [
     name: "The Musc",
     brand: "Essential Parfums",
     category: "scent",
-    image: "/images/rotation/scents/essential-the-musc.jpg",
+    image: essentialTheMuscImage,
     href: "https://ministryofscent.com/products/the-musc",
     note: "Red ginger, beeswax and soft musks.",
     price: "$130 / 100ml",
@@ -150,7 +172,7 @@ export const rotationItems: RotationItem[] = [
     name: "Hinoki & Cedarwood",
     brand: "Jo Malone London",
     category: "scent",
-    image: "/images/rotation/scents/jo-malone-hinoki.png",
+    image: joMaloneHinokiImage,
     href: "https://www.jomalone.co.uk/product/25946/127275/colognes/hinoki-cedarwood-cologne-intense",
     note: "Clean hinoki and cedarwood.",
     price: "£116 / 50ml",
@@ -160,7 +182,7 @@ export const rotationItems: RotationItem[] = [
     name: "Canvas Tote Bag",
     brand: "New Balance",
     category: "accessories",
-    image: "/images/rotation/accessories/new-balance-canvas-tote.jpg",
+    image: newBalanceCanvasToteImage,
     href: "https://www.asos.com/search/?q=new+balance+canvas+tote+bag+in+blue",
     note: "Blue canvas with the New Balance Athletics arch logo.",
     price: "$60.01",
@@ -170,7 +192,7 @@ export const rotationItems: RotationItem[] = [
     name: "Bois Impérial",
     brand: "Essential Parfums",
     category: "scent",
-    image: "/images/rotation/scents/essential-bois-imperial.jpg",
+    image: essentialBoisImperialImage,
     href: "https://www.essentialparfums.com/en/products/bois-imperial-eau-de-parfum-refillable-spray-100-ml",
     note: "Basil, pepper and dry woods.",
     price: "£86 / 100ml",
@@ -180,7 +202,7 @@ export const rotationItems: RotationItem[] = [
     name: "Guilty Elixir Pour Homme",
     brand: "Gucci",
     category: "scent",
-    image: "/images/rotation/scents/gucci-guilty-elixir.jpg",
+    image: gucciGuiltyElixirImage,
     href: "https://www.gucci.com/us/en/pr/beauty/fragrances/fragrances-for-men/gucci-guilty-for-men/gucci-guilty-elixir-de-parfum-pour-homme-60ml-p-765589999990099",
     note: "Iris, vanilla and amber.",
     price: "£134 / 60ml",
@@ -190,7 +212,7 @@ export const rotationItems: RotationItem[] = [
     name: "Waitress Cord Trucker Cap",
     brand: "ICECREAM",
     category: "accessories",
-    image: "/images/rotation/accessories/icecream-waitress-cord-cap.jpg",
+    image: icecreamWaitressCordCapImage,
     href: "https://www.asos.com/search/?q=icecream+waitress+cord+trucker+baseball+cap",
     note: "Black corduroy with the white waitress logo.",
     price: "$78.96",
@@ -200,7 +222,7 @@ export const rotationItems: RotationItem[] = [
     name: "AirPods Pro 3",
     brand: "Apple",
     category: "accessories",
-    image: "/images/rotation/accessories/airpods-pro-3.jpg",
+    image: airpodsPro3Image,
     href: "https://www.apple.com/airpods-pro/",
     note: "White earbuds with a USB-C charging case.",
     price: "$249",
@@ -210,7 +232,7 @@ export const rotationItems: RotationItem[] = [
     name: "Arsenal 26/27 Stadium Jersey",
     brand: "adidas Football",
     category: "tops",
-    image: "/images/rotation/clothing/adidas-arsenal-26-27-stadium.jpg",
+    image: adidasArsenal2627StadiumImage,
     href: "https://www.asos.com/adidas-performance/adidas-football-arsenal-26-27-stadium-jersey-in-red/prd/210032964",
     note: "Red with a checked shoulder graphic.",
     price: "$126.33",

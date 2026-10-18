@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { rotationItems } from "@/data/rotation";
 import Layout from "@/layouts/Layout.astro";
@@ -38,7 +39,7 @@ const labels: Record<RotationCategory, string> = {
             <a class="product-image" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`View ${item.brand} ${item.name}`}>
               <span class="product-type">{labels[item.category]}</span>
               <span class="external-mark" aria-hidden="true">↗</span>
-              <img src={item.image} alt={`${item.brand} ${item.name}`} width="700" height="700" loading={index < 4 ? "eager" : "lazy"} />
+              <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 640, 960]} sizes="(max-width: 700px) 45vw, (max-width: 900px) 30vw, 300px" quality={75} loading={index < 4 ? "eager" : "lazy"} />
             </a>
             <div class="product-meta">
               <div>

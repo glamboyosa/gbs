@@ -1,10 +1,12 @@
+import type { ImageMetadata } from "astro";
+
 export type RotationCategory = "tops" | "bottoms" | "shoes" | "accessories" | "scent";
 
 export type RotationItem = {
   name: string;
   brand: string;
   category: RotationCategory;
-  image: string;
+  image: ImageMetadata;
   href: string;
   note: string;
   price?: string;

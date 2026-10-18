@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import { rotationItems } from "@/data/rotation";
 const homepageRotation = [
   "Arsenal 26/27 Stadium Jersey",
@@ -20,7 +21,7 @@ const selection = homepageRotation.flatMap((name) => rotationItems.filter((item)
   </div>
   <div class="carousel-track" tabindex="0" aria-label="Clothes, gear and fragrances. Swipe to browse.">
     {selection.map((item) => <a class="carousel-slide" href="/clothing" aria-label={`${item.brand} ${item.name}, view archive`}>
-      <img src={item.image} alt={`${item.brand} ${item.name}`} width="420" height="420" loading="lazy" />
+      <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 720]} sizes="240px" quality={75} loading="eager" />
       <span class="carousel-caption"><small>{item.brand}</small><strong>{item.name}</strong></span>
     </a>)}
   </div>

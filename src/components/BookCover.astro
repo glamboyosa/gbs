@@ -1,4 +1,7 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
 interface Props {
   title: string;
   coverId?: number;
@@ -6,10 +9,17 @@ interface Props {
 }
 
 const { title, coverId, loading = "lazy" } = Astro.props;
+
+// Covers stored as src/assets/books/<coverId>.jpg are optimized and cached by Vercel.
+// A book added without a stored cover still loads it straight from Open Library.
+const storedCovers = import.meta.glob<{ default: ImageMetadata }>("/src/assets/books/*.jpg", { eager: true });
+const storedCover = coverId ? storedCovers[`/src/assets/books/${coverId}.jpg`]?.default : undefined;
 ---
 
 <div class:list={["book-cover", { "book-cover-placeholder": !coverId }]}>
-  {coverId ? (
+  {storedCover ? (
+    <Image src={storedCover} alt="" widths={[320, 480]} sizes="180px" quality={75} loading={loading} />
+  ) : coverId ? (
     <img src={`https://covers.openlibrary.org/b/id/${coverId}-L.jpg`} alt="" width="180" height="270" loading={loading} />
   ) : (
     <span>{title}</span>

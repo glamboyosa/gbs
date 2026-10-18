@@ -10,7 +10,7 @@ export default defineConfig({
     webAnalytics: true,
     imageService: true,
     imagesConfig: {
-      // Rotation images render at roughly 240–300 CSS px, so these cover 1x–3x screens.
+      // Rotation images and book covers render at up to about 300 CSS px, so these cover 1x–3x screens.
       sizes: [320, 480, 640, 720, 960],
       formats: ['image/avif', 'image/webp'],
       // Source files are content-hashed by Astro, so a long cache is safe.

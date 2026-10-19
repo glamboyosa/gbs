@@ -14,9 +14,9 @@ interface RefreshOptions {
   openAIKey?: string;
 }
 
-const repositories = ["docket", "conclave", "katalepsis"] as const;
+const repositories = ["docket", "conclave", "katalepsis", "swig", "ore"] as const;
 const historyKey = "project_updates_v1";
-const checkedKey = "project_updates_checked_v1";
+const checkedKey = "project_updates_checked_v2";
 const refreshLockKey = "project_updates_refresh_lock_v1";
 const initialCutoff = Date.parse(`${updates[0].date}T23:59:59Z`);
 
@@ -138,14 +138,17 @@ export const refreshProjectUpdates = async (options: RefreshOptions = {}): Promi
     const now = options.now ?? new Date();
     const lastChecked = await store.get<string>(checkedKey);
     const cutoff = Math.max(initialCutoff, lastChecked ? Date.parse(lastChecked) || 0 : 0);
+    const previousChecked = lastChecked ? null : await store.get<string>("project_updates_checked_v1");
+    const existingRepoCutoff = Math.max(cutoff, previousChecked ? Date.parse(previousChecked) || 0 : 0);
     const feeds = await Promise.all(repositories.map(async (repo) => {
       const response = await fetcher(`https://github.com/glamboyosa/${repo}/commits/main.atom`, { signal: AbortSignal.timeout(10_000) });
       if (!response.ok) throw new Error(`${repo} feed returned ${response.status}`);
       const xml = await response.text();
       if (!/<feed\b/.test(xml) || !/<\/feed>/.test(xml)) throw new Error(`${repo} returned an invalid Atom feed`);
-      return parseFeed(xml, repo);
+      const repoCutoff = repo === "swig" || repo === "ore" ? cutoff : existingRepoCutoff;
+      return parseFeed(xml, repo).filter((commit) => Date.parse(commit.date) > repoCutoff);
     }));
-    const commits = feeds.flat().filter((commit) => Date.parse(commit.date) > cutoff && Date.parse(commit.date) <= now.getTime())
+    const commits = feeds.flat().filter((commit) => Date.parse(commit.date) <= now.getTime())
       .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30);
     if (commits.length === 0) {
       await store.set(checkedKey, now.toISOString());

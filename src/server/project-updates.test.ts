@@ -14,6 +14,8 @@ const fixture = {
   docket: feed("docket", "a".repeat(40), "feat: Add document review", "2026-10-15T12:00:00Z"),
   conclave: feed("conclave", "b".repeat(40), "Update dependencies", "2026-10-15T13:00:00Z"),
   katalepsis: feed("katalepsis", "c".repeat(40), "&lt;Improve&gt; browser checks", "2026-10-15T14:00:00Z"),
+  swig: feed("swig", "d".repeat(40), "Add queue metrics", "2026-10-15T14:30:00Z"),
+  ore: feed("ore", "e".repeat(40), "Add stream recovery", "2026-10-15T14:40:00Z"),
 };
 
 const makeStore = () => {
@@ -62,7 +64,7 @@ test("a visit after an hour checks GitHub again without reclassifying old commit
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T15:00:00Z"), openRouterKey: "test-key" });
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T15:30:00Z"), openRouterKey: "test-key" });
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T16:01:00Z"), openRouterKey: "test-key" });
-  assert.equal(feedCalls, 6);
+  assert.equal(feedCalls, 10);
   assert.equal(modelCalls, 1);
 });
 
@@ -87,7 +89,7 @@ test("a failed page refresh keeps the saved updates visible", async () => {
 
   const updates = await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" });
   assert.equal(updates[0].reference, "v0.4.0");
-  assert.equal(await store.get("project_updates_checked_v1"), null);
+  assert.equal(await store.get("project_updates_checked_v2"), null);
 });
 
 test("a failed page refresh can retry on the next visit", async () => {
@@ -156,6 +158,42 @@ test("daily refresh publishes a selected public commit and keeps its source link
   assert.equal(updates[0].url, `https://github.com/glamboyosa/docket/commit/${"a".repeat(40)}`);
 });
 
+for (const repo of ["swig", "ore"] as const) {
+  test(`daily refresh can publish a ${repo} commit`, async () => {
+    const store = makeStore();
+    const sha = repo === "swig" ? "d".repeat(40) : "e".repeat(40);
+    const fetcher: typeof fetch = async (input, init) => {
+      const url = String(input);
+      if (url.endsWith(".atom")) return new Response(fixture[url.split("/")[4] as keyof typeof fixture]);
+      assert.match(String(init?.body), new RegExp(sha));
+      return Response.json({ choices: [{ message: { content: JSON.stringify({ sha }) } }] });
+    };
+
+    assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }), "published");
+    const update = (await getProjectUpdates(store))[0];
+    assert.equal(update.project, repo === "swig" ? "Swig" : "Ore");
+    assert.equal(update.url, `https://github.com/glamboyosa/${repo}/commit/${sha}`);
+    assert.equal(getHomepageUpdate([update], new Date("2026-10-15T22:00:00Z"))?.url, update.url);
+  });
+}
+
+test("new repositories are checked even when the previous feed cursor is newer", async () => {
+  const store = makeStore();
+  await store.set("project_updates_checked_v1", "2026-10-15T15:00:00Z");
+  const sha = "d".repeat(40);
+  const fetcher: typeof fetch = async (input, init) => {
+    const url = String(input);
+    if (url.endsWith(".atom")) return new Response(fixture[url.split("/")[4] as keyof typeof fixture]);
+    const request = JSON.parse(String(init?.body));
+    const candidates = JSON.parse(request.messages[1].content) as { project: string }[];
+    assert.deepEqual(candidates.map((candidate) => candidate.project), ["Ore", "Swig"]);
+    return Response.json({ choices: [{ message: { content: JSON.stringify({ sha }) } }] });
+  };
+
+  assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }), "published");
+  assert.equal((await getProjectUpdates(store))[0].project, "Swig");
+});
+
 test("long Atom subjects become a concise headline while keeping the selected commit", async () => {
   const store = makeStore();
   const sha = "c".repeat(40);
@@ -179,7 +217,7 @@ test("long Atom subjects become a concise headline while keeping the selected co
 
 test("already-saved Atom ellipses display as complete headlines", async () => {
   const store = makeStore();
-  await store.set("project_updates_checked_v1", "2026-10-19T09:30:00Z");
+  await store.set("project_updates_checked_v2", "2026-10-19T09:30:00Z");
   await store.set("project_updates_v1", [{
     date: "2026-10-19",
     dateLabel: "19 Oct 2026",
@@ -197,7 +235,7 @@ test("already-saved Atom ellipses display as complete headlines", async () => {
 
 test("cached ellipses without a complete clause use a safe fallback", async () => {
   const store = makeStore();
-  await store.set("project_updates_checked_v1", "2026-10-19T09:30:00Z");
+  await store.set("project_updates_checked_v2", "2026-10-19T09:30:00Z");
   await store.set("project_updates_v1", [{
     date: "2026-10-19",
     dateLabel: "19 Oct 2026",
@@ -305,7 +343,7 @@ test("an invalid repository feed does not advance the daily cursor", async () =>
 
   await assert.rejects(refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }));
   assert.equal(modelCalls, 0);
-  assert.equal(await store.get("project_updates_checked_v1"), null);
+  assert.equal(await store.get("project_updates_checked_v2"), null);
 });
 
 test("refresh catches up with commits still in the feed after a missed week", async () => {

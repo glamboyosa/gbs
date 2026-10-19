@@ -156,6 +156,91 @@ test("daily refresh publishes a selected public commit and keeps its source link
   assert.equal(updates[0].url, `https://github.com/glamboyosa/docket/commit/${"a".repeat(40)}`);
 });
 
+test("long Atom subjects become a concise headline while keeping the selected commit", async () => {
+  const store = makeStore();
+  const sha = "c".repeat(40);
+  const fullTitle = "Spell out how agent checks are enforced and list more guarantees on the landing page";
+  const atom = feed("katalepsis", sha, "Spell out how agent checks are enforced and list more guarantees on t…", "2026-10-19T09:20:35Z")
+    .replace("</entry>", `<content type="html">&lt;pre&gt;${fullTitle}&lt;/pre&gt;</content></entry>`);
+  const fetcher: typeof fetch = async (input, init) => {
+    const url = String(input);
+    if (url.endsWith(".atom")) return new Response(url.includes("/katalepsis/") ? atom : "<feed></feed>");
+    const request = JSON.parse(String(init?.body));
+    assert.match(request.messages[1].content, new RegExp(fullTitle));
+    return Response.json({ choices: [{ message: { content: JSON.stringify({ sha, headline: "Explain agent checks and site guarantees" }) } }] });
+  };
+
+  assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
+  const history = await getProjectUpdates(store);
+  assert.equal(history[0].title, "Explain agent checks and site guarantees");
+  assert.equal(getHomepageUpdate(history, new Date("2026-10-19T22:00:00Z"))?.title, "Explain agent checks and site guarantees");
+  assert.equal(history[0].url, `https://github.com/glamboyosa/katalepsis/commit/${sha}`);
+});
+
+test("already-saved Atom ellipses display as complete headlines", async () => {
+  const store = makeStore();
+  await store.set("project_updates_checked_v1", "2026-10-19T09:30:00Z");
+  await store.set("project_updates_v1", [{
+    date: "2026-10-19",
+    dateLabel: "19 Oct 2026",
+    project: "Katalepsis",
+    reference: "8f02425",
+    title: "Spell out how agent checks are enforced and list more guarantees on t…",
+    url: "https://github.com/glamboyosa/katalepsis/commit/8f02425",
+    linkText: "Commit",
+  }]);
+
+  const history = await getProjectUpdates(store, { now: new Date("2026-10-19T09:45:00Z") });
+  assert.equal(history[0].title, "Spell out how agent checks are enforced");
+  assert.equal(getHomepageUpdate(history, new Date("2026-10-19T09:45:00Z"))?.title, "Spell out how agent checks are enforced");
+});
+
+test("cached ellipses without a complete clause use a safe fallback", async () => {
+  const store = makeStore();
+  await store.set("project_updates_checked_v1", "2026-10-19T09:30:00Z");
+  await store.set("project_updates_v1", [{
+    date: "2026-10-19",
+    dateLabel: "19 Oct 2026",
+    project: "Katalepsis",
+    reference: "8f02425",
+    title: "Add a setting that lets users control browser checks across all pro…",
+    url: "https://github.com/glamboyosa/katalepsis/commit/8f02425",
+    linkText: "Commit",
+  }]);
+
+  const history = await getProjectUpdates(store, { now: new Date("2026-10-19T09:45:00Z") });
+  assert.equal(history[0].title, "Katalepsis update");
+});
+
+test("a long full Atom subject remains eligible for summarization", async () => {
+  const store = makeStore();
+  const sha = "e".repeat(40);
+  const fullTitle = `Explain how agent checks are enforced and ${"list the visible guarantees ".repeat(9)}`.trim();
+  const atom = feed("katalepsis", sha, "Explain how agent checks are enforced and list the visible guara…", "2026-10-19T09:20:35Z")
+    .replace("</entry>", `<content type="html">&lt;pre&gt;${fullTitle}&lt;/pre&gt;</content></entry>`);
+  const fetcher: typeof fetch = async (input, init) => {
+    if (String(input).endsWith(".atom")) return new Response(String(input).includes("/katalepsis/") ? atom : "<feed></feed>");
+    assert.match(String(init?.body), /list the visible guarantees/);
+    return Response.json({ choices: [{ message: { content: JSON.stringify({ sha, headline: "Explain agent checks and visible guarantees" }) } }] });
+  };
+
+  assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
+  assert.equal((await getProjectUpdates(store))[0].title, "Explain agent checks and visible guarantees");
+});
+
+test("invalid AI headlines fall back to a complete clause", async () => {
+  const store = makeStore();
+  const sha = "d".repeat(40);
+  const fetcher: typeof fetch = async (input) => String(input).endsWith(".atom")
+    ? new Response(String(input).includes("/katalepsis/")
+      ? feed("katalepsis", sha, "Spell out how agent checks are enforced and list more guarantees on t…", "2026-10-19T09:20:35Z")
+      : "<feed></feed>")
+    : Response.json({ choices: [{ message: { content: JSON.stringify({ sha, headline: "t…" }) } }] });
+
+  assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
+  assert.equal((await getProjectUpdates(store))[0].title, "Spell out how agent checks are enforced");
+});
+
 test("refresh publishes with the working OpenRouter selection model", async () => {
   const store = makeStore();
   const fetcher: typeof fetch = async (input, init) => {

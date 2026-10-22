@@ -1,0 +1,1771 @@
+{
+  "commit": "9c001045abcdac0b7a220f21d30d017ac357dbf3",
+  "chapters": [
+    {
+      "id": "brief",
+      "title": "What are we actually building?",
+      "summary": "A careful bookkeeper for one very small job.",
+      "paragraphs": [
+        "Imagine a shop with a notebook of unpaid bills. The bank sends a message: \u00a3120 arrived, with the reference \u201cPayment INV-1\u201d. The program helps connect that payment to the correct bill, asks a person to approve the match, then records the accounting result.",
+        "The money has already moved at the bank. This service does not send money. It records an incoming payment in the books. An invoice is a bill the customer owes. Reconciliation means connecting the bank activity to the correct business record.",
+        "The exercise allows a local API or CLI and a persistent database. We chose a Go command-line program and SQLite. A JSON fixture stands in for a model. There is no real model call, paid API, deployment requirement, VAT, currency conversion, partial payment or split payment.",
+        "A tenant means one organisation using the service. tenant-a and tenant-b can both have an inv-1. That does not make them the same invoice. Every match must use records belonging to the stated tenant.",
+        "The hard part is uncertainty: messages repeat, suggestions can be wrong, two workers can act together, and a process can die after saving a result but before reporting success. Correctness means those events do not create duplicate or unauthorised accounting entries.",
+        "Five promises guide the implementation: one financial effect per payment; deterministic checks before acting; explicit approval of exact proposal content; an all-or-nothing posting; and evidence that survives a restart.",
+        "The four commands are ingest \u2192 propose \u2192 approve \u2192 post. Receiving a bank message does not imply agreement about an invoice. A valid suggestion is not approval. Approval is not yet a journal. Keeping those facts separate makes the decisions inspectable."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "Is this program moving \u00a3120?",
+          "answer": "No. It records a payment that already arrived. The external bank transfer is outside this exercise."
+        },
+        {
+          "question": "What is Chris testing beyond happy-path coding?",
+          "answer": "Whether the system stays correct under duplicate delivery, concurrency, stale decisions and crashes, and whether its records explain what happened."
+        }
+      ]
+    },
+    {
+      "id": "accounting",
+      "title": "The \u00a3120 story",
+      "summary": "Understand the books before the database.",
+      "paragraphs": [
+        "Before payment, the customer owes \u00a3120. Accounts Receivable is the asset representing that debt. After payment, Bank is \u00a3120 higher and Accounts Receivable is \u00a3120 lower. Total assets have changed form: debt became cash.",
+        "The journal has two lines: debit Bank 12000; credit Accounts Receivable 12000, both in GBP. For these asset accounts a debit increases the asset and a credit decreases it. Debit does not universally mean money out, and credit does not universally mean money in.",
+        "A journal entry is a header plus its accounting lines. The ledger is the collection of those entries. \u201cBalanced\u201d means total debits equal total credits. A balanced entry can still be wrong: crediting the wrong customer invoice would balance too. Validation and review are separate controls.",
+        "Money uses integer minor units. For GBP, 12000 means 12,000 pence, which is \u00a3120. Using int64 avoids binary floating-point rounding in the amounts. Confidence uses float64 because it is a score, not money.",
+        "The example contains two open \u00a3120 invoices in tenant-a. Amount and currency matching cannot tell us which invoice the payer intended. The deterministic checks establish eligibility. The reviewer must still judge the actual match from the source evidence."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "Can a journal balance and still be incorrect?",
+          "answer": "Yes. The wrong invoice or tenant can produce equal debit and credit totals. Balance is one invariant, not the entire correctness argument."
+        },
+        {
+          "question": "Why not store 120.00 as float64?",
+          "answer": "Binary floating-point cannot represent every decimal fraction exactly. We store 12000 integer pence so equality and sums are exact within the integer range."
+        }
+      ]
+    },
+    {
+      "id": "go",
+      "title": "Enough Go to read every file",
+      "summary": "Read the notation without losing the business idea.",
+      "paragraphs": [
+        "package groups files into a module of behaviour. package recon contains the business workflow; package db opens SQLite; package main runs the CLI. Capitalised names such as Invoice and Post are exported to other packages. Lowercase names such as payment stay inside their package.",
+        "A struct is a form with named boxes. A value such as Invoice{Currency: \"GBP\"} fills those boxes. A type after a field tells you what belongs there: string for text, int64 for whole numbers, bool for true/false, and []Check for a slice of checks.",
+        "A pointer such as *int64 can be nil, meaning absent. &value takes an address; *pointer reads the value at that address. We use pointers at the JSON boundary to distinguish a missing field from a supplied zero, and for optional database relationships.",
+        "A function can return multiple values. (Journal, error) means result plus possible failure. nil means no error. The pattern if err != nil { return ..., err } stops immediately when something fails. := declares and assigns a local variable; = changes an existing variable.",
+        "func (s *Service) Post(...) is a method: call it as service.Post(...). The receiver s gives the method access to the database and configured hooks. context.Context carries cancellation and deadlines through database calls.",
+        "defer schedules cleanup when the current function returns. tx.Rollback() is deferred so an error or panic releases the transaction. After a successful commit that rollback cannot undo the commit. Closures are functions that use variables from their surrounding scope, such as the transaction callbacks.",
+        "SQL placeholders, written ?, carry values separately from SQL text. Scan copies query columns into Go variables in the same order. Exec performs a statement without returning rows. Query returns multiple rows; QueryRow expects one. Always check errors, including rows.Err() after a loop.",
+        "Go JSON tags are labels, not validation rules. `json:\"tenant_id\"` maps the JSON name to TenantID. Business checks and parsing code still need to validate what the field contains."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "Why is AmountMinor a *int64 in a wire struct but int64 in BankEvent?",
+          "answer": "The wire form needs to detect absence. After validation guarantees presence, BankEvent can hold an ordinary integer."
+        },
+        {
+          "question": "Does defer tx.Rollback() undo a successful commit?",
+          "answer": "No. It cleans up an unfinished transaction. Once commit succeeds, Rollback is a no-op for the committed transaction."
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "title": "The data model, line by line",
+      "summary": "These forms are the vocabulary of the whole system.",
+      "paragraphs": [
+        "Start with model.go. It defines shapes, not database writes. Every later function receives, loads or returns one of these objects. Follow each relationship: bank event \u2192 payment \u2192 proposal \u2192 approval \u2192 journal.",
+        "The package comment promises no duplicate financial effects. Read the operation-specific paths: accepted event retries preserve payment identity while adding delivery evidence; rejected or superseded proposals can be evaluated again. Idempotency does not mean every table stops growing."
+      ],
+      "blocks": [
+        {
+          "title": "Invoice: which bill, whose bill, how much?",
+          "file": "internal/recon/model.go",
+          "start": 9,
+          "end": 22,
+          "notes": [
+            {
+              "lines": "10",
+              "text": "type Invoice struct declares the form. The following lines declare its fields; the closing brace finishes it."
+            },
+            {
+              "lines": "11\u201312",
+              "text": "TenantID and InvoiceID together identify the bill. InvoiceID alone is insufficient across organisations."
+            },
+            {
+              "lines": "13\u201315",
+              "text": "Currency and AmountMinor are facts to compare against the bank payment. Status tells us whether settlement is still permitted."
+            },
+            {
+              "lines": "19\u201322",
+              "text": "Named constants prevent spelling drift. They improve readability; database CHECK constraints separately enforce the stored states."
+            }
+          ]
+        },
+        {
+          "title": "BankEvent: notification identity versus payment identity",
+          "file": "internal/recon/model.go",
+          "start": 24,
+          "end": 53,
+          "notes": [
+            {
+              "lines": "26\u201334",
+              "text": "The event contains tenant, provider, event ID, transaction ID, currency, amount and reference. EventID names the notification; TransactionID names the underlying bank movement."
+            },
+            {
+              "lines": "37",
+              "text": "IngestOutcome is a named string type. The compiler can distinguish this domain result from an arbitrary string."
+            },
+            {
+              "lines": "40\u201347",
+              "text": "Accepted means new payment. DuplicateEvent means a known notification. DuplicateTransaction means a new notification about a known payment. Conflicts travel through the error result."
+            },
+            {
+              "lines": "50\u201353",
+              "text": "IngestResult returns both the outcome and the payment ID. A retry can continue using the original payment."
+            }
+          ]
+        },
+        {
+          "title": "Proposal: input versus stored decision",
+          "file": "internal/recon/model.go",
+          "start": 55,
+          "end": 88,
+          "notes": [
+            {
+              "lines": "56\u201361",
+              "text": "ProposalInput is the untrusted suggestion. It supplies identifiers and confidence, not financial amounts. We load financial facts from stored source records."
+            },
+            {
+              "lines": "64\u201369",
+              "text": "Open can later become superseded or posted. Rejected is a recorded failed suggestion. An approval does not change proposal status; approval is a separate record."
+            },
+            {
+              "lines": "73\u201380",
+              "text": "A stored proposal adds its own ID and content fingerprint. The fingerprint covers the tenant, transaction, invoice and confidence."
+            },
+            {
+              "lines": "81\u201385",
+              "text": "PaymentID can be nil if the payment was missing or ambiguous. Checks preserve the original rule results. Supersedes links a new valid proposal to the prior one."
+            },
+            {
+              "lines": "86\u201387",
+              "text": "Replayed describes this response. It is not a database column in proposals."
+            }
+          ]
+        },
+        {
+          "title": "Approval: a named decision about exact content",
+          "file": "internal/recon/model.go",
+          "start": 90,
+          "end": 107,
+          "notes": [
+            {
+              "lines": "91\u201397",
+              "text": "An approval request names the proposal, the fingerprint the reviewer saw, and a simulated reviewer identity. The absence of JSON tags here is fine: the CLI constructs this value directly."
+            },
+            {
+              "lines": "100\u2013107",
+              "text": "The stored approval has its own ID, proposal reference, approved fingerprint, reviewer and timestamp. Replayed describes a repeat call, not a new decision."
+            }
+          ]
+        },
+        {
+          "title": "Journal: the accounting result and its evidence links",
+          "file": "internal/recon/model.go",
+          "start": 109,
+          "end": 136,
+          "notes": [
+            {
+              "lines": "110\u2013113",
+              "text": "This exercise has exactly two account names. It is not a general chart of accounts."
+            },
+            {
+              "lines": "116\u2013120",
+              "text": "Each JournalLine has an account and separate nonnegative debit and credit amounts. Schema rules prevent both sides being populated on one line."
+            },
+            {
+              "lines": "124\u2013129",
+              "text": "The journal links payment, invoice, proposal and approval. Those references let a reviewer trace the reason for posting."
+            },
+            {
+              "lines": "130\u2013135",
+              "text": "Currency belongs to the journal header; Lines contains its sides. Replayed means we returned an entry already committed."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Does \u201capproved\u201d appear as a proposal status?",
+          "answer": "No. The proposal remains open after approval. An approvals row records the human decision; posting or replacement then changes proposal status."
+        },
+        {
+          "question": "Why does an invalid proposal sometimes have no PaymentID?",
+          "answer": "The suggested payment may not exist within the tenant, or the transaction ID may be ambiguous. The proposal is still stored as rejected evidence."
+        }
+      ]
+    },
+    {
+      "id": "parsing",
+      "title": "The front door: parse before trusting",
+      "summary": "Correct JSON shape is different from a correct match.",
+      "paragraphs": [
+        "parse.go first checks whether the input can be understood. A malformed object never reaches a database write. Later checks decide whether a well-formed suggestion matches reality.",
+        "Rejecting \"12000\" and 12000.5 avoids silent conversion of financial input. We accept an integer amount and reject zero or negative payments because refunds and outgoing payments are outside scope.",
+        "The currency regular expression checks three uppercase letters. It does not consult an ISO currency registry. ABC passes its shape check. Calling that full ISO validation would overstate what this code does.",
+        "DisallowUnknownFields rejects fields the struct does not recognise, and the second Decode rejects trailing JSON values. The standard decoder still has other behaviours, such as accepting duplicate recognised object keys using later values. \u201cStrict\u201d here means these explicit rules, not every possible JSON ambiguity is rejected."
+      ],
+      "blocks": [
+        {
+          "title": "Wire forms preserve missing fields",
+          "file": "internal/recon/parse.go",
+          "start": 14,
+          "end": 34,
+          "notes": [
+            {
+              "lines": "14",
+              "text": "Compile the three-uppercase-letter pattern once when the package loads. ^ and $ anchor it to the whole string."
+            },
+            {
+              "lines": "19\u201327",
+              "text": "Each field is a pointer. nil means absent or JSON null. A supplied empty string is distinguishable from absence, even though both may be invalid."
+            },
+            {
+              "lines": "29\u201334",
+              "text": "Confidence is also a pointer because a supplied 0 is valid; an omitted confidence is not."
+            }
+          ]
+        },
+        {
+          "title": "ParseBankEvent: validate every boundary field",
+          "file": "internal/recon/parse.go",
+          "start": 36,
+          "end": 80,
+          "notes": [
+            {
+              "lines": "37\u201341",
+              "text": "Create the wire form, decode into its address, and turn decoding failure into a domain error with a stable reason."
+            },
+            {
+              "lines": "42\u201356",
+              "text": "Build a small list of required text fields, then reject nil or empty values. This keeps field-specific messages without duplicating the guard."
+            },
+            {
+              "lines": "57\u201363",
+              "text": "Reference may be empty but must be present. Amount must also be present before dereferencing it."
+            },
+            {
+              "lines": "64\u201370",
+              "text": "Validate the currency format and require a positive integer amount. These are scope rules, not invoice-match rules."
+            },
+            {
+              "lines": "71\u201379",
+              "text": "Dereference the validated pointers into an ordinary BankEvent and return nil error. No database has been touched."
+            }
+          ]
+        },
+        {
+          "title": "ParseProposal: shape, confidence and negative zero",
+          "file": "internal/recon/parse.go",
+          "start": 82,
+          "end": 120,
+          "notes": [
+            {
+              "lines": "84\u2013101",
+              "text": "Decode the wire proposal and require nonempty tenant, transaction and invoice identifiers."
+            },
+            {
+              "lines": "102\u2013107",
+              "text": "Require confidence and check its permitted range. JSON decoding already rejects many non-number representations; this guard also documents the domain range."
+            },
+            {
+              "lines": "108\u2013113",
+              "text": "Normalise negative zero to positive zero. SQLite stores -0 as 0. Without normalisation a fingerprint could change on a round trip and block a valid posting."
+            },
+            {
+              "lines": "114\u2013119",
+              "text": "Return only validated shape. A perfectly shaped proposal may still name the wrong tenant or amount; those checks happen later."
+            }
+          ]
+        },
+        {
+          "title": "decodeStrict: one object, known fields",
+          "file": "internal/recon/parse.go",
+          "start": 122,
+          "end": 132,
+          "notes": [
+            {
+              "lines": "123",
+              "text": "Wrap the bytes in a reader and create a streaming JSON decoder."
+            },
+            {
+              "lines": "124",
+              "text": "Unknown object fields now cause an error instead of being ignored."
+            },
+            {
+              "lines": "125\u2013127",
+              "text": "Decode the first value into the caller-provided destination."
+            },
+            {
+              "lines": "128\u2013130",
+              "text": "Try reading again. Only end-of-file is acceptable: a second object or trailing garbage is refused."
+            },
+            {
+              "lines": "131",
+              "text": "Return nil only after both conditions hold."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Does valid JSON mean the proposal can post?",
+          "answer": "No. Parsing establishes shape. Database-backed checks establish eligibility, a person approves, and posting rechecks state."
+        },
+        {
+          "question": "Why does -0 matter if it equals 0?",
+          "answer": "Its encoded representation can differ before storage. Fingerprinting content that changes representation across storage can break the content comparison."
+        }
+      ]
+    },
+    {
+      "id": "fingerprints",
+      "title": "Fingerprints: compare meaning, not whitespace",
+      "summary": "An ID says which thing. A fingerprint says what it asserted.",
+      "paragraphs": [
+        "A fingerprint is a SHA-256 digest of a deliberately chosen representation. Equal fingerprints are treated as equal content under that definition. This is not encryption, a signature, authentication or proof that the source told the truth.",
+        "We hash a fixed Go struct after parsing. Reordering JSON keys or changing indentation therefore does not create a conflict. Hashing raw input bytes would treat harmless formatting as a meaningful change.",
+        "There are three definitions because equality means something different for an event, a payment and a proposal. Choosing which fields belong in each digest is a business decision."
+      ],
+      "blocks": [
+        {
+          "title": "Three different meanings of \u201cthe same\u201d",
+          "file": "internal/recon/parse.go",
+          "start": 134,
+          "end": 163,
+          "notes": [
+            {
+              "lines": "141\u2013143",
+              "text": "The event digest covers the complete BankEvent, including event ID and reference. Any changed assertion under the same event ID is visible."
+            },
+            {
+              "lines": "148\u2013155",
+              "text": "The payment digest excludes event ID and reference. Another event can describe the same financial transaction even if the bank rewords its reference. Tenant stays included so misrouting becomes a conflict."
+            },
+            {
+              "lines": "161\u2013163",
+              "text": "The proposal digest covers all ProposalInput fields, including confidence. A rescore requires fresh review in this design, even when the invoice stays the same."
+            }
+          ]
+        },
+        {
+          "title": "Build a versioned SHA-256 digest",
+          "file": "internal/recon/parse.go",
+          "start": 165,
+          "end": 173,
+          "notes": [
+            {
+              "lines": "166",
+              "text": "json.Marshal produces a stable field order for these fixed structs. We do not hash arbitrary input-map ordering."
+            },
+            {
+              "lines": "167\u2013170",
+              "text": "Marshal failure panics because the callers supply known validated string/number structs. This assumption would need revisiting if the helper accepted wider types."
+            },
+            {
+              "lines": "171",
+              "text": "Prefix the content with a version label and newline, then hash the bytes. Different definitions use event.v1, payment.v1 and proposal.v1."
+            },
+            {
+              "lines": "172",
+              "text": "Convert the 32-byte digest into a readable hexadecimal string. sum[:] views the array as a slice."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Why not include EventID in the payment digest?",
+          "answer": "A new event ID can describe the same transaction. Including it would make equivalent financial facts appear different."
+        },
+        {
+          "question": "Does knowing a proposal fingerprint prove who approved it?",
+          "answer": "No. It binds content. Identity must come from authentication, which this local exercise simulates with a reviewer string."
+        }
+      ]
+    },
+    {
+      "id": "database",
+      "title": "SQLite and the rules beneath the code",
+      "summary": "The application asks politely. Constraints refuse violations.",
+      "paragraphs": [
+        "A database transaction groups changes so they commit together or roll back together. Persistent storage means committed records remain available after the program restarts. Atomicity and durability are different: all-or-nothing changes versus committed changes surviving failures.",
+        "SQLite is appropriate for this exercise: one local file, real transactions, unique constraints and no database server to provision. It serialises writers for the whole database. That is a deliberate simplicity trade-off, not unlimited concurrency.",
+        "BEGIN IMMEDIATE obtains the write reservation before business reads. Two posting writers do not both observe \u201cnot posted\u201d and independently proceed. The second waits, then reads the first writer\u2019s committed result. The busy timeout bounds that wait.",
+        "WAL allows readers to use snapshots while a writer works. synchronous=FULL requests stronger commit durability. These settings do not constitute a tested guarantee against every hardware, operating-system or storage failure. The crash tests exercise process failure around commit.",
+        "Database constraints protect specific invariants. UNIQUE payment_id prevents a second journal for a payment. It does not by itself guarantee the journal balances, matches the right invoice, or was authorised. Those controls span service logic and verification.",
+        "The embedded schema uses IF NOT EXISTS. Reopening creates missing objects; it does not migrate existing table definitions. A changed CREATE TABLE statement does not update a database that already has that table. Versioned migrations would be needed for an evolving product."
+      ],
+      "blocks": [
+        {
+          "title": "Open the database with deliberate settings",
+          "file": "internal/db/db.go",
+          "start": 1,
+          "end": 46,
+          "notes": [
+            {
+              "lines": "5\u201313",
+              "text": "database/sql is Go\u2019s database interface. The blank import of modernc.org/sqlite registers the driver for its side effect. It is a pure-Go driver, so this project does not require a C compiler."
+            },
+            {
+              "lines": "15\u201316",
+              "text": "go:embed includes schema.sql in the compiled executable. The CLI can initialise a database without locating a separate SQL file at runtime."
+            },
+            {
+              "lines": "28\u201332",
+              "text": "Build query parameters for foreign keys, a 10-second lock wait, WAL, full synchronisation and immediate write transactions."
+            },
+            {
+              "lines": "34\u201336",
+              "text": "Escape URI-sensitive path characters so ? or # in a filename do not become connection settings or fragments."
+            },
+            {
+              "lines": "37\u201345",
+              "text": "Create the database handle, execute the schema, close on initialisation failure and return the ready handle. sql.Open alone does not prove a working connection; executing the schema does."
+            }
+          ]
+        },
+        {
+          "title": "Invoice and payment identity",
+          "file": "internal/db/schema.sql",
+          "start": 6,
+          "end": 33,
+          "notes": [
+            {
+              "lines": "6\u201313",
+              "text": "The invoice primary key is tenant plus invoice ID. CHECK constraints require a positive amount and a known status. STRICT strengthens SQLite\u2019s type enforcement."
+            },
+            {
+              "lines": "20\u201329",
+              "text": "A payment has a provider-owned transaction identity. UNIQUE(provider, transaction_id) prevents a misrouted copy becoming a second payment in another tenant."
+            },
+            {
+              "lines": "32",
+              "text": "The tenant/transaction index supports proposal lookups. An index speeds lookup; it does not authenticate the requesting tenant."
+            }
+          ]
+        },
+        {
+          "title": "Events and deliveries are different evidence",
+          "file": "internal/db/schema.sql",
+          "start": 34,
+          "end": 67,
+          "notes": [
+            {
+              "lines": "35\u201349",
+              "text": "bank_events holds accepted event identities, linked to their payment. The provider/event pair is unique."
+            },
+            {
+              "lines": "53\u201367",
+              "text": "event_deliveries records every well-formed ingestion attempt, including duplicates and conflicts. payment_id can be null to avoid linking one tenant\u2019s conflicting payload to another tenant\u2019s trace."
+            }
+          ]
+        },
+        {
+          "title": "One live suggestion and one recorded approval",
+          "file": "internal/db/schema.sql",
+          "start": 70,
+          "end": 98,
+          "notes": [
+            {
+              "lines": "71\u201382",
+              "text": "Proposals retain content, checks, status and optional relationship links. Rejected input is still useful evidence."
+            },
+            {
+              "lines": "86\u201387",
+              "text": "A partial unique index applies only where status is open. Historical rejected, posted and superseded proposals do not occupy the live slot."
+            },
+            {
+              "lines": "92\u201398",
+              "text": "An approval references exactly one proposal and stores its reviewed fingerprint. UNIQUE proposal_id means the first approval stands."
+            }
+          ]
+        },
+        {
+          "title": "At most one journal for each payment",
+          "file": "internal/db/schema.sql",
+          "start": 102,
+          "end": 122,
+          "notes": [
+            {
+              "lines": "102\u2013113",
+              "text": "The journal header references its evidence. Payment, proposal and approval IDs are each unique. The composite invoice foreign key keeps its tenant/invoice reference structurally valid."
+            },
+            {
+              "lines": "115\u2013122",
+              "text": "Each journal line has one account and nonnegative amounts. The XOR-like CHECK requires exactly one side to be nonzero. No SQL aggregate constraint here enforces balance across all lines; service logic and verify do that."
+            }
+          ]
+        },
+        {
+          "title": "History cannot silently be rewritten",
+          "file": "internal/db/schema.sql",
+          "start": 135,
+          "end": 182,
+          "notes": [
+            {
+              "lines": "135\u2013162",
+              "text": "BEFORE UPDATE and BEFORE DELETE triggers abort attempts to modify evidence tables. They protect history from ordinary application writes, not a database administrator who can remove the triggers."
+            },
+            {
+              "lines": "165\u2013171",
+              "text": "An invoice may only move open \u2192 settled, with its other fields unchanged. It cannot be deleted."
+            },
+            {
+              "lines": "172\u2013182",
+              "text": "Proposals cannot be deleted. The complete update trigger permits only open \u2192 superseded or posted, and rejects changes to every content field."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Would a unique payment constraint make any balanced journal correct?",
+          "answer": "No. It prevents repetition. Matching, approval and account correctness need additional checks."
+        },
+        {
+          "question": "What happens if two unrelated payments post together?",
+          "answer": "On SQLite they still compete for one database write lock. This is safe but limits throughput. A larger database design can lock the relevant business rows instead."
+        }
+      ]
+    },
+    {
+      "id": "transactions",
+      "title": "The transaction wrapper and honest errors",
+      "summary": "Some refusals must save evidence while returning failure.",
+      "paragraphs": [
+        "Expected failures have a kind and a stable reason: invalid input, conflict with recorded facts, rejected business action or missing record. Callers can handle these without parsing human wording.",
+        "An internal database failure normally rolls back. A business refusal can still need a durable evidence row. keepEvidence tells the wrapper: commit the refusal evidence, then return the domain error to the caller.",
+        "This pattern is subtle. Its safety depends on every refusal happening before ledger changes. Adding keepEvidence after writing a journal would risk committing a partial financial operation. Follow the actual write order when reviewing it.",
+        "The read-only helper uses a snapshot and defers rollback because it has no writes to commit. Trace and verification can read a consistent view without using the write transaction helper."
+      ],
+      "blocks": [
+        {
+          "title": "Errors are structured outcomes",
+          "file": "internal/recon/errors.go",
+          "start": 8,
+          "end": 74,
+          "notes": [
+            {
+              "lines": "12\u201321",
+              "text": "Four kinds classify expected domain failures. An internal SQL error is different from a rejected match."
+            },
+            {
+              "lines": "25\u201334",
+              "text": "Error contains machine-readable Kind and Reason plus human Detail and optional failed checks. Error() implements Go\u2019s error interface."
+            },
+            {
+              "lines": "37\u201348",
+              "text": "errors.As finds a typed domain error through wrappers. IsKind and Reason expose safe classification helpers."
+            },
+            {
+              "lines": "51\u201365",
+              "text": "Small constructors keep expected failure creation consistent."
+            },
+            {
+              "lines": "72\u201374",
+              "text": "keepEvidence wraps a domain error as an internal transaction-control signal. It is not a successful business outcome."
+            }
+          ]
+        },
+        {
+          "title": "inTx: follow every return path",
+          "file": "internal/recon/service.go",
+          "start": 484,
+          "end": 507,
+          "notes": [
+            {
+              "lines": "488\u2013491",
+              "text": "BeginTx uses the immediate-lock setting from db.Open. Failure to begin returns without running the business callback."
+            },
+            {
+              "lines": "492\u2013496",
+              "text": "Defer rollback, run the callback, and capture its error. The defer also runs if the callback panics."
+            },
+            {
+              "lines": "497\u2013499",
+              "text": "Ordinary error: return now and let deferred rollback undo this transaction. keepEvidence is the one explicitly recognised exception."
+            },
+            {
+              "lines": "500\u2013502",
+              "text": "Try committing. A commit error reaches the caller; it must not be presented as success. A retry is safe because operations inspect durable identity."
+            },
+            {
+              "lines": "503\u2013506",
+              "text": "After commit, return the wrapped refusal or nil. An error response can therefore mean \u201crefused, and the refusal was saved\u201d."
+            }
+          ]
+        },
+        {
+          "title": "Read snapshots, timestamps and fixture rules",
+          "file": "internal/recon/service.go",
+          "start": 511,
+          "end": 552,
+          "notes": [
+            {
+              "lines": "511\u2013518",
+              "text": "Begin a read-only transaction, defer closing it with rollback, and run the reader against its snapshot."
+            },
+            {
+              "lines": "520\u2013522",
+              "text": "Use the injected clock and format a UTC timestamp. A clock function makes tests predictable without changing production business rules."
+            },
+            {
+              "lines": "524\u2013537",
+              "text": "Fixture invoices must be complete, positive and initially open. A settled invoice is supposed to be produced by posting, not loaded without supporting evidence."
+            },
+            {
+              "lines": "540\u2013552",
+              "text": "describeChanges builds a human-readable list of changed same-tenant fields. Cross-tenant conflict paths must avoid this detailed message."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Does returning an error always mean nothing was saved?",
+          "answer": "No. A domain refusal can commit its audit evidence. It must still leave the ledger unchanged. Unexpected failures roll back the transaction."
+        },
+        {
+          "question": "What change would make keepEvidence dangerous?",
+          "answer": "Returning it after ledger writes. It instructs the wrapper to commit, so all refusal branches must remain before financial mutation."
+        }
+      ]
+    },
+    {
+      "id": "ingest",
+      "title": "Ingest: one payment, many messages",
+      "summary": "Trace the first real workflow from bytes to durable identity.",
+      "paragraphs": [
+        "Ingest parses before opening its write transaction, computes separate event and payment fingerprints, then branches on stored identities. The service itself holds no cache of payment state; SQLite is the authority across restarts.",
+        "First look for the event\u2019s earliest delivery, including a refused one. Different content under that ID is a conflict. Equal content replays only if it was accepted previously; an identical refused delivery is checked again and remains refused. Cross-tenant conflicts omit sensitive details and stay unlinked.",
+        "Only a new event identity reaches the payment lookup. A known payment with equal financial content gets a new accepted event record linked to that payment. A known payment with changed facts is a conflict. If neither identity exists, create payment, event and delivery together.",
+        "Do not say retries create no rows. They create evidence rows. The guarantee is no duplicate payment or journal. Malformed input is rejected before this evidence path and is not retained as a delivery."
+      ],
+      "blocks": [
+        {
+          "title": "The service has dependencies, not hidden financial state",
+          "file": "internal/recon/service.go",
+          "start": 12,
+          "end": 73,
+          "notes": [
+            {
+              "lines": "13\u201323",
+              "text": "Options injects a clock and a post-commit crash hook. The hook is for testing the uncertainty after a durable commit."
+            },
+            {
+              "lines": "26\u201339",
+              "text": "Service stores the database and those functions. New selects time.Now when no clock is supplied."
+            },
+            {
+              "lines": "45\u201371",
+              "text": "LoadInvoices runs fixture insertion in one transaction. Equal existing content is a no-op; changed existing content conflicts. The entire batch rolls back on an ordinary failure."
+            }
+          ]
+        },
+        {
+          "title": "Parse and check the event identity",
+          "file": "internal/recon/service.go",
+          "start": 77,
+          "end": 117,
+          "notes": [
+            {
+              "lines": "78\u201384",
+              "text": "Parse the raw event and compute separate event and financial-content fingerprints before database writes."
+            },
+            {
+              "lines": "88\u201390",
+              "text": "The deliver closure records the outcome and optional payment link using this transaction."
+            },
+            {
+              "lines": "92\u201396",
+              "text": "findEvent now loads the first delivery, including a prior refusal. A reused ID with different content must conflict even if the original delivery was never accepted."
+            },
+            {
+              "lines": "97\u2013104",
+              "text": "A cross-tenant conflict records an unlinked delivery and returns a generic message, keeping the other tenant\u2019s source facts private."
+            },
+            {
+              "lines": "106\u2013111",
+              "text": "A same-tenant conflict can describe the changed fields and preserve the appropriate optional payment link."
+            },
+            {
+              "lines": "114\u2013117",
+              "text": "Equal content returns DuplicateEvent only if the earlier delivery was accepted. A repeated refused payload falls through to the payment check and remains a refusal."
+            }
+          ]
+        },
+        {
+          "title": "Check the transaction identity, then create only if new",
+          "file": "internal/recon/service.go",
+          "start": 119,
+          "end": 158,
+          "notes": [
+            {
+              "lines": "119\u2013130",
+              "text": "Look up provider/transaction ID. Equal payment content means the notification is new but the payment is old. Insert the event and return DuplicateTransaction."
+            },
+            {
+              "lines": "131\u2013145",
+              "text": "Different payment content is a conflict. Cross-tenant paths stay generic and unlinked; same-tenant paths may explain the financial difference."
+            },
+            {
+              "lines": "147\u2013158",
+              "text": "A genuinely new payment gets an ID, then its event and delivery are inserted in the same transaction. Any ordinary write failure rolls the whole group back."
+            }
+          ]
+        },
+        {
+          "title": "Identity queries and evidence insertion",
+          "file": "internal/recon/store.go",
+          "start": 24,
+          "end": 117,
+          "notes": [
+            {
+              "lines": "24\u201328",
+              "text": "A stored event can have no payment link, and records whether its original delivery was accepted. Receipt and financial acceptance are separate facts."
+            },
+            {
+              "lines": "33\u201343",
+              "text": "Query the earliest delivery by provider and event ID. The deliveries_by_event index supports this lookup. A missing row is different from a failed query."
+            },
+            {
+              "lines": "44\u201352",
+              "text": "Decode the previously validated source payload, preserve a nullable payment link, and classify its outcome. Accepted content without a payment is an internal consistency error."
+            },
+            {
+              "lines": "59\u201368",
+              "text": "findPayment deliberately looks across tenants by provider identity to detect routing conflicts. Its contents must not leak through cross-tenant errors."
+            },
+            {
+              "lines": "71\u201388",
+              "text": "paymentsByTransaction instead filters by tenant and returns all matching providers, so a proposal cannot silently choose an ambiguous payment."
+            },
+            {
+              "lines": "90\u2013117",
+              "text": "Insert helpers bind SQL parameters and use the caller\u2019s transaction. The accepted event table remains separate from the complete delivery history."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "What is the result of evt-2 describing the same txn-1?",
+          "answer": "One new bank_events row and a delivery row, linked to the existing payment. Outcome duplicate_transaction; no second payment."
+        },
+        {
+          "question": "Why is findPayment allowed to look across tenants?",
+          "answer": "It detects a provider transaction being routed to two tenants. It is internal; cross-tenant results must only produce generic errors and unlinked delivery evidence."
+        }
+      ]
+    },
+    {
+      "id": "checks",
+      "title": "Deterministic checks: eligibility, not intuition",
+      "summary": "The model supplies a suggestion. Stored facts decide whether it is allowed.",
+      "paragraphs": [
+        "evaluateChecks is a pure function: it receives facts and returns check results without querying the database or changing it. That makes the rule set easy to inspect and test.",
+        "The facts are loaded inside the transaction that will act on them. Amount and currency come from the stored payment and invoice. Confidence is absent from the rules. The input cannot promote its own score into posting authority.",
+        "Missing records cause failed checks. Dependent checks are skipped when their inputs are absent: there is no sensible amount comparison without an invoice. allPassed remains false because the missing-record check already failed.",
+        "Tenant-scoped lookup prevents foreign records from entering the matching facts. This is record scoping, not authentication: a production server must derive and authorise tenant identity rather than trust an arbitrary tenant_id from the caller."
+      ],
+      "blocks": [
+        {
+          "title": "Check results and the facts they may inspect",
+          "file": "internal/recon/checks.go",
+          "start": 5,
+          "end": 36,
+          "notes": [
+            {
+              "lines": "6\u201310",
+              "text": "Every rule result has a stable name, a boolean pass/fail and a human explanation. A proposal stores these initial results."
+            },
+            {
+              "lines": "13\u201321",
+              "text": "Named rules describe the control explicitly: existence, uniqueness, unposted payment, invoice existence/open status, currency and full amount."
+            },
+            {
+              "lines": "26\u201336",
+              "text": "matchFacts bundles only what the evaluator needs. A slice of payments lets it distinguish zero, one and ambiguous matches."
+            }
+          ]
+        },
+        {
+          "title": "Read the evaluator from top to bottom",
+          "file": "internal/recon/checks.go",
+          "start": 42,
+          "end": 82,
+          "notes": [
+            {
+              "lines": "43\u201347",
+              "text": "Take the proposal input, prepare a results slice and define a local add helper that formats explanations."
+            },
+            {
+              "lines": "49\u201359",
+              "text": "With zero payments, fail existence. With exactly one, capture it and pass uniqueness. With more than one, fail ambiguity instead of guessing a provider."
+            },
+            {
+              "lines": "61\u201367",
+              "text": "Only when one payment exists can we check whether it already has a journal."
+            },
+            {
+              "lines": "69\u201375",
+              "text": "Require the invoice and require its status to be open."
+            },
+            {
+              "lines": "77\u201380",
+              "text": "When both records exist, compare their currencies and complete integer amounts. The proposal confidence is never read."
+            }
+          ]
+        },
+        {
+          "title": "Aggregate outcomes without hiding individual failures",
+          "file": "internal/recon/checks.go",
+          "start": 86,
+          "end": 103,
+          "notes": [
+            {
+              "lines": "86\u201393",
+              "text": "allPassed returns false on the first failure and also rejects an empty check set. A missing check list must not mean automatically approved."
+            },
+            {
+              "lines": "95\u2013103",
+              "text": "failedChecks collects failures for the error response while the stored proposal retains the whole initial result set."
+            }
+          ]
+        },
+        {
+          "title": "Load fresh facts in the caller\u2019s transaction",
+          "file": "internal/recon/service.go",
+          "start": 433,
+          "end": 468,
+          "notes": [
+            {
+              "lines": "433\u2013446",
+              "text": "currentFacts loads and evaluates again. Its separate failure return distinguishes a business refusal from a technical database error."
+            },
+            {
+              "lines": "449\u2013457",
+              "text": "Find payments inside the proposal tenant and check posting only if one payment exists."
+            },
+            {
+              "lines": "458\u2013463",
+              "text": "Find the invoice using the same tenant. Return the assembled snapshot of facts."
+            },
+            {
+              "lines": "466\u2013468",
+              "text": "Convert a stored Proposal back into its content-only input form for rechecking and fingerprinting."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Would confidence 0.05 fail these rules?",
+          "answer": "No. A low-confidence suggestion can pass deterministic checks and still need a person\u2019s judgement. A high-confidence mismatch fails."
+        },
+        {
+          "question": "Why repeat checks after proposal creation?",
+          "answer": "The world may change. Another payment might settle the invoice before approval or posting. The final decision must use current facts."
+        }
+      ]
+    },
+    {
+      "id": "propose",
+      "title": "Propose: preserve suggestions and replace safely",
+      "summary": "A changed idea is a new record, not an edit to history.",
+      "paragraphs": [
+        "Propose stores rejected suggestions as well as valid ones. That explains what was attempted without adding anything to the ledger. Only a valid new suggestion can supersede an existing open proposal.",
+        "An identical open or posted proposal is returned as a replay. Rejected and superseded proposals are historical: resubmitting identical content evaluates it again. A previously missing payment might now exist.",
+        "Superseding does not delete an old approval. It makes its proposal no longer open, so a later Post refuses it as stale. Preserving the old decision is essential evidence."
+      ],
+      "blocks": [
+        {
+          "title": "Parse, fingerprint and recognise a live replay",
+          "file": "internal/recon/service.go",
+          "start": 169,
+          "end": 189,
+          "notes": [
+            {
+              "lines": "170\u2013175",
+              "text": "Reject malformed input, then compute the content digest and timestamp."
+            },
+            {
+              "lines": "177\u2013187",
+              "text": "Inside the write transaction, look for equal content in open or posted state. Return the existing row with Replayed set."
+            },
+            {
+              "lines": "189",
+              "text": "If no live equal proposal exists, start a fresh evaluation against the current database state."
+            }
+          ]
+        },
+        {
+          "title": "Default to rejection; open only after all rules pass",
+          "file": "internal/recon/service.go",
+          "start": 189,
+          "end": 221,
+          "notes": [
+            {
+              "lines": "189\u2013202",
+              "text": "Load facts and build a proposal with stored checks. The initial status is rejected, so passing is an explicit promotion."
+            },
+            {
+              "lines": "203\u2013205",
+              "text": "Link a payment only when the transaction is unambiguous. Rejected suggestions can still have a payment link if another check failed."
+            },
+            {
+              "lines": "207\u2013212",
+              "text": "If every check passed, find the currently open proposal for that payment."
+            },
+            {
+              "lines": "213\u2013221",
+              "text": "Move that earlier proposal to superseded and record its ID in the replacement. This happens in the same transaction as inserting the new row."
+            }
+          ]
+        },
+        {
+          "title": "Store the result even when the answer is no",
+          "file": "internal/recon/service.go",
+          "start": 223,
+          "end": 239,
+          "notes": [
+            {
+              "lines": "223\u2013227",
+              "text": "Insert the proposal and copy its generated ID into the returned value."
+            },
+            {
+              "lines": "228\u2013235",
+              "text": "A rejected suggestion returns a structured error listing failures, wrapped in keepEvidence so its row remains committed."
+            },
+            {
+              "lines": "236\u2013239",
+              "text": "A valid proposal commits normally. Neither branch writes accounting lines."
+            }
+          ]
+        },
+        {
+          "title": "The storage rules behind replacement",
+          "file": "internal/recon/store.go",
+          "start": 166,
+          "end": 209,
+          "notes": [
+            {
+              "lines": "170\u2013176",
+              "text": "The fingerprint lookup explicitly searches only open or posted proposals. That is why rejected suggestions can be reevaluated."
+            },
+            {
+              "lines": "178\u2013182",
+              "text": "The open-proposal lookup and partial unique index agree on the one-live-suggestion rule."
+            },
+            {
+              "lines": "184\u2013199",
+              "text": "Serialise initial checks to JSON and insert all proposal evidence together."
+            },
+            {
+              "lines": "203\u2013209",
+              "text": "The status update includes the expected previous status and requires exactly one changed row. It cannot silently overwrite an unexpected state."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Can an invalid replacement invalidate a good open proposal?",
+          "answer": "No. Only a proposal whose checks pass supersedes the previous one. An invalid suggestion is stored as rejected."
+        },
+        {
+          "question": "Why not just edit invoice_id on the old proposal?",
+          "answer": "That would blur which content was approved and rewrite history. A new immutable row plus supersedes keeps both versions explicit."
+        }
+      ]
+    },
+    {
+      "id": "approve",
+      "title": "Approve: content binding is not authentication",
+      "summary": "A person must explicitly approve the version they saw.",
+      "paragraphs": [
+        "Approve requires proposal ID, reviewed fingerprint and reviewer. The fingerprint prevents a client from approving content different from the version it claims to have reviewed. It does not prove that a human read it or that a reviewer string is authentic.",
+        "The exercise deliberately simulates identity. Reserving \u201csystem\u201d prevents one obvious automated label; it cannot stop somebody typing another name. Real approval must derive identity from an authenticated session and authorise that person for the tenant.",
+        "An existing approval is returned only if the unposted proposal still passes eligibility checks, or if it has already posted and the caller is recovering the completed result. Superseded proposals and newly ineligible matches are refused and audited. A second reviewer cannot overwrite the first decision."
+      ],
+      "blocks": [
+        {
+          "title": "Validate the approval request",
+          "file": "internal/recon/service.go",
+          "start": 247,
+          "end": 262,
+          "notes": [
+            {
+              "lines": "248",
+              "text": "Trim surrounding reviewer whitespace before checking or storing the name."
+            },
+            {
+              "lines": "249\u2013258",
+              "text": "Require a positive proposal ID, fingerprint and nonempty reviewer. Reject system case-insensitively. These failures happen before a transaction or audit row."
+            },
+            {
+              "lines": "259\u2013260",
+              "text": "Prepare a timestamp and stable audit subject naming the proposal."
+            }
+          ]
+        },
+        {
+          "title": "Load the proposal and compare what was reviewed",
+          "file": "internal/recon/service.go",
+          "start": 263,
+          "end": 281,
+          "notes": [
+            {
+              "lines": "263\u2013269",
+              "text": "Define refuse to write an approval_refused audit event and return keepEvidence. These business refusals survive even though approval fails."
+            },
+            {
+              "lines": "271\u2013277",
+              "text": "Load the proposal and distinguish an internal error from not found."
+            },
+            {
+              "lines": "278\u2013281",
+              "text": "Require the request fingerprint to equal the stored fingerprint. A mismatch cannot create an approval."
+            }
+          ]
+        },
+        {
+          "title": "Replay a decision, or make a new one after fresh checks",
+          "file": "internal/recon/service.go",
+          "start": 283,
+          "end": 323,
+          "notes": [
+            {
+              "lines": "283\u2013286",
+              "text": "Look up the recorded approval, but do not immediately return it. The current proposal may no longer be eligible."
+            },
+            {
+              "lines": "287\u2013291",
+              "text": "Require an open proposal, with one explicit exception: an already posted proposal with an existing approval may replay during crash recovery."
+            },
+            {
+              "lines": "292\u2013298",
+              "text": "For every open proposal, rerun the current payment and invoice checks. An old decision cannot report success after another payment settles this invoice."
+            },
+            {
+              "lines": "299\u2013308",
+              "text": "Only after those guards, replay the first approval. Another reviewer does not overwrite it; the attempt is audited."
+            },
+            {
+              "lines": "310\u2013320",
+              "text": "Create a new approval only when no existing decision was found and the eligibility guards passed. Insert its audit event in the same transaction."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Does repeating Approve on a superseded proposal create fresh authority?",
+          "answer": "No. The approval request is refused and audited, even if an earlier approval exists. Completed posted proposals retain a specific replay exception for crash recovery. Post also independently refuses stale proposals."
+        },
+        {
+          "question": "What replaces -reviewer in production?",
+          "answer": "An authenticated user identity from the server session, plus tenant role checks. The client must not choose its own authority by sending a name."
+        }
+      ]
+    },
+    {
+      "id": "post",
+      "title": "Post: the most important function",
+      "summary": "Be able to explain this function without reading its comments.",
+      "paragraphs": [
+        "Post is the only business path that writes a journal. It takes an approval ID, not a confidence score or arbitrary journal payload. It builds the financial result from freshly loaded source facts.",
+        "The replay check must happen before the open-state check. A successfully posted proposal is no longer open. If we checked status first, retrying a successful post would look like a stale failure instead of returning the completed result.",
+        "All authorisation and validation refusals happen before journal creation. After creation begins, any failure is an ordinary error, so the wrapper rolls back journal header, lines, invoice state, proposal state and audit together.",
+        "The post-commit hook runs outside the transaction. It can make the caller observe failure even though the journal is durable. That is intentional: it models the uncertain response window a retry must handle."
+      ],
+      "blocks": [
+        {
+          "title": "Require approval and find an already completed result first",
+          "file": "internal/recon/service.go",
+          "start": 333,
+          "end": 365,
+          "notes": [
+            {
+              "lines": "334\u2013338",
+              "text": "Require a positive approval ID and prepare the posting audit subject."
+            },
+            {
+              "lines": "341\u2013347",
+              "text": "Run within inTx. The refuse closure records a business refusal before returning keepEvidence."
+            },
+            {
+              "lines": "349\u2013355",
+              "text": "Load the approval. No approval means no posting path."
+            },
+            {
+              "lines": "357\u2013365",
+              "text": "Look for a journal belonging to this approval. If present, return it with Replayed true without writing another journal."
+            }
+          ]
+        },
+        {
+          "title": "Validate exact content, live status and current source facts",
+          "file": "internal/recon/service.go",
+          "start": 367,
+          "end": 390,
+          "notes": [
+            {
+              "lines": "367\u2013373",
+              "text": "Load the proposal referenced by the approval. A missing proposal would be an internal consistency failure, not a normal model rejection."
+            },
+            {
+              "lines": "374\u2013376",
+              "text": "Check stored proposal fingerprint against approval, and recompute the digest from stored content. This checks both the relationship and the content representation."
+            },
+            {
+              "lines": "377\u2013379",
+              "text": "Refuse if the proposal was superseded or is otherwise not open. Old approval cannot authorise a replacement."
+            },
+            {
+              "lines": "380\u2013386",
+              "text": "Reload and recheck payment and invoice in this same transaction. A competing settlement becomes a refusal before ledger writes."
+            },
+            {
+              "lines": "388\u2013390",
+              "text": "Use the single validated payment and its tenant for the journal. Do not trust caller-supplied financial amounts."
+            }
+          ]
+        },
+        {
+          "title": "Construct and commit the accounting effect",
+          "file": "internal/recon/service.go",
+          "start": 388,
+          "end": 428,
+          "notes": [
+            {
+              "lines": "389\u2013402",
+              "text": "Build the journal header, evidence references and two lines. Debit Bank and credit Accounts Receivable for the same payment amount."
+            },
+            {
+              "lines": "403\u2013405",
+              "text": "Assert the lines balance before inserting them. This is a separate check on the constructed result."
+            },
+            {
+              "lines": "406\u2013415",
+              "text": "Insert journal and lines, settle the still-open invoice, and move the proposal open \u2192 posted. An error at any point rolls the whole transaction back."
+            },
+            {
+              "lines": "416\u2013418",
+              "text": "Record the journal result and the posted audit event. The transaction wrapper performs the commit."
+            },
+            {
+              "lines": "419\u2013427",
+              "text": "Only after successful commit, run the crash hook for a newly posted journal. Replayed results do not trigger it again. Then return the journal."
+            }
+          ]
+        },
+        {
+          "title": "Balance, insert and settle with guarded writes",
+          "file": "internal/recon/service.go",
+          "start": 470,
+          "end": 483,
+          "notes": [
+            {
+              "lines": "472\u2013477",
+              "text": "Sum debits and credits across the lines using integer amounts."
+            },
+            {
+              "lines": "478\u2013481",
+              "text": "Require at least two lines, equal totals and a positive total. This helper checks balance, not every business relationship."
+            }
+          ]
+        },
+        {
+          "title": "All SQL writes share the posting transaction",
+          "file": "internal/recon/store.go",
+          "start": 274,
+          "end": 304,
+          "notes": [
+            {
+              "lines": "274\u2013285",
+              "text": "Insert the journal header and obtain its ID. This is not a commit; the caller still owns the transaction."
+            },
+            {
+              "lines": "286\u2013293",
+              "text": "Insert each line using that header ID. Any line failure returns an error and rolls back the whole caller transaction."
+            },
+            {
+              "lines": "296\u2013304",
+              "text": "Settle only the named tenant\u2019s open invoice. Requiring one affected row catches a state that was not actually transitioned."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Why check replay before proposal status?",
+          "answer": "A successful earlier post changed status to posted. We must return that completed journal rather than reject the retry for not being open."
+        },
+        {
+          "question": "What happens if settling the invoice fails after the journal insert?",
+          "answer": "The ordinary error makes inTx roll back. The inserted journal header and lines disappear together; there is no partial posting."
+        },
+        {
+          "question": "What if the crash hook returns an error?",
+          "answer": "The transaction has already committed. The caller should retry the same approval; Post finds and returns the existing journal."
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": "Trace and verify: explanation versus consistency",
+      "summary": "One answers \u201cwhat happened?\u201d The other asks \u201cdo these records agree?\u201d",
+      "paragraphs": [
+        "Trace follows evidence links for a tenant and transaction. It includes deliveries, proposals, approvals, journal and associated audit events. It also returns unresolved rejected proposals that could not link to a payment.",
+        "VerifyLedger scans the stored ledger for invariants. It uses SQL checks separate from the posting routine, so it can detect classes of inconsistent output even when posting code appears to succeed. It is not a complete forensic validator of every possible database corruption.",
+        "The verifier checks balance, account directions, amounts, currencies, tenants, exact approved-proposal relationships and both directions of invoice settlement. A balanced journal pointing at a different invoice than the one approved must still be reported as inconsistent.",
+        "There is a documented evidence gap: cross-tenant conflict deliveries are unlinked for privacy, so normal tenant traces cannot retrieve them. A production design should explicitly store the authenticated sending tenant and offer a tenant-scoped route to that evidence.",
+        "Append-only triggers protect ordinary writes. They do not make this a cryptographically tamper-proof audit system. Database privileges, backups, retention, access controls and external audit storage need a separate design."
+      ],
+      "blocks": [
+        {
+          "title": "Trace: tenant-scoped snapshot and unresolved suggestions",
+          "file": "internal/recon/trace.go",
+          "start": 47,
+          "end": 84,
+          "notes": [
+            {
+              "lines": "47\u201355",
+              "text": "Trace returns payments and unresolved proposals separately. A rejected attempt can be traceable without having a valid source payment."
+            },
+            {
+              "lines": "59\u201373",
+              "text": "Open a read snapshot, load only the named tenant\u2019s payments, and build each payment trace."
+            },
+            {
+              "lines": "74\u201383",
+              "text": "Load unlinked proposals filtered by tenant and transaction. Return not_found only when neither kind of evidence exists."
+            }
+          ]
+        },
+        {
+          "title": "Build one payment\u2019s evidence chain",
+          "file": "internal/recon/trace.go",
+          "start": 103,
+          "end": 177,
+          "notes": [
+            {
+              "lines": "104\u2013111",
+              "text": "Start with payment identity and financial facts already loaded in the tenant scope."
+            },
+            {
+              "lines": "113\u2013135",
+              "text": "Load linked deliveries in ID order and preserve their raw payload as JSON. Check both scanning errors and iteration errors."
+            },
+            {
+              "lines": "137\u2013154",
+              "text": "Load proposals and their approvals. Build audit subjects using internal IDs so only decisions connected to these records are included."
+            },
+            {
+              "lines": "156\u2013177",
+              "text": "Attach the posted journal if present, then the associated audit records. Arrays are grouped by record type; this is not one globally timestamp-sorted event stream."
+            }
+          ]
+        },
+        {
+          "title": "Verify the stored result independently",
+          "file": "internal/recon/trace.go",
+          "start": 190,
+          "end": 264,
+          "notes": [
+            {
+              "lines": "190\u2013195",
+              "text": "LedgerReport returns counts and a list of problems. An empty list means the implemented checks found no violation, not that every conceivable corruption is impossible."
+            },
+            {
+              "lines": "199\u2013212",
+              "text": "Run all checks in one read snapshot, so counts and invariants see a consistent database state."
+            },
+            {
+              "lines": "214\u2013234",
+              "text": "Detect unbalanced or wrongly directed lines and mismatched amounts, currencies or tenants."
+            },
+            {
+              "lines": "235\u2013240",
+              "text": "Require the journal to match the exact approved proposal\u2019s payment, invoice and tenant, as well as approval association, fingerprint and posted status."
+            },
+            {
+              "lines": "241\u2013250",
+              "text": "Check both directions of settlement: a journal\u2019s invoice must be settled, and a settled invoice needs exactly one journal."
+            },
+            {
+              "lines": "252\u2013264",
+              "text": "Run each invariant query and append the returned record IDs to the report. This validation is separate from the code that posted the journal."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Is trace the same as verify?",
+          "answer": "No. Trace explains an individual chain. Verify checks specified consistency rules across the database."
+        },
+        {
+          "question": "Can an administrator rewrite this evidence?",
+          "answer": "An administrator with enough database privileges can remove triggers or change files. Append-only application controls are useful, but they are not tamper-proof storage."
+        }
+      ]
+    },
+    {
+      "id": "cli",
+      "title": "The CLI: a small adapter around the service",
+      "summary": "Terminal input enters; JSON and an exit code come out.",
+      "paragraphs": [
+        "main.go parses commands and flags, opens the database, constructs the service, calls the chosen business method and reports a result. Keeping business rules in recon.Service allows a future HTTP adapter to reuse them.",
+        "main calls os.Exit with run\u2019s result. run accepts readers and writers so much of the adapter can be exercised without hard-wiring terminal streams. The crash option intentionally exits after commit without a normal success response.",
+        "Only the outermost CLI should decide how domain errors map to terminal exit codes. Business code returns structured errors and data; it does not print a misleading success line.",
+        "Use a fresh database when reproducing the fixtures. The README\u2019s approval and proposal IDs assume a clean run. On another database, use the actual IDs and fingerprint printed by your commands."
+      ],
+      "blocks": [
+        {
+          "title": "Entry point, flags, database and crash simulation",
+          "file": "cmd/recon/main.go",
+          "start": 26,
+          "end": 95,
+          "notes": [
+            {
+              "lines": "26\u201335",
+              "text": "Exit codes distinguish success, internal failure, invalid input, conflict, rejection, missing data and a simulated crash."
+            },
+            {
+              "lines": "51\u201360",
+              "text": "main passes command arguments without the executable name. run rejects an empty command and separates the command name from its arguments."
+            },
+            {
+              "lines": "62\u201378",
+              "text": "Create the command flag set, register typed values, parse them and reject flags that do not belong to that command."
+            },
+            {
+              "lines": "80\u201385",
+              "text": "Open the database and schedule closing it when run returns."
+            },
+            {
+              "lines": "87\u201395",
+              "text": "Inject an AfterPostCommit function only when requested. os.Exit deliberately bypasses deferred cleanup, resembling abrupt process termination."
+            }
+          ]
+        },
+        {
+          "title": "Dispatch commands without duplicating business rules",
+          "file": "cmd/recon/main.go",
+          "start": 97,
+          "end": 170,
+          "notes": [
+            {
+              "lines": "98\u2013108",
+              "text": "load-invoices reads CSV, parses fixture invoices and delegates the all-or-nothing load to the service."
+            },
+            {
+              "lines": "109\u2013123",
+              "text": "ingest and propose read JSON. A rejected proposal may still be returned with its stored ID and checks so the caller can inspect evidence."
+            },
+            {
+              "lines": "124\u2013139",
+              "text": "approve constructs ApprovalRequest; post uses its approval ID; trace and verify delegate to their service methods."
+            },
+            {
+              "lines": "141\u2013170",
+              "text": "report builds one JSON response, classifies domain errors and returns the appropriate exit code. An unhealthy verify report becomes a failure."
+            }
+          ]
+        },
+        {
+          "title": "Input helpers and terminal contracts",
+          "file": "cmd/recon/main.go",
+          "start": 173,
+          "end": 279,
+          "notes": [
+            {
+              "lines": "173\u2013181",
+              "text": "The command-to-flags map lists exactly which named options each command accepts."
+            },
+            {
+              "lines": "183\u2013201",
+              "text": "Reject unknown commands and options meant for a different command, before opening the database."
+            },
+            {
+              "lines": "202\u2013213",
+              "text": "Require exactly one input file for load-invoices, ingest and propose, and zero positional arguments for the other commands. Flags placed after FILE are no longer silently ignored."
+            },
+            {
+              "lines": "217\u2013237",
+              "text": "onlyOnSuccess drops meaningless zero results on error; exitCodeFor translates domain failure categories into terminal exit codes."
+            },
+            {
+              "lines": "239\u2013250",
+              "text": "A dash reads stdin, otherwise read the named file. The command-level argument checks run before this helper."
+            },
+            {
+              "lines": "252\u2013272",
+              "text": "Read five CSV columns and explicitly parse the integer amount before building invoice values."
+            },
+            {
+              "lines": "274\u2013279",
+              "text": "Choose the configured database path or a local default."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Why not put the matching rules in the CLI switch?",
+          "answer": "The switch should adapt inputs and outputs. Keeping rules in Service makes them reusable, testable and independent of terminal formatting."
+        },
+        {
+          "question": "Is an HTTP API required?",
+          "answer": "No. The brief accepts a local API or CLI. Adding networking and authentication is a future product decision, not necessary exercise scope."
+        }
+      ]
+    },
+    {
+      "id": "tests",
+      "title": "Prove behaviour, not just green output",
+      "summary": "Know exactly what each test establishes and what it does not.",
+      "paragraphs": [
+        "The tests create real SQLite files in temporary directories. Assertions inspect journal rows, lines, balances, invoice status and evidence relationships. They do not merely compare source code strings or mock the database away.",
+        "The happy path checks the journal amounts, account directions, the settled target invoice, unaffected other invoices, and the complete evidence chain. Rejected-path tests compare a before/after ledger snapshot, not only the returned error.",
+        "Duplicate tests distinguish the same event from another event describing the same transaction. They expect evidence to grow while the number of payments and journals remains one.",
+        "The service concurrency test uses separate connection pools and simultaneous goroutines. The CLI concurrency test uses separate OS processes. These exercise database coordination; go test -race separately detects certain Go memory races, not all database correctness errors.",
+        "The service crash test returns an error after commit and reopens the database. The CLI crash test launches a process that exits with code 70 after commit. Replay must return the original journal, leave one settled invoice and keep the ledger balanced.",
+        "Mutation testing means deliberately breaking a guarantee and confirming a relevant test fails. It can expose weak assertions, but do not claim a past mutation run as current evidence without reproducing it. The README\u2019s historical claims and the checks run during this review should be kept distinct.",
+        "A useful test strategy asks: what bad implementation could still pass this assertion? Counting one journal is insufficient if it has wrong lines. Checking balance is insufficient if the wrong invoice settled. Checking an error is insufficient if the ledger still changed."
+      ],
+      "blocks": [
+        {
+          "title": "Happy path: exact result and unaffected neighbours",
+          "file": "internal/recon/recon_test.go",
+          "start": 12,
+          "end": 62,
+          "notes": [
+            {
+              "lines": "13\u201335",
+              "text": "Use a fresh harness, ingest, propose, inspect all checks, approve and confirm the reviewer/fingerprint association."
+            },
+            {
+              "lines": "37\u201350",
+              "text": "Post and assert exact currency, tenant, invoice and both accounting lines. First post must not report replay."
+            },
+            {
+              "lines": "51\u201362",
+              "text": "Check the target invoice settled, the other invoices stayed open and the ledger counts are correct."
+            }
+          ]
+        },
+        {
+          "title": "Concurrent posting: force overlap and inspect outcomes",
+          "file": "internal/recon/recon_test.go",
+          "start": 217,
+          "end": 261,
+          "notes": [
+            {
+              "lines": "217\u2013230",
+              "text": "Prepare one approved payment and separate database-backed services. A start signal aligns competing attempts."
+            },
+            {
+              "lines": "231\u2013250",
+              "text": "Run concurrent posts, collect results and check that they point to one journal. Read the full test for the goroutine synchronisation."
+            },
+            {
+              "lines": "251\u2013261",
+              "text": "Check one financial effect and a healthy ledger after all workers finish. The assertion is about committed outcomes, not just lack of a panic."
+            }
+          ]
+        },
+        {
+          "title": "Crash and restart: durable identity survives memory loss",
+          "file": "internal/recon/recon_test.go",
+          "start": 302,
+          "end": 342,
+          "notes": [
+            {
+              "lines": "302\u2013316",
+              "text": "Inject a failure after posting commit and assert the caller observes it."
+            },
+            {
+              "lines": "317\u2013329",
+              "text": "Reopen the same database with a new service and replay the steps. Memory is gone; durable records must explain the completed operation."
+            },
+            {
+              "lines": "330\u2013342",
+              "text": "Confirm the original journal is returned as a replay and final counts still describe one balanced posting."
+            }
+          ]
+        },
+        {
+          "title": "Changed proposal: old approval cannot follow the new suggestion",
+          "file": "internal/recon/recon_test.go",
+          "start": 415,
+          "end": 447,
+          "notes": [
+            {
+              "lines": "417\u2013426",
+              "text": "Create and approve one proposal, then submit a changed valid suggestion. Verify that the old one becomes superseded."
+            },
+            {
+              "lines": "427\u2013436",
+              "text": "Try using the old approval. Expect refusal and compare the ledger before and after."
+            },
+            {
+              "lines": "438\u2013446",
+              "text": "Approve the replacement separately and post it. Assert that the journal targets inv-2 while inv-1 stayed open. Later subtests in the full file cover rescoring and competing settlement."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Does go test -race prove no double posting?",
+          "answer": "No. It detects certain shared-memory races. Actual SQLite concurrency tests and final ledger assertions establish the exercised posting behaviours."
+        },
+        {
+          "question": "What should every rejected-post test inspect?",
+          "answer": "The expected refusal and the final ledger. No new journal or lines, no changed balances and no unintended invoice settlement."
+        }
+      ]
+    },
+    {
+      "id": "failure-lab",
+      "title": "Walk through the failures yourself",
+      "summary": "Predict the stored state before revealing the answer.",
+      "paragraphs": [
+        "Use these as revision drills. Say the expected outcome, which evidence grows, and which financial records remain unchanged. If you cannot name the deciding query or constraint, return to that chapter.",
+        "Think in three crash windows: before transaction begins, during uncommitted writes, and after commit before response. The last window is why durable identity and replay matter even when all writes are atomic."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "The identical evt-1 arrives three times. What exists?",
+          "answer": "One payment and one accepted event identity, plus three delivery attempts. No journal until approval and posting. Each repeat returns the same PaymentID."
+        },
+        {
+          "question": "evt-2 describes txn-1 with the same amount but a different reference.",
+          "answer": "DuplicateTransaction. Store the new event and delivery linked to the original payment. The payment digest deliberately excludes reference."
+        },
+        {
+          "question": "evt-1 is reused with amount 13000.",
+          "answer": "Visible event_content_changed conflict. Preserve the original source and a conflict delivery. Do not create another payment or change the ledger."
+        },
+        {
+          "question": "A suggestion arrives before its bank event.",
+          "answer": "Store a rejected proposal because payment existence fails. After ingestion, submitting the same suggestion can evaluate fresh; rejected history is not replayed as a live result."
+        },
+        {
+          "question": "tenant-b guesses tenant-a\u2019s transaction ID.",
+          "answer": "The proposal\u2019s tenant-scoped payment lookup cannot load tenant-a\u2019s payment. The suggestion fails without using the other tenant\u2019s financial records."
+        },
+        {
+          "question": "Confidence is 1.0 but the currency is wrong.",
+          "answer": "Reject on currency mismatch. Confidence is not part of evaluateChecks and cannot create approval or posting authority."
+        },
+        {
+          "question": "Two workers post the same approval at the same time.",
+          "answer": "One obtains the write lock and commits. The other then sees the journal and returns replay. UNIQUE payment_id is a second defence against a second financial effect."
+        },
+        {
+          "question": "The process dies after inserting the header but before commit.",
+          "answer": "The uncommitted transaction is recovered/rolled back by SQLite. Retry can perform the complete posting; there must be no durable half-entry."
+        },
+        {
+          "question": "The process dies after commit but before reporting success.",
+          "answer": "Retry the same approval. The existing-journal lookup returns the original entry. Do not create a new approval just to recover an uncertain response."
+        },
+        {
+          "question": "A new proposal selects inv-2 after inv-1 was approved.",
+          "answer": "The new valid proposal supersedes the old one. Posting the old approval fails the open-state check. The replacement requires its own approval."
+        },
+        {
+          "question": "A different payment settles the invoice after approval.",
+          "answer": "Post reloads current facts inside its transaction. invoice_open fails and the refusal is audited with no ledger change for this payment."
+        },
+        {
+          "question": "A command times out waiting for the database lock.",
+          "answer": "The busy timeout can return an internal error. The CLI has no automatic retry loop. Retrying the same operation is safe, but the caller must choose to do it."
+        }
+      ]
+    },
+    {
+      "id": "tradeoffs",
+      "title": "Defend the choices and know the limits",
+      "summary": "Correct judgement includes saying where the exercise stops.",
+      "paragraphs": [
+        "SQLite buys simple local operation and strong transactions at the cost of one writer at a time. Moving to PostgreSQL would require explicit concurrency design. Locking only a payment is not automatically sufficient when two different payments target the same invoice: protect that competing settlement too.",
+        "Immutable proposals make approval history simpler. A replacement is explicit and stale approval cannot silently follow it. The cost is more historical rows. Including confidence in the content digest also means a harmless rescore forces reapproval.",
+        "Provider-scoped transaction IDs prevent tenant misrouting from duplicating a payment under the exercise\u2019s assumptions. Production contracts may scope IDs to a bank account or provider connection. Model that identity from documented provider guarantees rather than assuming global uniqueness.",
+        "Storing payloads and delivery attempts helps explanation and replay. In production it also creates privacy, retention and access-control obligations. Source evidence can contain personal information. More logs are not automatically better.",
+        "The local CLI is trusted by its operator. Tenant-scoped SQL is useful, but caller-supplied tenant and reviewer values are not a production security boundary. Authentication, per-tenant authorisation and separation of duties would block release.",
+        "There is no reversal path. A mistaken posted entry should be corrected by a linked reversing entry, not edited or deleted. Closed accounting periods would need their own rules.",
+        "An external accounting integration introduces another commit boundary. An outbox written with the local journal can preserve a delivery job. Exactly-once external effect still depends on the destination\u2019s idempotency or reliable lookup guarantees. A lookup before retry alone can race or be inconclusive.",
+        "For real model evaluation, use accountant-reviewed examples, measure wrong-match precision, missed matches and review effort, include ambiguous and adversarial cases, and run shadow mode before allowing real effects. A model proposal passing technical checks still needs evidence of the intended invoice.",
+        "Release blockers include any duplicate or unauthorised financial effect, cross-tenant access, broken ledger invariants, inadequate recovery evidence, unauthenticated approval and insufficient representative evaluation. A passing exercise test suite is not production certification.",
+        "Be exact about AI assistance. The repository README describes historical work and verification. Only repeat claims you can personally explain and substantiate. Learning the code now is part of preparing an honest handover; do not pretend the understanding came earlier."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "What would you improve first for real users?",
+          "answer": "Authenticated approval and tenant authorisation, then safe correction/reversal and accounting controls. Add migration and operational recovery discipline before treating the local exercise as a product."
+        },
+        {
+          "question": "Does an outbox guarantee exactly-once posting to an external API?",
+          "answer": "No. It reliably records an intent to send. The destination must provide a usable idempotency or reconciliation contract to resolve uncertain outcomes safely."
+        }
+      ]
+    },
+    {
+      "id": "revision",
+      "title": "Your revision route",
+      "summary": "Understand it, predict it, then change it.",
+      "paragraphs": [
+        "Pass 1: explain the \u00a3120 story aloud without code. Name the difference between event, payment, proposal, approval and journal. Explain why a balanced journal can still be wrong.",
+        "Pass 2: read model.go, parse.go and schema.sql. For every field ask who supplied it, who may change it and what enforces that rule. For every UNIQUE constraint give one concrete failure it prevents.",
+        "Pass 3: trace Ingest, Propose, Approve and Post with one fixture. For each database write identify the transaction that owns it. Point to the exact return that handles each failure.",
+        "Pass 4: work the failure drills without revealing the answers. Then read the corresponding test. Predict which assertion would fail if the relevant guard were deleted.",
+        "Pass 5: explain Post from memory: approval \u2192 existing result \u2192 content \u2192 live proposal \u2192 current facts \u2192 balanced lines \u2192 atomic writes \u2192 commit \u2192 uncertain response. Then open the code and check your explanation.",
+        "Pass 6: practise a small change in a disposable database, such as an approval-expiry policy or another mismatched-currency fixture. First describe the expected behaviour and test. Then implement it and inspect the final ledger. Do not add this scope to the hiring exercise unless you choose to.",
+        "A useful opening for a walkthrough: \u201cI separated delivery identity from payment identity. Suggestions pass deterministic checks and a person approves immutable content. Posting rechecks current state and commits the journal and invoice settlement together. An uncertain response is recovered by retrying the same approval.\u201d",
+        "Keep the explanation grounded. You should be able to answer where the lock starts, what commits, what rolls back, why a replay is safe, what the fingerprint proves, and what it does not prove."
+      ],
+      "blocks": [],
+      "questions": [
+        {
+          "question": "Can you describe the system in one sentence?",
+          "answer": "A local reconciliation workflow that records one payment once, validates a proposed invoice match, requires content-bound human approval and atomically posts a traceable balanced journal."
+        },
+        {
+          "question": "What is the strongest sign you understand the code?",
+          "answer": "You can predict stored state after a new failure scenario, locate the enforcing code and constraint, and write a behaviour test before changing the implementation."
+        }
+      ]
+    },
+    {
+      "id": "review-update",
+      "title": "Why the review changes matter",
+      "summary": "Learn the failure, the fix, and the test that would catch it again.",
+      "paragraphs": [
+        "The current source includes four focused improvements from review. The tests were first run against the previous implementation and failed on these behaviours. Fixing the behaviour, rather than weakening assertions, made them pass.",
+        "First, rejected messages still establish event identity. Previously, a new event ID that conflicted with an existing transaction appeared only in delivery history. Reusing that ID with changed financial content could become a new accepted payment because the identity lookup searched only accepted bank_events. The lookup now reads the first delivery. An index keeps that lookup efficient, and an explicit accepted flag prevents a refused message from masquerading as a successful duplicate.",
+        "Second, repeating approval now checks whether the decision is still usable. Previously, finding an approval returned success before checking supersession or current invoice state. Posting still protected the ledger, but the approval response was misleading. Eligibility is now checked first. Posted proposals retain a narrow recovery exception because their invoice is expected to be settled already.",
+        "Third, the independent verifier now checks that the journal uses the payment, invoice and tenant from the approved proposal, and that the journal\u2019s invoice is settled. Previously, equal-value invoices or payments could be swapped in directly inserted test data without the verifier noticing. This was a gap in the detective control, not evidence that the normal posting path performed such a swap.",
+        "Fourth, the CLI now validates positional arguments before opening a database. The Go flag parser stops at the first positional value; a flag after FILE could previously be silently ignored while ingestion succeeded. Missing input files now fail as usage errors, and commands that accept no positional arguments reject extras.",
+        "The package comment also states the precise idempotency promise: no duplicate financial effects. Delivery attempts and rejected suggestions remain evidence. The fixes keep the four-step design, transaction boundaries and accounting scope intact.",
+        "The race-enabled suite, vet and a compiled-CLI fixture walkthrough passed after the changes. The walkthrough included a process exiting after commit, a new process recovering the same journal, and a changed event ID payload being refused after an earlier conflict. Independent reviewers found no remaining actionable issue in the final Helix diff. Those checks support these exercised behaviours; the production gaps in the trade-off chapter still apply."
+      ],
+      "blocks": [
+        {
+          "title": "Prove a refused event keeps its identity after restart",
+          "file": "internal/recon/regression_test.go",
+          "start": 11,
+          "end": 39,
+          "notes": [
+            {
+              "lines": "12\u201319",
+              "text": "Start with one posted payment. Submit a new event ID with conflicting financial facts twice; both attempts must remain transaction conflicts."
+            },
+            {
+              "lines": "20",
+              "text": "Close and reopen the same database. This proves the identity rule depends on persistent evidence rather than an in-memory cache."
+            },
+            {
+              "lines": "22\u201326",
+              "text": "Change that refused event\u2019s transaction, then its tenant. Both uses must be event conflicts, and the foreign-tenant error must not reveal the original facts."
+            },
+            {
+              "lines": "27\u201338",
+              "text": "Assert one payment, one accepted event, four refused deliveries and exactly the same ledger as before."
+            }
+          ]
+        },
+        {
+          "title": "Prove stale reapproval is a refusal, not a successful replay",
+          "file": "internal/recon/regression_test.go",
+          "start": 41,
+          "end": 69,
+          "notes": [
+            {
+              "lines": "42\u201355",
+              "text": "Test two causes of staleness: a replacement proposal and another payment settling the invoice."
+            },
+            {
+              "lines": "56\u201360",
+              "text": "Repeat the original approval request. Expect proposal_not_open or checks_failed, rather than replayed success."
+            },
+            {
+              "lines": "61\u201365",
+              "text": "Check the ledger is unchanged and the refusal has its own audit evidence."
+            }
+          ]
+        },
+        {
+          "title": "Test the verifier without trusting the posting function",
+          "file": "internal/recon/regression_test.go",
+          "start": 71,
+          "end": 124,
+          "notes": [
+            {
+              "lines": "72\u201382",
+              "text": "Define three independently wrong results: another invoice, another payment, or an invoice still open."
+            },
+            {
+              "lines": "85\u201394",
+              "text": "Create valid source and approval records, then directly seed a broken journal header. This intentionally bypasses Service.Post so the verifier is tested separately."
+            },
+            {
+              "lines": "95\u2013114",
+              "text": "Add balanced lines and the selected statuses. Amounts and currencies still match, so balance alone cannot expose these errors."
+            },
+            {
+              "lines": "115\u2013122",
+              "text": "VerifyLedger must report the precise broken relationship rather than return an empty problems list."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Why is a rejected event still an identity fact?",
+          "answer": "Acceptance decides whether its financial content may enter the payment workflow. Receipt establishes that this event ID has already asserted particular content. Rejecting the first does not erase the second."
+        },
+        {
+          "question": "Why not call an identical rejected event a successful duplicate?",
+          "answer": "That would turn a refusal into apparent acceptance. The code must remember both identity and outcome: the same refused assertion stays a refusal."
+        },
+        {
+          "question": "Why can a posted proposal replay approval when an open stale one cannot?",
+          "answer": "A posted proposal is returning a completed historical result during recovery. An unposted approval request must still be usable. Current checks would naturally reject a posted invoice as settled, so recovery has an explicit exception."
+        },
+        {
+          "question": "Why directly insert broken journals in verifier tests?",
+          "answer": "Using only Service.Post could mean the verifier never sees invalid data. Direct insertion asks whether its independent checks actually detect wrong relationships even when the amounts balance."
+        },
+        {
+          "question": "Why check CLI arguments before db.Open?",
+          "answer": "A usage mistake should not create or change a database. It also prevents ignored trailing arguments from producing a misleading successful financial operation."
+        }
+      ]
+    }
+  ]
+}

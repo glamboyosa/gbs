@@ -1,0 +1,1005 @@
+---
+import CodePanel from "../components/reconcile/CodePanel.astro";
+import guide from "../data/reconcile/guide.json";
+import source from "../data/reconcile/source.json";
+
+export const prerender = true;
+const sources: Record<string, string> = source;
+const { chapters, commit } = guide;
+const snippet = (file: string, start: number, end: number) =>
+  sources[file]
+    .split("\n")
+    .slice(start - 1, end)
+    .join("\n");
+const codeLessons = chapters.reduce(
+  (sum, chapter) => sum + chapter.blocks.length,
+  0,
+);
+const questions = chapters.reduce(
+  (sum, chapter) => sum + chapter.questions.length,
+  0,
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f3ec" />
+    <meta
+      name="description"
+      content="A deep, plain-English study guide to a Go and SQLite bank-reconciliation service. Read the code, understand the controls, and practise the failure cases."
+    />
+    <meta name="robots" content="noindex" />
+    <title>Reconcile · GBS field notes</title>
+  </head>
+  <body>
+    <a class="skip" href="#brief">
+      Skip to the guide
+    </a>
+    <header class="topbar">
+      <a href="/" class="wordmark">
+        GBS<span> / field notes</span>
+      </a>
+      <div class="header-right">
+        <span id="progress" role="status">
+          0 / {chapters.length} read
+        </span>
+        <a
+          href="https://github.com/glamboyosa/helix-recon"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Repository ↗
+        </a>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div id="progress-fill"></div>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="outline">
+        <details open id="chapter-menu">
+          <summary>
+            Contents <span>{chapters.length} chapters</span>
+          </summary>
+          <nav aria-label="Chapters">
+            {chapters.map((chapter, index) => (
+              <a href={`#${chapter.id}`} data-nav={chapter.id}>
+                <span class="chapter-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                {chapter.title}
+                <span class="read-dot" aria-hidden="true"></span>
+              </a>
+            ))}
+            <a href="#source-library">
+              <span class="chapter-number">↗</span>Full source library
+            </a>
+          </nav>
+        </details>
+        <p class="outline-note">
+          Read a little. Explain it aloud.
+          <br />
+          Come back to what feels uncertain.
+        </p>
+      </aside>
+
+      <main>
+        <section class="hero" aria-labelledby="page-title">
+          <p class="eyebrow">A code-reading companion · Go + SQLite</p>
+          <h1 id="page-title">
+            Reconcile<span>.</span>
+          </h1>
+          <p class="dek">
+            From “the bank sent a message” to “the books are right”. Understand
+            every decision along the way.
+          </p>
+          <p class="intro">
+            Start with the shopkeeper story. Follow the real source. Test your
+            understanding before you reveal the answers. Built for slow reading,
+            especially on your phone.
+          </p>
+          <div class="guide-stats">
+            <span>{chapters.length} chapters</span>
+            <span>{codeLessons} code lessons</span>
+            <span>{questions} self-checks</span>
+          </div>
+          <div class="start-links">
+            <a class="primary" href="#brief">
+              Start from the beginning ↓
+            </a>
+            <a href="#post">Go to the posting function →</a>
+          </div>
+          <p class="snapshot">
+            Source snapshot{" "}
+            <a
+              href={`https://github.com/glamboyosa/helix-recon/tree/${commit}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {commit.slice(0, 7)} ↗
+            </a>
+            . Numbered snippets link to this version. This guide explains the
+            implementation; it is not a production certification.
+          </p>
+        </section>
+
+        <section class="story" aria-label="The whole idea">
+          <p class="eyebrow">The whole idea</p>
+          <p class="story-sentence">
+            One payment.
+            <br />
+            One human decision.
+            <br />
+            <em>One financial effect.</em>
+          </p>
+          <ol class="flow">
+            <li>
+              <b>Ingest</b>
+              <span>Keep the bank’s evidence.</span>
+            </li>
+            <li>
+              <b>Propose</b>
+              <span>Check the suggested match.</span>
+            </li>
+            <li>
+              <b>Approve</b>
+              <span>A person accepts exact content.</span>
+            </li>
+            <li>
+              <b>Post</b>
+              <span>Write the books together.</span>
+            </li>
+          </ol>
+          <p class="story-foot">
+            Messages can repeat. Suggestions can change. The ledger must remain
+            correct.
+          </p>
+        </section>
+
+        {chapters.map((chapter, index) => (
+          <article id={chapter.id} class="chapter" data-chapter={chapter.id}>
+            <header class="chapter-heading">
+              <p class="eyebrow">
+                Chapter {String(index + 1).padStart(2, "0")} / {chapters.length}
+              </p>
+              <h2>{chapter.title}</h2>
+              <p class="chapter-summary">{chapter.summary}</p>
+            </header>
+            <div class="prose">
+              {chapter.paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+            {chapter.id === "accounting" && (
+              <div class="accounting-table">
+                <table>
+                  <caption>The journal for a £120 incoming payment</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Account</th>
+                      <th scope="col">Debit</th>
+                      <th scope="col">Credit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Bank</th>
+                      <td>£120</td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Accounts Receivable</th>
+                      <td>—</td>
+                      <td>£120</td>
+                    </tr>
+                    <tr class="total">
+                      <th scope="row">Total</th>
+                      <td>£120</td>
+                      <td>£120</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {chapter.blocks.map((block, blockIndex) => (
+              <section
+                class="code-lesson"
+                aria-labelledby={`${chapter.id}-code-${blockIndex}`}
+              >
+                <h3 id={`${chapter.id}-code-${blockIndex}`}>{block.title}</h3>
+                <CodePanel
+                  code={snippet(block.file, block.start, block.end)}
+                  file={block.file}
+                  start={block.start}
+                  commit={commit}
+                />
+                <dl class="line-notes">
+                  {block.notes.map((note) => (
+                    <div>
+                      <dt>Line {note.lines}</dt>
+                      <dd>{note.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ))}
+            {chapter.questions.length > 0 && (
+              <section
+                class="self-check"
+                aria-label={`Self-check for ${chapter.title}`}
+              >
+                <p class="eyebrow">Pause & explain</p>
+                <p class="check-instruction">
+                  Try your answer aloud, then open the explanation.
+                </p>
+                {chapter.questions.map((question) => (
+                  <details>
+                    <summary>{question.question}</summary>
+                    <p>{question.answer}</p>
+                  </details>
+                ))}
+              </section>
+            )}
+            <footer class="chapter-footer">
+              <button
+                type="button"
+                data-complete={chapter.id}
+                aria-pressed="false"
+              >
+                Mark chapter as read
+              </button>
+              {chapters[index + 1] ? (
+                <a href={`#${chapters[index + 1].id}`}>Next chapter ↓</a>
+              ) : (
+                <a href="#source-library">Read the full files ↓</a>
+              )}
+            </footer>
+          </article>
+        ))}
+
+        <section id="source-library" class="chapter">
+          <header class="chapter-heading">
+            <p class="eyebrow">Reference shelf</p>
+            <h2>The full source.</h2>
+            <p class="chapter-summary">
+              Read beyond the excerpts. Every implementation file and both test
+              layers are here.
+            </p>
+          </header>
+          <p>
+            These are read-only snapshots, not an executable editor. Open a
+            file, wrap long lines, copy a section, or follow its pinned GitHub
+            link. The source includes fictional exercise fixtures only.
+          </p>
+          <div class="source-library">
+            {Object.entries(sources).map(([file, code]) => (
+              <details>
+                <summary>
+                  {file}
+                  <span>{code.trimEnd().split("\n").length} lines</span>
+                </summary>
+                <CodePanel code={code} file={file} commit={commit} />
+              </details>
+            ))}
+          </div>
+        </section>
+        <footer class="page-footer">
+          <a href="#page-title">Back to the beginning ↑</a>
+          <p>
+            Progress stays in this browser. No account or cross-device sync.{" "}
+            <span id="storage-note" role="status"></span>
+          </p>
+          <p>GBS · Reconcile · A fictional, local coding exercise.</p>
+        </footer>
+      </main>
+    </div>
+    <script>
+      const key = "gbs-reconcile-read-v1";
+      const ids = new Set(
+        Array.from(
+          document.querySelectorAll<HTMLElement>("[data-chapter]"),
+          (element) => element.dataset.chapter!,
+        ),
+      );
+      const parseSavedChapters = (raw: string | null): string[] => {
+        if (raw === null) return [];
+        try {
+          const saved: unknown = JSON.parse(raw);
+          return Array.isArray(saved)
+            ? saved.filter(
+                (id): id is string => typeof id === "string" && ids.has(id),
+              )
+            : [];
+        } catch {
+          return [];
+        }
+      };
+      let completed = new Set<string>();
+      let storageAvailable = true;
+      try {
+        completed = new Set(parseSavedChapters(localStorage.getItem(key)));
+      } catch {
+        storageAvailable = false;
+      }
+      const renderProgress = () => {
+        document.querySelector("#progress")!.textContent =
+          `${completed.size} / ${ids.size} read`;
+        (document.querySelector("#progress-fill") as HTMLElement).style.width =
+          `${(completed.size / ids.size) * 100}%`;
+        document
+          .querySelectorAll<HTMLButtonElement>("[data-complete]")
+          .forEach((button) => {
+            const read = completed.has(button.dataset.complete!);
+            button.setAttribute("aria-pressed", String(read));
+            button.textContent = read
+              ? "Read ✓ · mark unread"
+              : "Mark chapter as read";
+          });
+        document
+          .querySelectorAll<HTMLElement>("[data-nav]")
+          .forEach((link) =>
+            link.classList.toggle("is-read", completed.has(link.dataset.nav!)),
+          );
+        document.querySelector("#storage-note")!.textContent = storageAvailable
+          ? ""
+          : "Saving is unavailable; progress lasts for this visit.";
+      };
+      renderProgress();
+      const menu = document.querySelector<HTMLDetailsElement>("#chapter-menu")!;
+      const narrow = window.matchMedia("(max-width: 900px)");
+      const updateMenu = () => {
+        menu.open = !narrow.matches;
+      };
+      updateMenu();
+      narrow.addEventListener("change", updateMenu);
+      document.addEventListener("click", async (event) => {
+        if (!(event.target instanceof Element)) return;
+        const jump = event.target.closest("[data-nav]");
+        if (jump && narrow.matches) menu.open = false;
+        const complete =
+          event.target.closest<HTMLButtonElement>("[data-complete]");
+        if (complete) {
+          const id = complete.dataset.complete!;
+          if (completed.has(id)) completed.delete(id);
+          else completed.add(id);
+          try {
+            localStorage.setItem(key, JSON.stringify([...completed]));
+          } catch {
+            storageAvailable = false;
+          }
+          renderProgress();
+        }
+        const wrap = event.target.closest<HTMLButtonElement>("[data-wrap]");
+        if (wrap) {
+          const wrapped = wrap
+            .closest(".code-panel")!
+            .classList.toggle("wrapped");
+          wrap.setAttribute("aria-pressed", String(wrapped));
+        }
+        const copy = event.target.closest<HTMLButtonElement>("[data-copy]");
+        if (copy) {
+          const panel = copy.closest(".code-panel")!;
+          const status = panel.querySelector<HTMLElement>(".copy-status")!;
+          try {
+            await navigator.clipboard.writeText(
+              panel.querySelector("code")!.textContent || "",
+            );
+            copy.textContent = "Copied ✓";
+            status.textContent = "Code copied to clipboard.";
+          } catch {
+            copy.textContent = "Select code";
+            status.textContent =
+              "Copy unavailable. Select the code to copy it manually.";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+  :global(html) {
+    background: #f5f3ec;
+    color: #22362c;
+    scroll-padding-top: 140px;
+  }
+  :global(body) {
+    margin: 0;
+    font:
+      17px/1.75 ui-sans-serif,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  :global(a) {
+    color: inherit;
+    text-underline-offset: 4px;
+  }
+  :global(button),
+  :global(summary) {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  :global(a:focus-visible),
+  :global(button:focus-visible),
+  :global(summary:focus-visible) {
+    outline: 2px solid #26362c;
+    outline-offset: 4px;
+  }
+  :global(h1),
+  :global(h2),
+  :global(h3) {
+    text-wrap: balance;
+  }
+  :global([id]) {
+    scroll-margin-top: 140px;
+  }
+  .skip {
+    position: fixed;
+    top: -100px;
+    left: 16px;
+    padding: 12px;
+    background: white;
+    z-index: 3;
+  }
+  .skip:focus {
+    top: 12px;
+  }
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 68px;
+    padding: 8px max(24px, calc((100vw - 1380px) / 2));
+    background: #f5f3ec;
+    border-bottom: 1px solid #d9ded4;
+  }
+  .wordmark {
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.04em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .wordmark span {
+    font-size: 12px;
+    margin-left: 10px;
+    color: #5d6b61;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  .header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 12px;
+  }
+  .header-right a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  #progress {
+    font-variant-numeric: tabular-nums;
+    color: #5d6b61;
+  }
+  .progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 3px;
+    pointer-events: none;
+  }
+  #progress-fill {
+    height: 100%;
+    width: 0;
+    background: #386747;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 820px);
+    gap: 72px;
+    max-width: 1270px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+  .outline {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    max-height: calc(100dvh - 125px);
+    overflow: auto;
+    padding-bottom: 16px;
+    margin-top: 64px;
+    scrollbar-width: thin;
+  }
+  .outline summary {
+    font:
+      12px/1.5 ui-monospace,
+      monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .outline summary > span {
+    float: right;
+    font-size: 10px;
+    letter-spacing: 0;
+    color: #5d6b61;
+  }
+  nav {
+    display: grid;
+    gap: 3px;
+    padding: 12px 0;
+  }
+  nav a {
+    display: grid;
+    grid-template-columns: 23px 1fr 6px;
+    gap: 8px;
+    align-items: start;
+    min-height: 44px;
+    padding: 9px 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .chapter-number {
+    font:
+      11px/1.8 ui-monospace,
+      monospace;
+    color: #5d6b61;
+    font-variant-numeric: tabular-nums;
+  }
+  .read-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-top: 7px;
+  }
+  .is-read .read-dot {
+    background: #386747;
+  }
+  .outline-note {
+    font-size: 11px;
+    color: #5d6b61;
+    padding-top: 14px;
+    border-top: 1px solid #d9ded4;
+  }
+  main {
+    min-width: 0;
+  }
+  .hero {
+    padding: 76px 0 52px;
+  }
+  .eyebrow {
+    font:
+      11px/1.6 ui-monospace,
+      monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #5d6b61;
+  }
+  h1 {
+    margin: 14px 0 22px;
+    font:
+      400 clamp(64px, 8vw, 106px)/1 Georgia,
+      "Times New Roman",
+      serif;
+    letter-spacing: -0.065em;
+  }
+  h1 span {
+    color: #759675;
+  }
+  .dek {
+    max-width: 640px;
+    font:
+      26px/1.4 Georgia,
+      serif;
+    letter-spacing: -0.02em;
+  }
+  .intro {
+    max-width: 620px;
+    color: #5d6b61;
+    font-size: 15px;
+  }
+  .guide-stats {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-top: 26px;
+    font:
+      11px/1.6 ui-monospace,
+      monospace;
+    color: #5d6b61;
+  }
+  .start-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 26px 0 22px;
+    font-size: 12px;
+  }
+  .start-links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .primary {
+    padding: 10px 16px;
+    background: #263e2e;
+    color: #f5f3ec;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+  .snapshot {
+    font-size: 11px;
+    line-height: 1.8;
+    color: #5d6b61;
+    max-width: 600px;
+  }
+  .story {
+    padding: 30px;
+    border: 1px solid #ccd7c9;
+    background: #eaf0e5;
+    border-radius: 12px;
+  }
+  .story-sentence {
+    margin: 24px 0;
+    font:
+      33px/1.3 Georgia,
+      serif;
+    letter-spacing: -0.03em;
+  }
+  .story-sentence em {
+    color: #3b6544;
+  }
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    list-style: none;
+    padding: 24px 0 0;
+    border-top: 1px solid #ccd7c9;
+  }
+  .flow b {
+    display: block;
+    font-size: 14px;
+  }
+  .flow span {
+    display: block;
+    font-size: 12px;
+    color: #4d6352;
+    margin-top: 5px;
+  }
+  .story-foot {
+    font-size: 12px;
+    color: #4d6352;
+    margin-bottom: 0;
+  }
+  .chapter {
+    padding: 64px 0 42px;
+    border-bottom: 1px solid #d9ded4;
+  }
+  .chapter-heading {
+    margin-bottom: 28px;
+  }
+  h2 {
+    font:
+      400 38px/1.18 Georgia,
+      serif;
+    letter-spacing: -0.035em;
+    margin: 14px 0;
+  }
+  .chapter-summary {
+    font-size: 15px;
+    color: #5d6b61;
+  }
+  .prose {
+    max-width: 710px;
+  }
+  .prose p {
+    margin: 0 0 22px;
+  }
+  .code-lesson {
+    margin: 38px 0;
+    min-width: 0;
+  }
+  h3 {
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+  .line-notes {
+    margin: 18px 0 0;
+  }
+  .line-notes > div {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e1e3db;
+  }
+  dt {
+    color: #476b4e;
+    font:
+      11px/1.8 ui-monospace,
+      monospace;
+    padding-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  dd {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .self-check {
+    margin: 34px 0 24px;
+    padding: 22px 24px;
+    border: 1px solid #d9ded4;
+    border-radius: 10px;
+    background: #faf9f5;
+  }
+  .check-instruction {
+    font-size: 12px;
+    color: #5d6b61;
+    margin: 8px 0 16px;
+  }
+  .self-check details {
+    border-top: 1px solid #d9ded4;
+  }
+  .self-check summary {
+    cursor: pointer;
+    min-height: 48px;
+    padding: 13px 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .self-check details > p {
+    font-size: 14px;
+    margin: 0 0 18px;
+    color: #4d6352;
+  }
+  .chapter-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+    font-size: 12px;
+  }
+  .chapter-footer button {
+    border: 1px solid #bcc9b8;
+    background: transparent;
+    color: #263e2e;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font: inherit;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .chapter-footer button[aria-pressed="true"] {
+    background: #e4ecde;
+  }
+  .chapter-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .accounting-table {
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  caption {
+    text-align: left;
+    font-size: 12px;
+    color: #5d6b61;
+    margin-bottom: 10px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 12px 8px;
+    border-bottom: 1px solid #d9ded4;
+  }
+  td {
+    font-variant-numeric: tabular-nums;
+  }
+  .total {
+    background: #eaf0e5;
+  }
+  .source-library > details {
+    border-top: 1px solid #d9ded4;
+    padding-bottom: 12px;
+  }
+  .source-library > details > summary {
+    min-height: 54px;
+    padding: 14px 0;
+    font:
+      12px/1.8 ui-monospace,
+      monospace;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  .source-library summary span {
+    display: block;
+    padding-left: 16px;
+    font-size: 10px;
+    color: #5d6b61;
+  }
+  .page-footer {
+    font-size: 12px;
+    color: #5d6b61;
+    padding: 36px 0 calc(48px + env(safe-area-inset-bottom));
+  }
+  .page-footer > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  @media (hover: hover) {
+    nav a:hover {
+      background: #e9ede3;
+    }
+    .chapter-footer button:hover {
+      background: #e4ecde;
+    }
+  }
+  @media (max-width: 1100px) {
+    .shell {
+      gap: 36px;
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 900px) {
+    .shell {
+      display: block;
+      padding: 0 22px;
+      max-width: 800px;
+    }
+    .outline {
+      position: sticky;
+      top: 68px;
+      z-index: 1;
+      margin: 0 -22px;
+      padding: 0 22px;
+      max-height: none;
+      overflow: visible;
+      background: #f5f3ec;
+      border-bottom: 1px solid #d9ded4;
+    }
+    .outline summary {
+      display: list-item;
+      padding: 13px 0;
+    }
+    .outline nav {
+      max-height: 55dvh;
+      overflow: auto;
+    }
+    .outline-note {
+      display: none;
+    }
+    nav a {
+      font-size: 13px;
+    }
+    .hero {
+      padding-top: 42px;
+    }
+    .topbar {
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+  }
+  @media (max-width: 540px) {
+    :global(body) {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .topbar {
+      gap: 8px;
+    }
+    .wordmark span {
+      display: none;
+    }
+    .header-right {
+      gap: 14px;
+      font-size: 11px;
+    }
+    .hero {
+      padding-bottom: 34px;
+    }
+    .eyebrow {
+      font-size: 10px;
+    }
+    .dek {
+      font-size: 24px;
+    }
+    .guide-stats {
+      gap: 12px;
+      font-size: 10px;
+    }
+    .start-links {
+      align-items: start;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .story {
+      padding: 24px 20px;
+    }
+    .story-sentence {
+      font-size: 29px;
+    }
+    .flow {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .chapter {
+      padding-top: 44px;
+    }
+    h2 {
+      font-size: 31px;
+    }
+    h3 {
+      font-size: 17px;
+    }
+    .line-notes > div {
+      display: block;
+      padding: 14px 0;
+    }
+    dt {
+      margin-bottom: 5px;
+    }
+    .self-check {
+      padding: 20px 16px;
+    }
+    th,
+    td {
+      padding: 10px 5px;
+      font-size: 12px;
+    }
+  }
+  @media print {
+    .topbar,
+    .outline,
+    .chapter-footer,
+    .start-links,
+    .source-library,
+    script {
+      display: none;
+    }
+    .shell {
+      display: block;
+    }
+    .chapter {
+      break-before: page;
+    }
+    .hero {
+      padding-top: 0;
+    }
+  }
+</style>

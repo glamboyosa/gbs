@@ -1,0 +1,231 @@
+---
+import { Code } from "astro:components";
+
+interface Props {
+  code: string;
+  file: string;
+  start?: number;
+  commit: string;
+}
+
+const { code, file, start = 1, commit } = Astro.props;
+const end = start + code.trimEnd().split("\n").length - 1;
+const url = `https://github.com/glamboyosa/helix-recon/blob/${commit}/${file}#L${start}-L${end}`;
+---
+
+<div class="code-panel wrapped" style={`--first-line: ${start - 1}`}>
+  <div class="code-bar">
+    <span class="file-name">{file}</span>
+    <span class="code-range">
+      L{start}–{end}
+    </span>
+  </div>
+  <div class="code-actions">
+    <span class="language">
+      {file.endsWith(".sql") ? "SQL" : "GO"} · READ ONLY
+    </span>
+    <div>
+      <button
+        type="button"
+        data-wrap
+        aria-pressed="true"
+        aria-label={`Wrap lines in ${file}, line ${start}`}
+      >
+        Wrap
+      </button>
+      <button
+        type="button"
+        data-copy
+        aria-label={`Copy ${file}, line ${start} snippet`}
+      >
+        Copy
+      </button>
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`View ${file}, lines ${start} to ${end} on GitHub (new tab)`}
+      >
+        Source ↗
+      </a>
+    </div>
+  </div>
+  <div
+    class="code-scroll"
+    tabindex="0"
+    role="region"
+    aria-label={`${file}, lines ${start} to ${end}`}
+  >
+    <Code
+      code={code.trimEnd()}
+      lang={file.endsWith(".sql") ? "sql" : "go"}
+      theme="github-dark-high-contrast"
+    />
+  </div>
+  <span class="copy-status sr-only" role="status"></span>
+</div>
+
+<style>
+  .code-panel {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #303c39;
+    border-radius: 12px;
+    background: #111b18;
+    color: #e2e9e5;
+  }
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px 4px;
+    font:
+      12px/1.5 ui-monospace,
+      monospace;
+  }
+  .file-name {
+    overflow-wrap: anywhere;
+  }
+  .code-range {
+    flex-shrink: 0;
+    color: #b3c3b9;
+    font-variant-numeric: tabular-nums;
+  }
+  .code-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px 0 16px;
+    border-bottom: 1px solid #303c39;
+  }
+  .code-actions > div {
+    display: flex;
+  }
+  .language {
+    font:
+      10px/1.5 ui-monospace,
+      monospace;
+    letter-spacing: 0.06em;
+    color: #a4b5ab;
+  }
+  button,
+  a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 0;
+    background: none;
+    color: #e2e9e5;
+    font:
+      12px/1 ui-sans-serif,
+      sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  button[aria-pressed="true"] {
+    color: #bde7c9;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid white;
+    outline-offset: -3px;
+    border-radius: 4px;
+  }
+  .code-scroll {
+    max-height: 31rem;
+    overflow: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-color: #60766a #111b18;
+    scrollbar-width: thin;
+  }
+  .code-scroll:focus-visible {
+    outline: 2px solid white;
+    outline-offset: -3px;
+  }
+  .code-scroll :global(pre) {
+    margin: 0;
+    padding: 18px 16px 18px 0;
+    background: #111b18 !important;
+    font:
+      13px/1.8 ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Consolas,
+      monospace;
+    tab-size: 2;
+    counter-reset: code-line var(--first-line);
+  }
+  .code-scroll :global(code) {
+    display: block;
+    min-width: max-content;
+  }
+  .code-scroll :global(.line) {
+    display: inline-block;
+    width: 100%;
+    min-height: 1.8em;
+    padding-left: 4.3em;
+    position: relative;
+    counter-increment: code-line;
+  }
+  .code-scroll :global(.line)::before {
+    content: counter(code-line);
+    position: absolute;
+    left: 0;
+    width: 3.3em;
+    color: #93a39a;
+    text-align: right;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .wrapped .code-scroll :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .wrapped .code-scroll :global(code) {
+    min-width: 0;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    button:hover,
+    a:hover {
+      background: #26372e;
+    }
+  }
+  @media (max-width: 420px) {
+    .language {
+      font-size: 9px;
+    }
+    button,
+    a {
+      padding: 0 8px;
+    }
+    .code-bar {
+      padding-left: 12px;
+    }
+    .code-actions {
+      padding-left: 12px;
+    }
+  }
+  @media print {
+    .code-scroll {
+      max-height: none;
+    }
+    .code-actions {
+      display: none;
+    }
+  }
+</style>

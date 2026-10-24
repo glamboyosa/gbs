@@ -1,0 +1,240 @@
+---
+import { Code } from "astro:components";
+const steps = [
+  {
+    title: "Open the app. Nothing has been approved.",
+    image: "01-start",
+    text: "The empty screen is waiting for source data. Opening the app does not create a payment, approval or journal. The database file will keep your work when you quit.",
+    alt: "Helix TUI empty state, with no payment and a ledger containing zero journals.",
+  },
+  {
+    title: "Press d. Load the fictional £120 payment.",
+    image: "02-demo",
+    text: "The demo loads the invoices, bank event and suggested match. You should see GBP 12000, Payment INV-1, and a proposal for inv-1. Every displayed check passes, but Approval is still #0 and the ledger still has 0 journals. Valid means eligible for review; it does not mean approved.",
+    alt: "Loaded demo showing the £120 payment, proposal for inv-1, passing checks and no approval or journal.",
+  },
+  {
+    title: "Press a, type Osa, then press Enter.",
+    image: "03-approval",
+    text: "Now you are reviewing a specific proposal. The screen names its ID, invoice and fingerprint. Osa is a simulated reviewer name, not a login. Check the match, then press y to approve it. Press n or Esc to cancel. Approval alone still leaves the ledger unchanged.",
+    alt: "Explicit approval confirmation naming proposal 1, inv-1, its full fingerprint and reviewer Osa.",
+  },
+  {
+    title: "Press p. Confirm the separate posting step.",
+    image: "05-post-confirm",
+    text: "The app asks whether to post the approval. Press n if you want to practise cancelling: no journal is written. Press p again, then y when ready. The service checks the current records again before it writes anything financial.",
+    alt: "Posting confirmation for approval 1 explaining that checks run again and settlement commits with the journal.",
+  },
+  {
+    title: "Read the result. One balanced journal.",
+    image: "06-posted",
+    text: "The result shows debit Bank 12000 and credit Accounts Receivable 12000. The invoice is settled. The ledger has 1 journal, 1 settled invoice and 0 problems. Try p then y again: the same journal comes back. A repeated click must not record another £120.",
+    alt: "Posted journal with Bank debit 12000, Accounts Receivable credit 12000, and one settled invoice.",
+  },
+  {
+    title: "Press t. Follow the evidence.",
+    image: "07-evidence",
+    text: "The evidence view contains the stored source, proposals, approvals and journal. Scroll with the arrow keys. Press t to return to the summary, then q to quit. Start the same command again to see the saved result. Restarting the app does not reset the database.",
+    alt: "Scrollable JSON evidence view from the real TUI, showing the payment and stored source delivery.",
+  },
+];
+---
+
+<section id="tui" class="chapter tui-walkthrough" aria-labelledby="tui-heading">
+  <header class="chapter-heading">
+    <p class="eyebrow">Try it first · about five minutes</p>
+    <h2 id="tui-heading">Run it. Watch each decision happen.</h2>
+    <p class="chapter-summary">
+      The problem: reading the code is easier once you have seen what the code
+      protects.
+    </p>
+  </header>
+  <p>
+    Imagine £120 has reached the bank. The app suggests invoice INV-1. Your job
+    is to inspect that suggestion, approve exactly what you saw, then tell the
+    service to record it. Follow these steps on your computer. You do not need
+    an API key.
+  </p>
+  <h3>1. Open Terminal and check Go.</h3>
+  <div class="command-code">
+    <Code code="go version" lang="bash" theme="github-dark-high-contrast" />
+  </div>
+  <p>
+    You need Go 1.23.2 or later, as declared in the project. If the command is
+    missing, install Go from{" "}
+    <a href="https://go.dev/doc/install" target="_blank" rel="noreferrer">
+      the official instructions
+    </a>
+    , then reopen Terminal.
+  </p>
+  <h3>2. Open your checkout.</h3>
+  <p>On Osa’s Mac, the existing repository is here:</p>
+  <div class="command-code">
+    <Code
+      code="cd ~/Developer/helix-recon"
+      lang="bash"
+      theme="github-dark-high-contrast"
+    />
+  </div>
+  <p>
+    On another computer, clone the repository first. A private repository
+    requires access:
+  </p>
+  <div class="command-code">
+    <Code
+      code={
+        "git clone https://github.com/glamboyosa/helix-recon.git\ncd helix-recon"
+      }
+      lang="bash"
+      theme="github-dark-high-contrast"
+    />
+  </div>
+  <h3>3. Download the dependencies and start a practice database.</h3>
+  <div class="command-code">
+    <Code
+      code={"go mod download\ngo run ./cmd/recon tui -db recon-practice.db"}
+      lang="bash"
+      theme="github-dark-high-contrast"
+    />
+  </div>
+  <p>
+    The first build can take a moment. This command uses recon-practice.db in
+    your current folder, keeping the practice run separate from the default
+    recon.db. For a fresh run later, choose a different filename, such as
+    recon-practice-2.db. Keep the same filename when testing restart recovery.
+  </p>
+  <p class="capture-note">
+    These screenshots render the actual terminal output captured from Helix{" "}
+    <a
+      href="https://github.com/glamboyosa/helix-recon/tree/d8defc5a82eb0c0ae507eeb2cb131cec7d3a2f6e"
+      target="_blank"
+      rel="noreferrer"
+    >
+      d8defc5
+    </a>{" "}
+    on a 100-column × 32-row terminal, using only the fictional fixtures. They
+    are not mockups. IDs and fingerprints may differ in a database that already
+    has records. Tap an image to read it full size.
+  </p>
+  {steps.map((step, index) => (
+    <section class="tui-step">
+      <h3>
+        {index + 4}. {step.title}
+      </h3>
+      <p>{step.text}</p>
+      <figure>
+        <a
+          href={`/reconcile/${step.image}.png`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Open full-size screenshot: ${step.title} (new tab)`}
+        >
+          <img
+            src={`/reconcile/${step.image}.png`}
+            width="1920"
+            height="1408"
+            loading="lazy"
+            decoding="async"
+            alt={step.alt}
+          />
+        </a>
+        <figcaption>{step.title} Actual captured app output.</figcaption>
+      </figure>
+    </section>
+  ))}
+  <h3>What to notice before reading the code</h3>
+  <p>
+    Loading the demo creates evidence and a suggestion. Approval records your
+    decision about one proposal. Posting writes the accounting result. Those are
+    three different moments. The chapters below explain why retries, changed
+    suggestions and crashes cannot safely collapse them into one action.
+  </p>
+  <p>
+    If the terminal is too small, widen it to at least 48 columns and 18 rows.
+    If you see an existing posted journal, you reopened a saved database. To
+    leave at any point, use Ctrl+C; q also exits outside the confirmation and
+    reviewer forms.
+  </p>
+</section>
+<style>
+  .tui-walkthrough {
+    margin: 56px 0;
+    padding: 48px 0;
+    border-top: 1px solid #cbd3c8;
+  }
+  h2 {
+    font:
+      400 36px/1.2 Georgia,
+      serif;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  h3 {
+    margin: 30px 0 12px;
+    font-size: 19px;
+    line-height: 1.4;
+  }
+  p {
+    line-height: 1.85;
+    margin: 14px 0;
+  }
+  .eyebrow {
+    font:
+      11px/1.6 ui-monospace,
+      monospace;
+    color: #5d6b61;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .chapter-summary {
+    color: #5d6b61;
+  }
+  .command-code {
+    margin: 16px 0;
+    overflow: auto;
+    border-radius: 8px;
+    background: #0a0c10;
+  }
+  .command-code :global(pre) {
+    margin: 0;
+    padding: 18px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .capture-note,
+  figcaption {
+    color: #5d6b61;
+    font-size: 13px;
+  }
+  figure {
+    margin: 20px 0 36px;
+  }
+  figure a {
+    display: block;
+    min-height: 44px;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #3b443d;
+    background: #141818;
+  }
+  figcaption {
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+  a:focus-visible {
+    outline: 2px solid #263e2e;
+    outline-offset: 4px;
+  }
+  @media (max-width: 600px) {
+    h2 {
+      font-size: 29px;
+    }
+    .tui-walkthrough {
+      padding: 30px 0;
+    }
+  }
+</style>

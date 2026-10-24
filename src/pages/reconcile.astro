@@ -1,4 +1,5 @@
 ---
+import TUIWalkthrough from "../components/reconcile/TUIWalkthrough.astro";
 import CodePanel from "../components/reconcile/CodePanel.astro";
 import guide from "../data/reconcile/guide.json";
 import source from "../data/reconcile/source.json";
@@ -66,6 +67,9 @@ const questions = chapters.reduce(
             Contents <span>{chapters.length} chapters</span>
           </summary>
           <nav aria-label="Chapters">
+            <a href="#tui" data-nav="tui">
+              <span class="chapter-number">▶</span>Run the TUI, step by step
+            </a>
             {chapters.map((chapter, index) => (
               <a href={`#${chapter.id}`} data-nav={chapter.id}>
                 <span class="chapter-number">
@@ -98,9 +102,9 @@ const questions = chapters.reduce(
             every decision along the way.
           </p>
           <p class="intro">
-            Start with the shopkeeper story. Follow the real source. Test your
-            understanding before you reveal the answers. Built for slow reading,
-            especially on your phone.
+            Start with the problem. Work through a £120 example. Then read the
+            code, one decision at a time. Keep the deeper details close, and
+            test your understanding before you reveal the answers.
           </p>
           <div class="guide-stats">
             <span>{chapters.length} chapters</span>
@@ -111,7 +115,7 @@ const questions = chapters.reduce(
             <a class="primary" href="#brief">
               Start from the beginning ↓
             </a>
-            <a href="#post">Go to the posting function →</a>
+            <a href="#tui">Run the TUI with screenshots →</a>
           </div>
           <p class="snapshot">
             Source snapshot{" "}
@@ -159,6 +163,8 @@ const questions = chapters.reduce(
             correct.
           </p>
         </section>
+
+        <TUIWalkthrough />
 
         {chapters.map((chapter, index) => (
           <article id={chapter.id} class="chapter" data-chapter={chapter.id}>
@@ -211,6 +217,13 @@ const questions = chapters.reduce(
                 aria-labelledby={`${chapter.id}-code-${blockIndex}`}
               >
                 <h3 id={`${chapter.id}-code-${blockIndex}`}>{block.title}</h3>
+                <p class="lesson-problem">
+                  <strong>The problem.</strong> {block.problem}
+                </p>
+                <p class="lesson-example">
+                  <strong>For example.</strong> {block.example}
+                </p>
+                <p class="eyebrow">Now read the code</p>
                 <CodePanel
                   code={snippet(block.file, block.start, block.end)}
                   file={block.file}

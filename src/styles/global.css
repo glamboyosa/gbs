@@ -35,10 +35,6 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-@media (hover: hover) and (pointer: fine) {
-  html { cursor: url("/cursor.svg") 5 3, auto; }
-  a, button { cursor: url("/cursor.svg") 5 3, pointer !important; }
-}
 button:focus-visible, a:focus-visible { outline: 3px solid rgba(19, 92, 255, 0.35); outline-offset: 3px; }
 h1, h2, h3 { text-wrap: balance; }
 p, li { text-wrap: pretty; }

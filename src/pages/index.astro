@@ -3,6 +3,7 @@ import { NowPlaying } from "@/components/now-playing";
 import SiteHeader from "@/components/SiteHeader.astro";
 import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
+import StoryTimeline from "@/components/StoryTimeline.astro";
 import StravaStats from "@/components/StravaStats.astro";
 import BookCover from "@/components/BookCover.astro";
 import Layout from "@/layouts/Layout.astro";
@@ -66,6 +67,8 @@ try {
       </section>
 
       <StravaStats />
+
+      <StoryTimeline />
 
       <section class="panel listening-panel stagger-item">
         <div class="panel-label"><span>LISTENING</span><span class="signal" aria-hidden="true">🎵</span></div>

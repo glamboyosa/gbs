@@ -1,0 +1,186 @@
+---
+const chapters = [
+  {
+    year: "2021",
+    role: "Developer experience · tru.ID / IDLayr",
+    story: "I turned cellular-verification APIs into SDKs and examples other developers could use.",
+  },
+  {
+    year: "2022",
+    role: "Full-stack engineering · Vendorful",
+    story: "I made procurement software easier to navigate and its documents easier to search.",
+  },
+  {
+    year: "2023",
+    role: "Founding product engineer · Shepherd",
+    story: "I helped build Shepherd, where students can turn their own class materials into flashcards, quizzes, and answers.",
+  },
+  {
+    year: "2024",
+    role: "Senior software engineer · APM Help",
+    story: "At APM Help, I helped start the innovation team and built tools for property managers, including PM-in-a-Box.",
+  },
+  {
+    year: "2025–26",
+    role: "Indigenous Guardianship · Conservation Metrics",
+    story: "I help build Guardian Connector with Indigenous partners, making land monitoring faster as their data grows while they stay in control of it.",
+  },
+];
+---
+
+<section class="panel story-panel" aria-labelledby="story-title" data-story>
+  <div class="story-heading">
+    <h2 id="story-title">How I got here<span aria-hidden="true">.</span></h2>
+    <button class="story-play" type="button" aria-label="Autoplay story" aria-pressed="true" data-story-play><span data-story-play-label>Pause</span><span aria-hidden="true" data-story-play-icon>Ⅱ</span></button>
+  </div>
+
+  <div class="story-stage" aria-live="polite">
+    {chapters.map((chapter, index) => (
+      <div id={`story-panel-${index}`} class="story-chapter" role="tabpanel" aria-labelledby={`story-tab-${index}`} hidden={index !== 0}>
+        <span class:list={["story-year", { "story-year-range": chapter.year === "2025–26" }]} aria-hidden="true">{chapter.year}</span>
+        <div class="story-copy">
+          <p class="story-role">{chapter.role}</p>
+          <p class="story-line">{chapter.story}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="story-controls">
+    <div class="story-tabs" role="tablist" aria-label="Career chapters">
+      {chapters.map((chapter, index) => (
+        <button id={`story-tab-${index}`} type="button" role="tab" aria-controls={`story-panel-${index}`} aria-selected={index === 0 ? "true" : "false"} tabindex={index === 0 ? 0 : -1} data-story-tab>
+          {chapter.year}
+        </button>
+      ))}
+    </div>
+    <div class="story-arrows">
+      <button type="button" aria-label="Previous chapter" data-story-previous>←</button>
+      <button type="button" aria-label="Next chapter" data-story-next>→</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const story = document.querySelector<HTMLElement>("[data-story]");
+  if (story) {
+    const tabs = Array.from(story.querySelectorAll<HTMLButtonElement>("[data-story-tab]"));
+    const panels = Array.from(story.querySelectorAll<HTMLElement>("[role='tabpanel']"));
+    const tablist = story.querySelector<HTMLElement>(".story-tabs");
+    const playButton = story.querySelector<HTMLButtonElement>("[data-story-play]");
+    const playLabel = story.querySelector<HTMLElement>("[data-story-play-label]");
+    const playIcon = story.querySelector<HTMLElement>("[data-story-play-icon]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let selected = 0;
+    let playing = !reducedMotion.matches;
+    let inView = false;
+    let timer: number | undefined;
+
+    const select = (index: number, focus = false) => {
+      selected = (index + tabs.length) % tabs.length;
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === selected;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        panels[tabIndex].hidden = !active;
+      });
+      if (tablist) {
+        const tabBounds = tabs[selected].getBoundingClientRect();
+        const listBounds = tablist.getBoundingClientRect();
+        if (tabBounds.left < listBounds.left) tablist.scrollLeft += tabBounds.left - listBounds.left;
+        if (tabBounds.right > listBounds.right) tablist.scrollLeft += tabBounds.right - listBounds.right;
+      }
+      if (focus) tabs[selected].focus();
+    };
+
+    const updatePlayButton = () => {
+      if (!playButton) return;
+      playButton.setAttribute("aria-pressed", String(playing));
+      if (playLabel) playLabel.textContent = playing ? "Pause" : "Play";
+      if (playIcon) playIcon.textContent = playing ? "Ⅱ" : "▶";
+    };
+
+    const schedule = () => {
+      window.clearTimeout(timer);
+      if (playing && inView && !document.hidden) timer = window.setTimeout(() => {
+        select(selected + 1);
+        schedule();
+      }, 8500);
+    };
+
+    const pause = () => {
+      playing = false;
+      updatePlayButton();
+      schedule();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("focus", pause);
+      tab.addEventListener("click", () => { pause(); select(index); });
+      tab.addEventListener("keydown", (event) => {
+        const next = {
+          ArrowRight: index + 1,
+          ArrowLeft: index - 1,
+          Home: 0,
+          End: tabs.length - 1,
+        }[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        pause();
+        select(next, true);
+      });
+    });
+
+    story.querySelector("[data-story-previous]")?.addEventListener("click", () => { pause(); select(selected - 1); });
+    story.querySelector("[data-story-next]")?.addEventListener("click", () => { pause(); select(selected + 1); });
+    playButton?.addEventListener("click", () => {
+      playing = !playing;
+      updatePlayButton();
+      schedule();
+    });
+    document.addEventListener("visibilitychange", schedule);
+    reducedMotion.addEventListener("change", (event) => { if (event.matches) pause(); });
+    new IntersectionObserver(([entry]) => {
+      inView = entry.intersectionRatio >= 0.5;
+      schedule();
+    }, { threshold: 0.5 }).observe(story);
+    updatePlayButton();
+    schedule();
+  }
+</script>
+
+<style>
+  .story-panel { grid-column: 1 / -1; min-height: 340px; padding: 26px; background: #faf8f2; }
+  .story-heading, .story-controls { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .story-heading h2 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.04em; }
+  .story-heading h2 span { color: var(--purple); }
+  .story-role { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .story-play { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font: 600 11px "Inter", system-ui, sans-serif; }
+  .story-play span { font-size: 12px; }
+  .story-stage { display: grid; min-height: 224px; align-items: center; padding: 20px 0 28px; }
+  .story-chapter { display: grid; grid-template-columns: minmax(180px, 0.25fr) minmax(0, 1fr); align-items: center; gap: 28px; }
+  .story-chapter[hidden] { display: none; }
+  .story-year { color: var(--purple); font-family: "Lacquer", system-ui; font-size: clamp(48px, 7vw, 92px); line-height: 1; letter-spacing: -0.04em; user-select: none; }
+  .story-year-range { font-size: clamp(38px, 3.9vw, 50px); white-space: nowrap; }
+  .story-role { margin: 0 0 12px; }
+  .story-line { max-width: 850px; margin: 0; font-size: clamp(26px, 3.6vw, 48px); font-weight: 500; letter-spacing: -0.06em; line-height: 1.1; text-wrap: balance; }
+  .story-controls { border-top: 1px solid rgba(24, 23, 22, 0.12); }
+  .story-tabs { display: flex; min-width: 0; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .story-tabs::-webkit-scrollbar { display: none; }
+  .story-tabs button, .story-arrows button { display: inline-grid; flex: none; min-width: 52px; min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font: 600 12px "Inter", system-ui, sans-serif; place-items: center; transition: color 150ms ease-out, background-color 150ms ease-out; }
+  .story-tabs button[aria-selected="true"] { color: var(--purple); }
+  .story-tabs button:hover, .story-arrows button:hover { color: var(--ink); }
+  .story-arrows { display: flex; flex: none; }
+  .story-arrows button { min-width: 44px; font-size: 17px; }
+  .story-arrows button + button { border-left: 1px solid rgba(24, 23, 22, 0.12); }
+  @media (max-width: 700px) {
+    .story-panel { min-height: 390px; padding: 22px; }
+    .story-stage { min-height: 270px; }
+    .story-chapter { grid-template-columns: 1fr; gap: 18px; }
+    .story-year { font-size: 60px; }
+    .story-year-range { font-size: 48px; }
+    .story-line { font-size: clamp(27px, 7vw, 38px); }
+    .story-tabs { gap: 0; }
+    .story-tabs button { min-width: 45px; padding: 0 7px; }
+  }
+</style>

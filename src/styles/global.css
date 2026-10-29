@@ -236,7 +236,8 @@ p, li { text-wrap: pretty; }
   100% { translate: 0 0; }
 }
 @keyframes claim-status-in { from { opacity: 0; transform: translateY(4px); } }
-.claim-dot { position: fixed; z-index: 60; width: 7px; height: 7px; border-radius: 999px; pointer-events: none; will-change: transform, opacity; }
+.claim-confetti { position: fixed; z-index: 60; width: 6px; height: 11px; border-radius: 1.5px; pointer-events: none; will-change: transform, opacity; }
+.claim-confetti-dot { width: 7px; height: 7px; border-radius: 999px; }
 .claim-dialog, .claim-dialog::backdrop { opacity: 0; transition: opacity 160ms ease-in, transform 160ms ease-in, overlay 160ms allow-discrete, display 160ms allow-discrete; }
 .claim-dialog { transform: scale(0.97); }
 .claim-dialog[open], .claim-dialog[open]::backdrop { opacity: 1; transition-duration: 220ms; transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }

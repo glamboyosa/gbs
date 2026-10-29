@@ -37,12 +37,14 @@ const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD",
 const priceBandFor = (item: WishlistItem) => priceBands.find((band) => item.price >= band.min && item.price < band.max)!.key;
 const formatPrice = (item: WishlistItem) => (item.priceTo ? `${usd.format(item.price)}–${usd.format(item.priceTo)}` : usd.format(item.price));
 
-const items = [
+const claims = await getClaims();
+const ranked = [
   ...wishlistItems.filter((item) => item.priority).sort((a, b) => a.priority! - b.priority!),
   ...wishlistItems.filter((item) => !item.priority),
 ];
+// Claimed gifts sink to the end so visitors see what's still available first.
+const items = [...ranked.filter((item) => !claims[item.id]), ...ranked.filter((item) => claims[item.id])];
 const priorityCount = items.filter((item) => item.priority).length;
-const claims = await getClaims();
 ---
 
 <Layout title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
@@ -221,10 +223,47 @@ const claims = await getClaims();
     };
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    const burstColors = ["#6d4aff", "#181716", "#e3b341", "#dcd3ff"];
+    const confettiColors = ["#6d4aff", "#181716", "#e3b341", "#dcd3ff", "#8fc1ff"];
 
     /**
-     * Plays the one-off claim celebration: the stamp lands, the card thuds, and a ring of dots bursts from the stamp.
+     * Throws one confetti piece up from the stamp and lets it fall under gravity.
+     * The arc is sampled into keyframes because CSS easing can't express a projectile.
+     *
+     * @param {number} x - Launch point, in viewport pixels.
+     * @param {number} y - Launch point, in viewport pixels.
+     * @param {number} index - The piece's position in the burst, used for colour and shape.
+     * @returns {void}
+     */
+    const launchConfetti = (x: number, y: number, index: number) => {
+      const piece = document.createElement("span");
+      piece.className = index % 3 === 0 ? "claim-confetti claim-confetti-dot" : "claim-confetti";
+      piece.style.left = `${x}px`;
+      piece.style.top = `${y}px`;
+      piece.style.background = confettiColors[index % confettiColors.length];
+      piece.style.opacity = "0";
+      document.body.append(piece);
+
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * 2.4;
+      const speed = 260 + Math.random() * 240;
+      const spin = (Math.random() - 0.5) * 900;
+      const duration = 1000 + Math.random() * 400;
+      const gravity = 900;
+      const frames = Array.from({ length: 9 }, (_, step) => {
+        const progress = step / 8;
+        const seconds = (progress * duration) / 1000;
+        const dx = Math.cos(angle) * speed * seconds;
+        const dy = Math.sin(angle) * speed * seconds + 0.5 * gravity * seconds * seconds;
+        return {
+          transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${spin * progress}deg)`,
+          opacity: progress < 0.7 ? 1 : 1 - (progress - 0.7) / 0.3,
+        };
+      });
+      piece.animate(frames, { duration, delay: 200 + Math.random() * 60, easing: "linear", fill: "forwards" })
+        .finished.then(() => piece.remove());
+    };
+
+    /**
+     * Plays the one-off claim celebration: the stamp lands, the card thuds, and confetti bursts from the stamp.
      *
      * @param {HTMLElement} claim - The card's claim container.
      * @returns {void}
@@ -239,23 +278,9 @@ const claims = await getClaims();
       setTimeout(() => card.classList.remove("just-claimed"), 500);
 
       const stamp = card.querySelector<HTMLElement>(".claim-stamp")!.getBoundingClientRect();
-      const originX = stamp.left + stamp.width / 2;
-      const originY = stamp.top + stamp.height / 2;
-      // Dots launch as the stamp hits, roughly 60% into its 380ms landing.
-      for (let index = 0; index < 14; index += 1) {
-        const dot = document.createElement("span");
-        dot.className = "claim-dot";
-        dot.style.left = `${originX}px`;
-        dot.style.top = `${originY}px`;
-        dot.style.background = burstColors[index % burstColors.length];
-        dot.style.opacity = "0";
-        document.body.append(dot);
-        const angle = (index / 14) * Math.PI * 2 + Math.random() * 0.4;
-        const distance = 54 + Math.random() * 40;
-        dot.animate([
-          { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-          { transform: `translate(calc(-50% + ${Math.cos(angle) * distance}px), calc(-50% + ${Math.sin(angle) * distance}px)) scale(0.4)`, opacity: 0 },
-        ], { duration: 560, delay: 220, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)", fill: "forwards" }).finished.then(() => dot.remove());
+      // Confetti launches as the stamp hits, roughly 60% into its 380ms landing.
+      for (let index = 0; index < 36; index += 1) {
+        launchConfetti(stamp.left + stamp.width / 2, stamp.top + stamp.height / 2, index);
       }
     };
 

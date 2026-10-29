@@ -53,6 +53,7 @@ const ranked = [
 // Claimed gifts sink to the end so visitors see what's still available first.
 const items = [...ranked.filter((item) => !claims[item.id]), ...ranked.filter((item) => claims[item.id])];
 const priorityCount = items.filter((item) => item.priority).length;
+const claimedCount = items.filter((item) => claims[item.id]).length;
 ---
 
 <Layout preloadFonts={["inter", "rubik-marker-hatch"]} title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
@@ -69,6 +70,7 @@ const priorityCount = items.filter((item) => item.priority).length;
         <div class="filter-bar" role="group" aria-label="Filter by type">
           <button class="filter-pill active pressable" type="button" data-category="all" aria-pressed="true">All <span data-count>{items.length}</span></button>
           <button class="filter-pill pressable" type="button" data-category="priority" aria-pressed="false">Priorities <span data-count>{priorityCount}</span></button>
+          <button class="filter-pill pressable" type="button" data-category="claimed" aria-pressed="false">Claimed <span data-count>{claimedCount}</span></button>
           {categories.map((category) => (
             <button class="filter-pill pressable" type="button" data-category={category.key} aria-pressed="false">{category.label} <span data-count>{items.filter((item) => item.category === category.key).length}</span></button>
           ))}
@@ -165,14 +167,18 @@ const priorityCount = items.filter((item) => item.priority).length;
     let price = "all";
 
     /**
-     * Reports whether an item belongs to a type filter, where "priority" means the ranked items.
+     * Reports whether an item belongs to a type filter, where "priority" means the ranked items and "claimed" the ones someone has taken.
      *
      * @param {HTMLElement} item - The wishlist card.
      * @param {string} filter - The selected type filter.
      * @returns {boolean} Whether the item matches.
      */
-    const matchesCategory = (item: HTMLElement, filter: string) =>
-      filter === "all" || (filter === "priority" ? item.dataset.priority === "true" : item.dataset.category === filter);
+    const matchesCategory = (item: HTMLElement, filter: string) => {
+      if (filter === "all") return true;
+      if (filter === "priority") return item.dataset.priority === "true";
+      if (filter === "claimed") return item.classList.contains("is-claimed");
+      return item.dataset.category === filter;
+    };
 
     const matchesPrice = (item: HTMLElement, filter: string) => filter === "all" || item.dataset.price === filter;
 
@@ -187,7 +193,10 @@ const priorityCount = items.filter((item) => item.priority).length;
         item.hidden = !(matchesCategory(item, category) && matchesPrice(item, price));
         if (!item.hidden) visible += 1;
       });
-      if (empty) empty.hidden = visible > 0;
+      if (empty) {
+        empty.hidden = visible > 0;
+        empty.textContent = category === "claimed" && price === "all" ? "Nothing’s been claimed yet." : "Nothing here at that price.";
+      }
 
       categoryButtons.forEach((button) => {
         const selected = button.dataset.category === category;
@@ -245,6 +254,8 @@ const priorityCount = items.filter((item) => item.priority).length;
       claim.querySelector<HTMLElement>("[data-claim-open]")!.hidden = Boolean(name);
       claim.querySelector<HTMLElement>("[data-claim-undo]")!.hidden = !(name && readTokens()[claim.dataset.claim!]);
       claim.closest(".collection-item")!.classList.toggle("is-claimed", Boolean(name));
+      // Keeps the Claimed tab's count and contents current as people claim and undo.
+      render();
     };
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");

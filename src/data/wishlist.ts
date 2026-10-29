@@ -1,7 +1,6 @@
 import type { WishlistItem } from "@/types";
 import rolexOysterPerpetual34Image from "@/assets/wishlist/watches/rolex-oyster-perpetual-34.jpg";
 import craftdCurbBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-curb-bracelet-gold-2mm.jpg";
-import craftdClassicCuffGold3mmImage from "@/assets/wishlist/jewellery/craftd-classic-cuff-gold-3mm.jpg";
 import craftdRopeBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-rope-bracelet-gold-2mm.jpg";
 import craftdInceptionRingSilverImage from "@/assets/wishlist/jewellery/craftd-inception-ring-silver.jpg";
 import beelinkSer8Image from "@/assets/wishlist/tech/beelink-ser8.jpg";
@@ -74,7 +73,6 @@ import amouageGuidanceImage from "@/assets/wishlist/scents/amouage-guidance.jpg"
 import amouageGuidance46Image from "@/assets/wishlist/scents/amouage-guidance-46.jpg";
 import amouageDecisionImage from "@/assets/wishlist/scents/amouage-decision.jpg";
 import thomasKosmalaNo4Image from "@/assets/wishlist/scents/thomas-kosmala-no-4-apres-lamour.jpg";
-import bartonLeatherWatchStrapImage from "@/assets/wishlist/everyday/barton-leather-watch-strap.jpg";
 
 export const wishlistItems: WishlistItem[] = [
   {
@@ -163,16 +161,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://craftdlondon.com/products/adjustable-curb-bracelet-gold",
     note: "2mm, gold.",
     price: 38,
-  },
-  {
-    id: "craftd-slim-gold-cuff",
-    name: "Classic Cuff",
-    brand: "CRAFTD",
-    category: "accessories",
-    image: craftdClassicCuffGold3mmImage,
-    href: "https://craftdlondon.com/products/classic-cuff-3mm-gold",
-    note: "3mm, gold.",
-    price: 57,
   },
   {
     id: "craftd-slim-rope-bracelet",
@@ -828,16 +816,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.amazon.com/dp/B0DKNKT7JF",
     note: "Single watch, travel.",
     price: 39,
-  },
-  {
-    id: "barton-leather-watch-strap",
-    name: "Leather Watch Strap",
-    brand: "Barton",
-    category: "everyday",
-    image: bartonLeatherWatchStrapImage,
-    href: "https://www.bartonwatchbands.com/products/weathered-brown-leather",
-    note: "20mm, weathered brown.",
-    price: 38,
   },
   {
     id: "kitsch-satin-sleep-mask",

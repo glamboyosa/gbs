@@ -487,7 +487,7 @@ export const wishlistItems: WishlistItem[] = [
     brand: "New Balance",
     category: "shoes",
     image: newBalance1000Image,
-    note: "Black, EU 46.5 / US 12.",
+    note: "Black, EU 46. 46.5 or US 12 also fits.",
     price: 150,
   },
   {
@@ -497,7 +497,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: newBalanceAbzorb2000Image,
     href: "https://www.newbalance.com/pd/abzorb-2000/U2000V1-50934-PMG-NA.html",
-    note: "EU 46.5 / US 12.",
+    note: "EU 46. 46.5 or US 12 also fits.",
     price: 170,
   },
   {
@@ -507,7 +507,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: newBalance5030SilverBlueImage,
     href: "https://www.newbalance.com/pd/5030/U5030V1_LI-FTW-841594.html?dwvar_U5030V1__LI-FTW-841594_style=U50301XA",
-    note: "Silver and blue, EU 46.5 / US 12.",
+    note: "Silver and blue, EU 46. 46.5 or US 12 also fits.",
     price: 120,
   },
   {
@@ -516,7 +516,7 @@ export const wishlistItems: WishlistItem[] = [
     brand: "New Balance",
     category: "shoes",
     href: "https://www.newbalance.com/search?q=5030",
-    note: "Black with metallic silver, EU 46.5 / US 12.",
+    note: "Black with metallic silver, EU 46. 46.5 or US 12 also fits.",
     price: 120,
   },
   {
@@ -526,7 +526,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: nikeReactxRejuven8Image,
     href: "https://www.nike.com/t/reactx-rejuven8-mens-shoes-d9QTC07e/HV5060-001",
-    note: "Black, EU 46.5 / US 12.",
+    note: "Black, EU 46. 46.5 or US 12 also fits.",
     price: 70,
   },
   {
@@ -536,7 +536,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: crocsEchoImage,
     href: "https://www.crocs.com/p/echo-gum-ro-clog/211675.html",
-    note: "The chunky one. EU 46.5 / US 12.",
+    note: "The chunky one. EU 46. 46.5 or US 12 also fits.",
     price: 75,
   },
   {
@@ -546,7 +546,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: newBalanceRebelV5Image,
     href: "https://www.newbalance.com/pd/fuelcell-rebel-v5/MFCXV5-50690.html",
-    note: "Running. EU 46.5 / US 12.",
+    note: "Running. EU 46. 46.5 or US 12 also fits.",
     price: 145,
   },
   {
@@ -556,7 +556,7 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: asicsNovablast5Image,
     href: "https://www.runningwarehouse.com/ASICS_Novablast_5/descpage-A5NM01.html",
-    note: "Running. EU 46.5 / US 12.",
+    note: "Running. EU 46. 46.5 or US 12 also fits.",
     price: 150,
   },
   {

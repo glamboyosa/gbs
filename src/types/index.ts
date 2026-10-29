@@ -24,6 +24,9 @@ export type WishlistItem = {
   category: WishlistCategory;
   /** Experiences have no product shot. */
   image?: ImageMetadata;
+  /** Options to swipe between, such as colourways. The first one is shown first. */
+  /** A variant `href` replaces the card's link while that option is showing. */
+  variants?: { label: string; image: ImageMetadata; href?: string }[];
   href?: string;
   note: string;
   /** Lowest expected USD price. Affordability filters use this. */

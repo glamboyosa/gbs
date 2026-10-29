@@ -1,21 +1,26 @@
 import type { WishlistItem } from "@/types";
+import arcteryxBetaJacketBlackImage from "@/assets/wishlist/clothing/arcteryx-beta-jacket-black.jpg";
+import maisonMargielaTabiAnkleBootsImage from "@/assets/wishlist/shoes/maison-margiela-tabi-ankle-boots.jpg";
+import abercrombieHeavyweight3PackImage from "@/assets/wishlist/clothing/abercrombie-heavyweight-3-pack-black-navy-white.jpg";
+import skimsCottonBoxerBrief3PackImage from "@/assets/wishlist/clothing/skims-cotton-boxer-brief-3-pack.jpg";
+import phlurVanillaSkinDeodorantImage from "@/assets/wishlist/scents/phlur-vanilla-skin-deodorant.jpg";
+import phlurFatherFigureDeodorantImage from "@/assets/wishlist/scents/phlur-father-figure-deodorant.jpg";
+import crocsEchoClogWhiteImage from "@/assets/wishlist/shoes/crocs-echo-clog-white.jpg";
+import cosrxSnail92CreamImage from "@/assets/wishlist/everyday/cosrx-snail-92-cream.jpg";
+import gymsharkAnkleStrapsImage from "@/assets/wishlist/gym/gymshark-ankle-straps.jpg";
 import rolexOysterPerpetual34Image from "@/assets/wishlist/watches/rolex-oyster-perpetual-34.jpg";
 import craftdCurbBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-curb-bracelet-gold-2mm.jpg";
-import craftdRopeBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-rope-bracelet-gold-2mm.jpg";
 import craftdInceptionRingSilverImage from "@/assets/wishlist/jewellery/craftd-inception-ring-silver.jpg";
 import beelinkSer8Image from "@/assets/wishlist/tech/beelink-ser8.jpg";
-import abercrombie5PackClassicEssentialTeesImage from "@/assets/wishlist/clothing/abercrombie-5-pack-classic-essential-tees.jpg";
 import abercrombieEssentialPopoverHoodieImage from "@/assets/wishlist/clothing/abercrombie-essential-popover-hoodie.jpg";
 import lvImaginationImage from "@/assets/wishlist/scents/lv-imagination.jpg";
 import joMaloneMyrrhTonkaImage from "@/assets/wishlist/scents/jo-malone-myrrh-tonka.jpg";
 import newBalance5030BlackImage from "@/assets/wishlist/shoes/new-balance-5030-black.jpg";
 import valetTrayImage from "@/assets/wishlist/everyday/valet-tray.jpg";
-import cordlessLampImage from "@/assets/wishlist/everyday/cordless-lamp.jpg";
 import cedarShoeTreesImage from "@/assets/wishlist/everyday/cedar-shoe-trees.jpg";
 import corkMassageBallImage from "@/assets/wishlist/everyday/cork-massage-ball.jpg";
 import watchRollImage from "@/assets/wishlist/everyday/watch-roll.jpg";
 import silkSleepMaskImage from "@/assets/wishlist/everyday/silk-sleep-mask.jpg";
-import nailGroomingKitImage from "@/assets/wishlist/everyday/nail-grooming-kit.jpg";
 import orikiMassageRoomImage from "@/assets/wishlist/experiences/oriki-massage-room.jpg";
 import orikiReceptionImage from "@/assets/wishlist/experiences/oriki-reception.jpg";
 import orikiSpaHallImage from "@/assets/wishlist/experiences/oriki-spa-hall.jpg";
@@ -40,7 +45,6 @@ import giovannisRoomImage from "@/assets/wishlist/books/giovannis-room.jpg";
 import unbearableLightnessOfBeingImage from "@/assets/wishlist/books/unbearable-lightness-of-being.jpg";
 import staffEngineersPathImage from "@/assets/wishlist/books/staff-engineers-path.jpg";
 import orientStarSemiSkeletonImage from "@/assets/wishlist/watches/orient-star-semi-skeleton.jpg";
-import seikoPresageSsa379Image from "@/assets/wishlist/watches/seiko-presage-ssa379.jpg";
 import casioA168wg9Image from "@/assets/wishlist/watches/casio-a168wg-9.jpg";
 import timexQReissueLcaImage from "@/assets/wishlist/watches/timex-q-reissue-lca.jpg";
 import cartierTankMustLargeImage from "@/assets/wishlist/watches/cartier-tank-must-large.jpg";
@@ -48,9 +52,6 @@ import craftdFigaroBraceletGoldImage from "@/assets/wishlist/jewellery/craftd-fi
 import coachHitchCrossbodyBlackImage from "@/assets/wishlist/bags/coach-hitch-crossbody-black.jpg";
 import fujifilmXHalfImage from "@/assets/wishlist/cameras/fujifilm-x-half.jpg";
 import fujifilmXT30IiImage from "@/assets/wishlist/cameras/fujifilm-x-t30-ii.jpg";
-import fujifilmXM5Image from "@/assets/wishlist/cameras/fujifilm-x-m5.jpg";
-import nikonZFcImage from "@/assets/wishlist/cameras/nikon-z-fc.png";
-import fujifilmXE5Image from "@/assets/wishlist/cameras/fujifilm-x-e5.jpg";
 import fujifilmX100viImage from "@/assets/wishlist/cameras/fujifilm-x100vi.jpg";
 import theragunMiniImage from "@/assets/wishlist/tech/theragun-mini.jpg";
 import princeOfPersiaImage from "@/assets/wishlist/games/prince-of-persia-the-lost-crown.jpg";
@@ -63,11 +64,8 @@ import ayblCore7ShortsImage from "@/assets/wishlist/clothing/aybl-core-7-shorts-
 import newBalance1000Image from "@/assets/wishlist/shoes/new-balance-1000-black.jpg";
 import newBalance5030SilverBlueImage from "@/assets/wishlist/shoes/new-balance-5030-silver-blue.jpg";
 import nikeReactxRejuven8Image from "@/assets/wishlist/shoes/nike-reactx-rejuven8-black.jpg";
-import crocsEchoImage from "@/assets/wishlist/shoes/crocs-echo-gum-ro-clog-black.jpg";
 import newBalanceRebelV5Image from "@/assets/wishlist/shoes/new-balance-fuelcell-rebel-v5-black.jpg";
 import asicsNovablast5Image from "@/assets/wishlist/shoes/asics-novablast-5-black.jpg";
-import gymsharkWristStrapsImage from "@/assets/wishlist/gym/gymshark-wrist-straps.jpg";
-import ayblWristStrapsImage from "@/assets/wishlist/gym/aybl-wrist-straps.jpg";
 import optimumNutritionWheyImage from "@/assets/wishlist/gym/optimum-nutrition-gold-standard-whey.jpg";
 import amouageGuidanceImage from "@/assets/wishlist/scents/amouage-guidance.jpg";
 import amouageGuidance46Image from "@/assets/wishlist/scents/amouage-guidance-46.jpg";
@@ -85,16 +83,6 @@ export const wishlistItems: WishlistItem[] = [
     note: "RE-AT0201G00B. Champagne dial, brown leather.",
     price: 625,
     priority: 2,
-  },
-  {
-    id: "seiko-presage-japanese-garden-open-heart",
-    name: "Presage Japanese Garden Open Heart",
-    brand: "Seiko",
-    category: "watches",
-    image: seikoPresageSsa379Image,
-    href: "https://longislandwatch.com/products/seiko-ssa379-presage-watch-ssa379",
-    note: "SSA379.",
-    price: 550,
   },
   {
     id: "casio-a168wg-9-gold-digital",
@@ -163,16 +151,6 @@ export const wishlistItems: WishlistItem[] = [
     price: 38,
   },
   {
-    id: "craftd-slim-rope-bracelet",
-    name: "Rope Bracelet",
-    brand: "CRAFTD",
-    category: "accessories",
-    image: craftdRopeBraceletGold2mmImage,
-    href: "https://craftdlondon.com/products/rope-bracelet-gold-2mm",
-    note: "2mm, gold.",
-    price: 54,
-  },
-  {
     id: "sculptural-silver-ring",
     name: "Inception Ring",
     brand: "CRAFTD",
@@ -215,38 +193,6 @@ export const wishlistItems: WishlistItem[] = [
     priority: 6,
   },
   {
-    id: "fujifilm-x-m5-kit",
-    name: "X-M5 Kit",
-    brand: "Fujifilm",
-    category: "cameras",
-    image: fujifilmXM5Image,
-    href: "https://www.bestbuy.com/product/fujifilm-x-m5-body-with-xc15-45mmf3-5-5-6-ois-pz-lens-kit-black/J7929VC99H",
-    note: "With the XC15-45mm lens.",
-    price: 1000,
-  },
-  {
-    id: "nikon-z-fc-kit",
-    name: "Z fc Kit",
-    brand: "Nikon",
-    category: "cameras",
-    image: nikonZFcImage,
-    href: "https://www.nikonusa.com/p/z-fc/1675",
-    note: "With the 16-50mm lens.",
-    price: 900,
-    priceTo: 1100,
-  },
-  {
-    id: "fujifilm-x-e5",
-    name: "X-E5",
-    brand: "Fujifilm",
-    category: "cameras",
-    image: fujifilmXE5Image,
-    href: "https://www.fujifilm-x.com/en-us/products/cameras/x-e5/",
-    note: "Body $1,700, or $1,900 with the XF23mm kit lens.",
-    price: 1700,
-    priceTo: 1900,
-  },
-  {
     id: "fujifilm-x100vi",
     name: "X100VI",
     brand: "Fujifilm",
@@ -279,6 +225,7 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.therabody.com/products/theragun-mini-gen-3-black?oc=US",
     note: "Third generation, black.",
     price: 220,
+    priority: 9,
   },
   {
     id: "kindle-paperwhite",
@@ -292,24 +239,15 @@ export const wishlistItems: WishlistItem[] = [
   },
   {
     id: "claude-subscription",
-    name: "Claude Pro or Max",
-    brand: "Anthropic",
+    name: "Claude or ChatGPT",
+    brand: "AI subscription",
     category: "tech",
     image: claudeImage,
     href: "https://claude.ai/upgrade",
-    note: "A month or a year of it.",
+    note: "Claude Pro or Max, or ChatGPT Plus. A month or a year.",
     price: 20,
     priceTo: 200,
-  },
-  {
-    id: "chatgpt-subscription",
-    name: "ChatGPT Plus",
-    brand: "OpenAI",
-    category: "tech",
-    image: chatgptImage,
-    href: "https://chatgpt.com/#pricing",
-    note: "A month or a year of it.",
-    price: 20,
+    variants: [{ label: "Claude", image: claudeImage, href: "https://claude.ai/upgrade" }, { label: "ChatGPT", image: chatgptImage, href: "https://chatgpt.com/#pricing" }],
   },
   {
     id: "chromagraph-camera",
@@ -398,18 +336,9 @@ export const wishlistItems: WishlistItem[] = [
     category: "clothing",
     image: ayblRefuseTeeBlackImage,
     href: "https://us.aybl.com/products/cam-kissel-x-refuse-to-blend-in-oversized-t-shirt-black",
-    note: "Black, XL.",
+    note: "Black or off white, XL.",
     price: 42,
-  },
-  {
-    id: "aybl-refuse-to-blend-in-tee-off-white",
-    name: "Refuse To Blend In Oversized Tee",
-    brand: "AYBL × Cam Kissel",
-    category: "clothing",
-    image: ayblRefuseTeeOffWhiteImage,
-    href: "https://us.aybl.com/products/cam-kissel-x-refuse-to-blend-in-oversized-t-shirt-off-white",
-    note: "Off white, XL.",
-    price: 42,
+    variants: [{ label: "Black", image: ayblRefuseTeeBlackImage, href: "https://us.aybl.com/products/cam-kissel-x-refuse-to-blend-in-oversized-t-shirt-black" }, { label: "Off white", image: ayblRefuseTeeOffWhiteImage, href: "https://us.aybl.com/products/cam-kissel-x-refuse-to-blend-in-oversized-t-shirt-off-white" }],
   },
   {
     id: "gymshark-vengeance-graphic-tank",
@@ -512,14 +441,36 @@ export const wishlistItems: WishlistItem[] = [
     price: 87,
   },
   {
-    id: "abercrombie-5-pack-classic-essential-tees",
-    name: "5-Pack Classic Essential Tees",
+    id: "abercrombie-heavyweight-3-pack-tees",
+    name: "Premium Heavyweight 3-Pack Tees",
     brand: "Abercrombie & Fitch",
     category: "clothing",
-    image: abercrombie5PackClassicEssentialTeesImage,
-    href: "https://www.abercrombie.com/shop/us/mens-multipacks",
-    note: "Black, brown, green, white and sage. XL.",
-    price: 90,
+    image: abercrombieHeavyweight3PackImage,
+    href: "https://www.asos.com/au/abercrombie-fitch/abercrombie-fitch-premium-heavyweight-3-pack-t-shirt-in-black-navy-and-white/prd/211654330",
+    note: "Black, navy and white. XL. AU$168 on ASOS.",
+    price: 110,
+  },
+  {
+    id: "arcteryx-beta-jacket",
+    name: "Beta Jacket",
+    brand: "Arc’teryx",
+    category: "clothing",
+    image: arcteryxBetaJacketBlackImage,
+    href: "https://arcteryx.com/us/en/shop/mens/beta-jacket",
+    note: "GORE-TEX shell, black. The one the rain beads off. XL.",
+    price: 400,
+    priority: 10,
+  },
+  {
+    id: "skims-cotton-boxer-brief-3-pack",
+    name: "Cotton Boxer Brief 3-Pack",
+    brand: "SKIMS",
+    category: "clothing",
+    image: skimsCottonBoxerBrief3PackImage,
+    href: "https://skims.com/products/skims-cotton-mens-3-inch-boxer-brief-3-pack-blue-black-multi",
+    note: "3\" leg. XL.",
+    price: 45,
+    priceTo: 60,
   },
   {
     id: "abercrombie-fitch-essential-popover-hoodie",
@@ -547,18 +498,9 @@ export const wishlistItems: WishlistItem[] = [
     category: "shoes",
     image: newBalance5030SilverBlueImage,
     href: "https://www.newbalance.com/pd/5030/U5030V1_LI-FTW-841594.html?dwvar_U5030V1__LI-FTW-841594_style=U50301XA",
-    note: "Silver and blue, EU 46. 46.5 or US 12 also fits.",
+    note: "Silver and blue, or black with metallic silver. EU 46. 46.5 or US 12 also fits.",
     price: 120,
-  },
-  {
-    id: "new-balance-5030-black",
-    name: "5030",
-    brand: "New Balance",
-    category: "shoes",
-    image: newBalance5030BlackImage,
-    href: "https://stockx.com/new-balance-5030-black-silver-metallic",
-    note: "Black with metallic silver, EU 46. 46.5 or US 12 also fits.",
-    price: 120,
+    variants: [{ label: "Silver & blue", image: newBalance5030SilverBlueImage }, { label: "Black", image: newBalance5030BlackImage, href: "https://stockx.com/new-balance-5030-black-silver-metallic" }],
   },
   {
     id: "nike-reactx-rejuven8",
@@ -575,10 +517,21 @@ export const wishlistItems: WishlistItem[] = [
     name: "Echo Clog",
     brand: "Crocs",
     category: "shoes",
-    image: crocsEchoImage,
-    href: "https://www.crocs.com/p/echo-gum-ro-clog/211675.html",
-    note: "The chunky one. EU 46. 46.5 or US 12 also fits.",
-    price: 75,
+    image: crocsEchoClogWhiteImage,
+    href: "https://www.crocs.com/p/echo-clog/207937.html",
+    note: "White. EU 46. 46.5 or US 12 also fits.",
+    price: 70,
+  },
+  {
+    id: "maison-margiela-tabi-ankle-boots",
+    name: "Tabi Ankle Boots",
+    brand: "Maison Margiela",
+    category: "shoes",
+    image: maisonMargielaTabiAnkleBootsImage,
+    href: "https://www.farfetch.com/shopping/men/search/items.aspx?q=maison%20margiela%20tabi%20ankle%20boots",
+    note: "Black leather, split toe. EU 46. AU$1,794–1,991 on Farfetch.",
+    price: 1175,
+    priceTo: 1305,
   },
   {
     id: "new-balance-fuelcell-rebel-v5",
@@ -601,24 +554,14 @@ export const wishlistItems: WishlistItem[] = [
     price: 150,
   },
   {
-    id: "gymshark-wrist-straps",
-    name: "Wrist Straps",
-    brand: "Gymshark",
+    id: "gymshark-ankle-straps",
+    name: "Ankle Cuffs",
+    brand: "Gymshark or AYBL",
     category: "wellness",
-    image: gymsharkWristStrapsImage,
-    href: "https://www.gymshark.com/products/gymshark-wrist-straps-equipment-black-aw26",
-    note: "Black.",
-    price: 20,
-  },
-  {
-    id: "aybl-wrist-straps",
-    name: "Wrist Straps",
-    brand: "AYBL",
-    category: "wellness",
-    image: ayblWristStrapsImage,
-    href: "https://us.aybl.com/products/wrist-straps",
-    note: "Black.",
-    price: 20,
+    image: gymsharkAnkleStrapsImage,
+    href: "https://uk.gymshark.com/products/gymshark-ankle-straps-equipment-black-aw25",
+    note: "For cable kickbacks and leg work. Either brand.",
+    price: 27,
   },
   {
     id: "optimum-nutrition-gold-standard-whey",
@@ -707,24 +650,15 @@ export const wishlistItems: WishlistItem[] = [
   },
   {
     id: "amouage-guidance",
-    name: "Guidance",
+    name: "Guidance or Guidance 46",
     brand: "Amouage",
     category: "scent",
     image: amouageGuidanceImage,
     href: "https://amouage.com/100ml-guidance.html",
-    note: "100ml, or the 50ml Guidance hair perfume.",
+    note: "Guidance 100ml or its 50ml hair perfume, or Guidance 46 100ml.",
     price: 130,
-    priceTo: 395,
-  },
-  {
-    id: "amouage-guidance-46",
-    name: "Guidance 46",
-    brand: "Amouage",
-    category: "scent",
-    image: amouageGuidance46Image,
-    href: "https://www.luckyscent.com/products/guidance-46-by-amouage",
-    note: "100ml.",
-    price: 550,
+    priceTo: 550,
+    variants: [{ label: "Guidance", image: amouageGuidanceImage }, { label: "Guidance 46", image: amouageGuidance46Image, href: "https://www.luckyscent.com/products/guidance-46-by-amouage" }],
   },
   {
     id: "amouage-decision",
@@ -755,6 +689,18 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.luckyscent.com/products/no-4-apres-lamour-by-thomas-kosmala",
     note: "100ml.",
     price: 235,
+    priority: 8,
+  },
+  {
+    id: "phlur-deodorant",
+    name: "Roll-On Deodorant",
+    brand: "PHLUR",
+    category: "scent",
+    image: phlurVanillaSkinDeodorantImage,
+    variants: [{ label: "Vanilla Skin", image: phlurVanillaSkinDeodorantImage, href: "https://phlur.com/products/vanilla-skin-natural-deodorant" }, { label: "Father Figure", image: phlurFatherFigureDeodorantImage, href: "https://phlur.com/products/father-figure-natural-deodorant" }],
+    href: "https://phlur.com/collections/natural-deodorant",
+    note: "Vanilla Skin or Father Figure.",
+    price: 20,
   },
   {
     id: "jo-malone-london-myrrh-tonka-cologne-intense",
@@ -776,16 +722,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.amazon.com/dp/B08C5BJ8VT",
     note: "For watches and jewellery.",
     price: 19,
-  },
-  {
-    id: "barebones-rechargeable-lamp",
-    name: "Cordless Bedside Lamp",
-    brand: "Any brand",
-    category: "everyday",
-    image: cordlessLampImage,
-    href: "https://www.amazon.com/dp/B0GWM6MBLP",
-    note: "Rechargeable, warm light.",
-    price: 18,
   },
   {
     id: "thursday-boot-co-cedar-shoe-trees",
@@ -828,13 +764,13 @@ export const wishlistItems: WishlistItem[] = [
     price: 9,
   },
   {
-    id: "tweezerman-nail-grooming-kit",
-    name: "Nail Grooming Kit",
-    brand: "MANSCAPED",
+    id: "cosrx-advanced-snail-92-cream",
+    name: "Advanced Snail 92 All in One Cream",
+    brand: "COSRX",
     category: "everyday",
-    image: nailGroomingKitImage,
-    href: "https://www.amazon.com/dp/B0CDNT3PH2",
-    note: "Compact travel kit.",
-    price: 25,
+    image: cosrxSnail92CreamImage,
+    href: "https://beautyhutafrica.com/product/cosrx-advanced-snail-92-all-in-one-cream/",
+    note: "₦17,500 at Beauty Hut.",
+    price: 13,
   },
 ];

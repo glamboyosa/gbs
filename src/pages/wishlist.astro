@@ -80,10 +80,27 @@ const priorityCount = items.filter((item) => item.priority).length;
               <span class="product-type">{item.priority ? `Priority ${item.priority}` : tags[item.category]}</span>
               {item.href && <span class="external-mark" aria-hidden="true">↗</span>}
               <span class="claim-stamp" aria-hidden="true">Claimed</span>
-              {item.image
-                ? <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 640, 960]} sizes="(max-width: 700px) 45vw, (max-width: 900px) 30vw, 300px" quality={75} loading={index < 4 ? "eager" : "lazy"} />
-                : <span class="product-text" aria-hidden="true">{item.name}</span>}
+              {item.variants
+                ? (
+                  <span class="product-slides" data-slides>
+                    {item.variants.map((variant, slide) => (
+                      <span class="product-slide">
+                        <Image src={variant.image} alt={`${item.brand} ${item.name}, ${variant.label}`} widths={[320, 480, 640, 960]} sizes="(max-width: 700px) 45vw, (max-width: 900px) 30vw, 300px" quality={75} loading={index < 4 && slide === 0 ? "eager" : "lazy"} />
+                      </span>
+                    ))}
+                  </span>
+                )
+                : item.image
+                  ? <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 640, 960]} sizes="(max-width: 700px) 45vw, (max-width: 900px) 30vw, 300px" quality={75} loading={index < 4 ? "eager" : "lazy"} />
+                  : <span class="product-text" aria-hidden="true">{item.name}</span>}
             </a>
+            {item.variants && (
+              <div class="variant-chips" role="group" aria-label={`${item.name} options`}>
+                {item.variants.map((variant, slide) => (
+                  <button class="variant-chip pressable" type="button" data-slide={slide} data-href={variant.href ?? item.href} aria-pressed={slide === 0 ? "true" : "false"}>{variant.label}</button>
+                ))}
+              </div>
+            )}
             <div class="product-meta">
               <div>
                 <p class="product-brand">{item.brand}</p>
@@ -223,6 +240,25 @@ const priorityCount = items.filter((item) => item.priority).length;
     };
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    // Variant cards swipe on touch; the chips jump to an option and follow the swipe.
+    document.querySelectorAll<HTMLElement>("[data-slides]").forEach((slides) => {
+      const card = slides.closest(".collection-item")!;
+      const link = card.querySelector<HTMLAnchorElement>(".product-image")!;
+      const chips = [...card.querySelectorAll<HTMLButtonElement>(".variant-chip")];
+      const select = (active: number) => {
+        chips.forEach((chip, slide) => chip.setAttribute("aria-pressed", slide === active ? "true" : "false"));
+        if (chips[active]?.dataset.href) link.href = chips[active].dataset.href!;
+      };
+      chips.forEach((chip, slide) => chip.addEventListener("click", () => {
+        slides.scrollTo({ left: slide * slides.clientWidth, behavior: reducedMotion.matches ? "auto" : "smooth" });
+        select(slide);
+      }));
+      slides.addEventListener("scroll", () => {
+        // A card hidden by a filter has no width yet.
+        if (slides.clientWidth) select(Math.round(slides.scrollLeft / slides.clientWidth));
+      }, { passive: true });
+    });
     const confettiColors = ["#6d4aff", "#181716", "#e3b341", "#dcd3ff", "#8fc1ff"];
 
     /**

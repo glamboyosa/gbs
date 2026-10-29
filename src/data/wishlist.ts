@@ -1,10 +1,52 @@
 import type { WishlistItem } from "@/types";
+import rolexOysterPerpetual34Image from "@/assets/wishlist/watches/rolex-oyster-perpetual-34.jpg";
+import craftdCurbBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-curb-bracelet-gold-2mm.jpg";
+import craftdClassicCuffGold3mmImage from "@/assets/wishlist/jewellery/craftd-classic-cuff-gold-3mm.jpg";
+import craftdOnyxSquaredSignetGoldImage from "@/assets/wishlist/jewellery/craftd-onyx-squared-signet-gold.jpg";
+import craftdVintageStoneSignetSilverImage from "@/assets/wishlist/jewellery/craftd-vintage-stone-signet-silver.jpg";
+import craftdRopeBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-rope-bracelet-gold-2mm.jpg";
+import craftdInceptionRingSilverImage from "@/assets/wishlist/jewellery/craftd-inception-ring-silver.jpg";
+import beelinkSer8Image from "@/assets/wishlist/tech/beelink-ser8.jpg";
+import abercrombieEssentialTeeImage from "@/assets/wishlist/clothing/abercrombie-essential-tee.jpg";
+import abercrombieEssentialPopoverHoodieImage from "@/assets/wishlist/clothing/abercrombie-essential-popover-hoodie.jpg";
+import lvImaginationImage from "@/assets/wishlist/scents/lv-imagination.jpg";
+import joMaloneMyrrhTonkaImage from "@/assets/wishlist/scents/jo-malone-myrrh-tonka.jpg";
+import newBalance5030BlackImage from "@/assets/wishlist/shoes/new-balance-5030-black.jpg";
+import valetTrayImage from "@/assets/wishlist/everyday/valet-tray.jpg";
+import cordlessLampImage from "@/assets/wishlist/everyday/cordless-lamp.jpg";
+import cedarShoeTreesImage from "@/assets/wishlist/everyday/cedar-shoe-trees.jpg";
+import corkMassageBallImage from "@/assets/wishlist/everyday/cork-massage-ball.jpg";
+import watchRollImage from "@/assets/wishlist/everyday/watch-roll.jpg";
+import silkSleepMaskImage from "@/assets/wishlist/everyday/silk-sleep-mask.jpg";
+import nailGroomingKitImage from "@/assets/wishlist/everyday/nail-grooming-kit.jpg";
+import orikiMassageRoomImage from "@/assets/wishlist/experiences/oriki-massage-room.jpg";
+import orikiReceptionImage from "@/assets/wishlist/experiences/oriki-reception.jpg";
+import orikiUnwindImage from "@/assets/wishlist/experiences/oriki-unwind.jpg";
+import orikiSpaHallImage from "@/assets/wishlist/experiences/oriki-spa-hall.jpg";
+import orikiSpaLobbyImage from "@/assets/wishlist/experiences/oriki-spa-lobby.jpg";
+import orikiSpaLoungeImage from "@/assets/wishlist/experiences/oriki-spa-lounge.jpg";
+import filmhouseImaxImage from "@/assets/wishlist/experiences/filmhouse-imax.jpg";
+import modernWarfare4Image from "@/assets/wishlist/games/modern-warfare-4.jpg";
+import controlResonantImage from "@/assets/wishlist/games/control-resonant.jpg";
+import marvelsWolverineImage from "@/assets/wishlist/games/marvels-wolverine.jpg";
+import adidasEssentialOversizedTeeBlackImage from "@/assets/wishlist/clothing/adidas-essential-oversized-tee-black.jpg";
+import adidasEssentialOpenHemJoggersBlackImage from "@/assets/wishlist/clothing/adidas-essential-open-hem-joggers-black.jpg";
+import newBalancePerformance5inShortsBlackImage from "@/assets/wishlist/clothing/new-balance-performance-5in-shorts-black.jpg";
+import newBalanceWovenLabelSweatshirtBlackImage from "@/assets/wishlist/clothing/new-balance-woven-label-sweatshirt-black.jpg";
+import newBalanceRemasteredHandsTeeBlackImage from "@/assets/wishlist/clothing/new-balance-remastered-hands-tee-black.jpg";
+import newBalanceReimaginedFleeceOffWhiteImage from "@/assets/wishlist/clothing/new-balance-reimagined-fleece-off-white.jpg";
+import kindlePaperwhiteImage from "@/assets/wishlist/tech/kindle-paperwhite.jpg";
+import claudeImage from "@/assets/wishlist/tech/claude.jpg";
+import chatgptImage from "@/assets/wishlist/tech/chatgpt.jpg";
+import chromagraphCameraImage from "@/assets/wishlist/tech/chromagraph-camera.jpg";
+import giovannisRoomImage from "@/assets/wishlist/books/giovannis-room.jpg";
+import unbearableLightnessOfBeingImage from "@/assets/wishlist/books/unbearable-lightness-of-being.jpg";
+import staffEngineersPathImage from "@/assets/wishlist/books/staff-engineers-path.jpg";
 import orientStarSemiSkeletonImage from "@/assets/wishlist/watches/orient-star-semi-skeleton.jpg";
 import orientBambinoOpenHeartBlueImage from "@/assets/wishlist/watches/orient-bambino-open-heart-blue.jpg";
 import seikoPresageSsa379Image from "@/assets/wishlist/watches/seiko-presage-ssa379.jpg";
 import seikoPresageCocktailTimeGreenImage from "@/assets/wishlist/watches/seiko-presage-cocktail-time-green.jpg";
 import hamiltonJazzmasterOpenHeartImage from "@/assets/wishlist/watches/hamilton-jazzmaster-open-heart.jpg";
-import frederiqueConstantCarreeImage from "@/assets/wishlist/watches/frederique-constant-carree.png";
 import longinesDolcevitaImage from "@/assets/wishlist/watches/longines-dolcevita.jpg";
 import casioA168wg9Image from "@/assets/wishlist/watches/casio-a168wg-9.jpg";
 import timexQReissueLcaImage from "@/assets/wishlist/watches/timex-q-reissue-lca.jpg";
@@ -19,18 +61,13 @@ import fujifilmXE5Image from "@/assets/wishlist/cameras/fujifilm-x-e5.jpg";
 import fujifilmX100viImage from "@/assets/wishlist/cameras/fujifilm-x100vi.jpg";
 import macMiniImage from "@/assets/wishlist/tech/mac-mini-24gb-512gb.jpg";
 import theragunMiniImage from "@/assets/wishlist/tech/theragun-mini.jpg";
-import dispatchImage from "@/assets/wishlist/games/dispatch.jpg";
 import princeOfPersiaImage from "@/assets/wishlist/games/prince-of-persia-the-lost-crown.jpg";
-import balatroImage from "@/assets/wishlist/games/balatro.jpg";
-import hollowKnightSilksongImage from "@/assets/wishlist/games/hollow-knight-silksong.jpg";
 import ayblRefuseTeeBlackImage from "@/assets/wishlist/clothing/aybl-refuse-to-blend-in-tee-black.jpg";
 import ayblRefuseTeeOffWhiteImage from "@/assets/wishlist/clothing/aybl-refuse-to-blend-in-tee-off-white.jpg";
 import gymsharkVengeanceTankImage from "@/assets/wishlist/clothing/gymshark-vengeance-graphic-tank-white.jpg";
 import gymsharkChromeSweatshirtImage from "@/assets/wishlist/clothing/gymshark-chrome-graphic-sweatshirt-tactical-teal.jpg";
 import gymsharkChromePantsImage from "@/assets/wishlist/clothing/gymshark-chrome-graphic-pants-black.jpg";
 import ayblCore7ShortsImage from "@/assets/wishlist/clothing/aybl-core-7-shorts-black.jpg";
-import newBalanceTeeImage from "@/assets/wishlist/clothing/new-balance-sport-essentials-tee-black.jpg";
-import newBalanceHoodieImage from "@/assets/wishlist/clothing/new-balance-sport-essentials-hoodie-black.jpg";
 import newBalance1000Image from "@/assets/wishlist/shoes/new-balance-1000-black.jpg";
 import newBalanceAbzorb2000Image from "@/assets/wishlist/shoes/new-balance-abzorb-2000-black.jpg";
 import newBalance5030SilverBlueImage from "@/assets/wishlist/shoes/new-balance-5030-silver-blue.jpg";
@@ -100,16 +137,6 @@ export const wishlistItems: WishlistItem[] = [
     price: 1295,
   },
   {
-    id: "frederique-constant-classics-carree",
-    name: "Classics Carrée",
-    brand: "Frédérique Constant",
-    category: "watches",
-    image: frederiqueConstantCarreeImage,
-    href: "https://www.exquisitetimepieces.com/products/frederique-constant-fc-303sal4c6-classics-carree-small-seconds",
-    note: "Automatic, FC-303SAL4C6.",
-    price: 1495,
-  },
-  {
     id: "longines-dolcevita",
     name: "DolceVita",
     brand: "Longines",
@@ -159,9 +186,10 @@ export const wishlistItems: WishlistItem[] = [
     name: "Oyster Perpetual 34",
     brand: "Rolex",
     category: "watches",
+    image: rolexOysterPerpetual34Image,
     href: "https://www.rolex.com/en-us/watches/oyster-perpetual/m124200-0001",
     note: "124200. The cheapest current Rolex.",
-    price: 5900,
+    price: 6400,
     dream: true,
   },
   {
@@ -177,61 +205,63 @@ export const wishlistItems: WishlistItem[] = [
   },
   {
     id: "craftd-thin-curb-bracelet",
-    name: "Thin Curb Bracelet",
+    name: "Curb Bracelet",
     brand: "CRAFTD",
     category: "accessories",
-    href: "https://craftdlondon.com/collections/bracelets",
+    image: craftdCurbBraceletGold2mmImage,
+    href: "https://craftdlondon.com/products/adjustable-curb-bracelet-gold",
     note: "2mm, gold.",
-    price: 40,
-    priceTo: 50,
+    price: 38,
   },
   {
     id: "craftd-slim-gold-cuff",
-    name: "Slim Gold Cuff",
+    name: "Classic Cuff",
     brand: "CRAFTD",
     category: "accessories",
-    href: "https://craftdlondon.com",
-    note: "Slim and plain.",
-    price: 40,
-    priceTo: 60,
+    image: craftdClassicCuffGold3mmImage,
+    href: "https://craftdlondon.com/products/classic-cuff-3mm-gold",
+    note: "3mm, gold.",
+    price: 57,
   },
   {
     id: "craftd-black-onyx-signet-ring",
-    name: "Black Onyx Signet Ring",
+    name: "Onyx Squared Signet Ring",
     brand: "CRAFTD",
     category: "accessories",
-    href: "https://craftdlondon.com",
+    image: craftdOnyxSquaredSignetGoldImage,
+    href: "https://craftdlondon.com/products/squared-stone-ring-gold",
     note: "Gold.",
-    price: 50,
-    priceTo: 65,
+    price: 73,
   },
   {
     id: "craftd-vintage-stone-signet-ring",
     name: "Vintage Stone Signet Ring",
     brand: "CRAFTD",
     category: "accessories",
+    image: craftdVintageStoneSignetSilverImage,
     href: "https://craftdlondon.com/products/vintage-stone-signet-ring-silver",
     note: "Silver.",
     price: 55,
   },
   {
     id: "craftd-slim-rope-bracelet",
-    name: "Slim Rope Bracelet",
+    name: "Rope Bracelet",
     brand: "CRAFTD",
     category: "accessories",
-    href: "https://craftdlondon.com/collections/bracelets",
-    note: "Silver or gold.",
-    price: 40,
-    priceTo: 60,
+    image: craftdRopeBraceletGold2mmImage,
+    href: "https://craftdlondon.com/products/rope-bracelet-gold-2mm",
+    note: "2mm, gold.",
+    price: 54,
   },
   {
     id: "sculptural-silver-ring",
-    name: "Sculptural Silver Ring",
-    brand: "Any brand",
+    name: "Inception Ring",
+    brand: "CRAFTD",
     category: "accessories",
-    note: "Minimal, organic shape.",
-    price: 40,
-    priceTo: 100,
+    image: craftdInceptionRingSilverImage,
+    href: "https://craftdlondon.com/products/inception-ring-silver",
+    note: "Silver. Or any minimal sculptural ring.",
+    price: 65,
   },
   {
     id: "coach-hitch-messenger-bag",
@@ -314,6 +344,7 @@ export const wishlistItems: WishlistItem[] = [
     name: "Linux Mini PC",
     brand: "Beelink · GMKtec · Minisforum",
     category: "tech",
+    image: beelinkSer8Image,
     href: "https://www.bee-link.com/products/beelink-ser8-8845hs",
     note: "Ryzen 7, 64GB RAM, 1TB NVMe. Beelink SER8, GMKtec K8 Plus or Minisforum UM880 Plus. Aiming for about $680.",
     price: 650,
@@ -342,15 +373,75 @@ export const wishlistItems: WishlistItem[] = [
     price: 220,
   },
   {
-    id: "dispatch",
-    name: "Dispatch",
-    brand: "Nintendo Switch 2",
-    category: "games",
-    image: dispatchImage,
-    href: "https://www.nintendo.com/us/store/products/dispatch-nintendo-switch-2-edition-switch-2/",
-    note: "Next game up.",
-    price: 30,
-    priority: 7,
+    id: "kindle-paperwhite",
+    name: "Kindle Paperwhite",
+    brand: "Amazon",
+    category: "tech",
+    image: kindlePaperwhiteImage,
+    href: "https://www.amazon.com/dp/B0CFPJYX7P",
+    note: "16GB.",
+    price: 200,
+  },
+  {
+    id: "claude-subscription",
+    name: "Claude Pro or Max",
+    brand: "Anthropic",
+    category: "tech",
+    image: claudeImage,
+    href: "https://claude.ai/upgrade",
+    note: "A month or a year of it.",
+    price: 20,
+    priceTo: 200,
+  },
+  {
+    id: "chatgpt-subscription",
+    name: "ChatGPT Plus",
+    brand: "OpenAI",
+    category: "tech",
+    image: chatgptImage,
+    href: "https://chatgpt.com/#pricing",
+    note: "A month or a year of it.",
+    price: 20,
+  },
+  {
+    id: "chromagraph-camera",
+    name: "Chromagraph Camera",
+    brand: "iPhone app",
+    category: "tech",
+    image: chromagraphCameraImage,
+    href: "https://apps.apple.com/us/app/chromagraph-camera/id6803329435",
+    note: "Steve Yedlin’s RAW camera app.",
+    price: 13,
+  },
+  {
+    id: "giovannis-room",
+    name: "Giovanni’s Room",
+    brand: "James Baldwin",
+    category: "books",
+    image: giovannisRoomImage,
+    href: "https://www.amazon.com/dp/0345806565",
+    note: "Paperback or Kindle.",
+    price: 12,
+  },
+  {
+    id: "unbearable-lightness-of-being",
+    name: "The Unbearable Lightness of Being",
+    brand: "Milan Kundera",
+    category: "books",
+    image: unbearableLightnessOfBeingImage,
+    href: "https://www.amazon.com/dp/0061148520",
+    note: "Paperback or Kindle.",
+    price: 10,
+  },
+  {
+    id: "staff-engineers-path",
+    name: "The Staff Engineer’s Path",
+    brand: "Tanya Reilly",
+    category: "books",
+    image: staffEngineersPathImage,
+    href: "https://www.amazon.com/dp/1098118731",
+    note: "Paperback or Kindle.",
+    price: 27,
   },
   {
     id: "prince-of-persia-the-lost-crown",
@@ -363,24 +454,34 @@ export const wishlistItems: WishlistItem[] = [
     price: 30,
   },
   {
-    id: "balatro",
-    name: "Balatro",
-    brand: "Nintendo Switch 2",
+    id: "call-of-duty-modern-warfare-4",
+    name: "Call of Duty: Modern Warfare 4",
+    brand: "PlayStation 5",
     category: "games",
-    image: balatroImage,
-    href: "https://www.nintendo.com/us/store/products/balatro-switch-2/",
-    note: "Switch 2 version.",
-    price: 15,
+    image: modernWarfare4Image,
+    href: "https://www.amazon.com/dp/B0H37MKQ64",
+    note: "Standard Edition.",
+    price: 69,
   },
   {
-    id: "hollow-knight-silksong",
-    name: "Hollow Knight: Silksong",
-    brand: "Nintendo Switch 2",
+    id: "control-resonant",
+    name: "Control Resonant",
+    brand: "PlayStation 5",
     category: "games",
-    image: hollowKnightSilksongImage,
-    href: "https://www.nintendo.com/us/store/products/hollow-knight-silksong-nintendo-switch-2-edition-switch-2/",
-    note: "Switch 2 Edition.",
-    price: 20,
+    image: controlResonantImage,
+    href: "https://www.amazon.com/dp/B0H3WQP7C6",
+    note: "Remedy’s new one.",
+    price: 60,
+  },
+  {
+    id: "marvels-wolverine",
+    name: "Marvel’s Wolverine",
+    brand: "PlayStation 5",
+    category: "games",
+    image: marvelsWolverineImage,
+    href: "https://www.amazon.com/dp/B0G6157JKW",
+    note: "Standard Edition.",
+    price: 69,
   },
   {
     id: "aybl-refuse-to-blend-in-tee-black",
@@ -443,30 +544,71 @@ export const wishlistItems: WishlistItem[] = [
     price: 26,
   },
   {
-    id: "new-balance-sport-essentials-tee",
-    name: "Sport Essentials Tee",
-    brand: "New Balance",
+    id: "adidas-essential-oversized-tee-black",
+    name: "Essential Oversized Tee",
+    brand: "adidas Originals",
     category: "clothing",
-    image: newBalanceTeeImage,
-    href: "https://www.newbalance.com/pd/sport-essentials-logo-t-shirt/MT41502.html",
-    note: "Plain, XL.",
-    price: 30,
+    image: adidasEssentialOversizedTeeBlackImage,
+    href: "https://www.asos.com/us/adidas-originals/adidas-originals-premium-essentials-oversized-t-shirt-in-black/prd/204210178",
+    note: "Black, XL.",
+    price: 35,
   },
   {
-    id: "new-balance-sport-essentials-hoodie",
-    name: "Sport Essentials Hoodie",
+    id: "adidas-essential-open-hem-joggers-black",
+    name: "Essential Open Hem Joggers",
+    brand: "adidas Originals",
+    category: "clothing",
+    image: adidasEssentialOpenHemJoggersBlackImage,
+    href: "https://www.asos.com/us/adidas-originals/adidas-originals-essential-open-hem-joggers-in-black/prd/209110283",
+    note: "Black, XL.",
+    price: 72,
+  },
+  {
+    id: "new-balance-performance-5in-shorts-black",
+    name: "Performance 5\" Shorts",
     brand: "New Balance",
     category: "clothing",
-    image: newBalanceHoodieImage,
-    href: "https://www.newbalance.com/pd/sport-essentials-fleece-hoodie/MT41511.html",
-    note: "XL.",
-    price: 70,
+    image: newBalancePerformance5inShortsBlackImage,
+    href: "https://www.asos.com/us/new-balance/new-balance-performance-5-inch-shorts-in-black/prd/205350332",
+    note: "Black, 2XL.",
+    price: 59,
+  },
+  {
+    id: "new-balance-woven-label-sweatshirt-black",
+    name: "Woven Label Graphic Sweatshirt",
+    brand: "New Balance",
+    category: "clothing",
+    image: newBalanceWovenLabelSweatshirtBlackImage,
+    href: "https://www.asos.com/us/search/?q=new+balance+woven+label+graphic+sweatshirt",
+    note: "Black, XL.",
+    price: 87,
+  },
+  {
+    id: "new-balance-remastered-hands-tee-black",
+    name: "Digitally Remastered Hands Tee",
+    brand: "New Balance",
+    category: "clothing",
+    image: newBalanceRemasteredHandsTeeBlackImage,
+    href: "https://www.asos.com/us/search/?q=new+balance+digitally+remastered+hands+t-shirt",
+    note: "Black, XL.",
+    price: 40,
+  },
+  {
+    id: "new-balance-reimagined-fleece-off-white",
+    name: "Reimagined Graphic Fleece Sweatshirt",
+    brand: "New Balance",
+    category: "clothing",
+    image: newBalanceReimaginedFleeceOffWhiteImage,
+    href: "https://www.asos.com/us/search/?q=new+balance+reimagined+graphic+fleece+sweatshirt",
+    note: "Off white, XL.",
+    price: 87,
   },
   {
     id: "abercrombie-fitch-essential-tee",
     name: "Essential Tee",
     brand: "Abercrombie & Fitch",
     category: "clothing",
+    image: abercrombieEssentialTeeImage,
     href: "https://www.abercrombie.com/shop/us/mens-tees-and-henleys-tops",
     note: "Plain, XL.",
     price: 30,
@@ -477,8 +619,9 @@ export const wishlistItems: WishlistItem[] = [
     name: "Essential Popover Hoodie",
     brand: "Abercrombie & Fitch",
     category: "clothing",
+    image: abercrombieEssentialPopoverHoodieImage,
     href: "https://www.abercrombie.com/shop/us/mens-hoodies-and-sweatshirts",
-    note: "Plain, XL.",
+    note: "Brown, XL.",
     price: 60,
   },
   {
@@ -515,7 +658,8 @@ export const wishlistItems: WishlistItem[] = [
     name: "5030",
     brand: "New Balance",
     category: "shoes",
-    href: "https://www.newbalance.com/search?q=5030",
+    image: newBalance5030BlackImage,
+    href: "https://stockx.com/new-balance-5030-black-silver-metallic",
     note: "Black with metallic silver, EU 46. 46.5 or US 12 also fits.",
     price: 120,
   },
@@ -595,17 +739,19 @@ export const wishlistItems: WishlistItem[] = [
     name: "Massage at Oríkì",
     brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiMassageRoomImage,
     href: "https://payment.unwindapp.co/gift-cards",
     note: "Stress Release for back and shoulders, or similar. Once a month.",
     price: 60,
     priceTo: 90,
-    priority: 8,
+    priority: 7,
   },
   {
     id: "oriki-birthday-indulgence",
     name: "Birthday Indulgence",
     brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiReceptionImage,
     href: "https://oriki.zenoti.com/webstoreNew/services/27593b34-d1fc-41e6-bad6-9ce717138be4",
     note: "₦97,300. A 175-minute birthday package at Oríkì Surulere.",
     price: 74,
@@ -615,6 +761,7 @@ export const wishlistItems: WishlistItem[] = [
     name: "Unwind Membership",
     brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiUnwindImage,
     href: "https://www.orikigroup.com/pages/oriki-membership",
     note: "₦1,073,800 a year. A massage, facial and mani-pedi every month.",
     price: 812,
@@ -623,8 +770,10 @@ export const wishlistItems: WishlistItem[] = [
   {
     id: "professional-facial",
     name: "Professional Facial",
-    brand: "Experience",
+    brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiSpaHallImage,
+    href: "https://oriki.zenoti.com/webstoreNew/services",
     note: "Once a quarter.",
     price: 100,
     priceTo: 150,
@@ -632,8 +781,10 @@ export const wishlistItems: WishlistItem[] = [
   {
     id: "manicure-pedicure",
     name: "Manicure & Pedicure",
-    brand: "Experience",
+    brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiSpaLobbyImage,
+    href: "https://oriki.zenoti.com/webstoreNew/services",
     note: "Professional.",
     price: 60,
     priceTo: 90,
@@ -641,18 +792,22 @@ export const wishlistItems: WishlistItem[] = [
   {
     id: "spa-day",
     name: "Spa Day",
-    brand: "Experience",
+    brand: "Oríkì Spa",
     category: "wellness",
+    image: orikiSpaLoungeImage,
+    href: "https://payment.unwindapp.co/gift-cards",
     note: "A relaxation package.",
     price: 150,
     priceTo: 300,
   },
   {
     id: "premium-cinema",
-    name: "Premium Cinema",
-    brand: "Experience",
+    name: "Filmhouse IMAX or EbonyLife Recliner",
+    brand: "Cinema",
     category: "wellness",
-    note: "IMAX or a recliner screen.",
+    image: filmhouseImaxImage,
+    href: "https://filmhouseng.com",
+    note: "A night at the movies.",
     price: 25,
     priceTo: 40,
   },
@@ -663,8 +818,9 @@ export const wishlistItems: WishlistItem[] = [
     category: "scent",
     image: amouageGuidanceImage,
     href: "https://amouage.com/100ml-guidance.html",
-    note: "100ml.",
-    price: 395,
+    note: "100ml, or the 50ml Guidance hair perfume.",
+    price: 130,
+    priceTo: 395,
   },
   {
     id: "amouage-guidance-46",
@@ -691,9 +847,10 @@ export const wishlistItems: WishlistItem[] = [
     name: "Imagination",
     brand: "Louis Vuitton",
     category: "scent",
-    href: "https://us.louisvuitton.com/eng-us/products/imagination-nvprod2970067v/LP0219",
+    image: lvImaginationImage,
+    href: "https://us.louisvuitton.com/eng-us/products/Imagination-nvprod7340011v/LP0476",
     note: "100ml.",
-    price: 410,
+    price: 360,
   },
   {
     id: "thomas-kosmala-no-4-apres-lamour",
@@ -710,55 +867,61 @@ export const wishlistItems: WishlistItem[] = [
     name: "Myrrh & Tonka Cologne Intense",
     brand: "Jo Malone London",
     category: "scent",
+    image: joMaloneMyrrhTonkaImage,
     href: "https://www.jomalone.com/product/25946/110447/colognes/myrrh-tonka-cologne-intense",
-    note: "100ml.",
-    price: 228,
+    note: "50ml or 100ml.",
+    price: 160,
+    priceTo: 228,
   },
   {
     id: "bull-sheath-leather-leather-valet-tray",
     name: "Leather Valet Tray",
-    brand: "Bull Sheath Leather",
+    brand: "SITHON",
     category: "everyday",
-    href: "https://bullsheathleather.com/products/valet-tray",
+    image: valetTrayImage,
+    href: "https://www.amazon.com/dp/B08C5BJ8VT",
     note: "For watches and jewellery.",
-    price: 10,
-    priceTo: 25,
+    price: 19,
   },
   {
     id: "barebones-rechargeable-lamp",
-    name: "Rechargeable Lamp",
-    brand: "Barebones",
+    name: "Cordless Bedside Lamp",
+    brand: "Any brand",
     category: "everyday",
-    href: "https://www.barebonesliving.com/products/beacon",
-    note: "Warm light for the bedside.",
-    price: 24,
+    image: cordlessLampImage,
+    href: "https://www.amazon.com/dp/B0GWM6MBLP",
+    note: "Rechargeable, warm light.",
+    price: 18,
   },
   {
     id: "thursday-boot-co-cedar-shoe-trees",
     name: "Cedar Shoe Trees",
-    brand: "Thursday Boot Co.",
+    brand: "HOUNDSBAY",
     category: "everyday",
-    href: "https://thursdayboots.com/products/cobblers-choice-mens-cedar-shoe-tree",
+    image: cedarShoeTreesImage,
+    href: "https://www.amazon.com/dp/B07RWNZJNZ",
     note: "Men's.",
-    price: 28,
+    price: 40,
   },
   {
     id: "rawlogy-cork-massage-ball",
     name: "Cork Massage Ball",
     brand: "Rawlogy",
     category: "everyday",
-    href: "https://www.rawlogy.com/products/cork-massage-ball",
+    image: corkMassageBallImage,
+    href: "https://www.amazon.com/dp/B07RT1ZKZ6",
     note: "For gym and tennis recovery.",
-    price: 14,
+    price: 16,
   },
   {
     id: "barton-travel-watch-roll",
-    name: "Travel Watch Roll",
-    brand: "Barton",
+    name: "Leather Watch Case",
+    brand: "Any brand",
     category: "everyday",
-    href: "https://www.bartonwatchbands.com/products/single-recycled-leather-watch-roll-travel-case",
-    note: "Slim, single watch.",
-    price: 50,
+    image: watchRollImage,
+    href: "https://www.amazon.com/dp/B0DKNKT7JF",
+    note: "Single watch, travel.",
+    price: 39,
   },
   {
     id: "barton-leather-watch-strap",
@@ -772,20 +935,22 @@ export const wishlistItems: WishlistItem[] = [
   },
   {
     id: "kitsch-satin-sleep-mask",
-    name: "Satin Sleep Mask",
-    brand: "Kitsch",
+    name: "Silk Sleep Mask",
+    brand: "Any brand",
     category: "everyday",
-    href: "https://mykitsch.com/products/the-pillow-eye-mask-charcoal",
-    note: "Charcoal.",
-    price: 21,
+    image: silkSleepMaskImage,
+    href: "https://www.amazon.com/dp/B08817H6HS",
+    note: "Mulberry silk.",
+    price: 9,
   },
   {
     id: "tweezerman-nail-grooming-kit",
     name: "Nail Grooming Kit",
-    brand: "Tweezerman",
+    brand: "MANSCAPED",
     category: "everyday",
-    href: "https://www.tweezerman.com/products/mini-nail-rescue-kit",
-    note: "Compact clipper and file kit.",
-    price: 26,
+    image: nailGroomingKitImage,
+    href: "https://www.amazon.com/dp/B0CDNT3PH2",
+    note: "Compact travel kit.",
+    price: 25,
   },
 ];

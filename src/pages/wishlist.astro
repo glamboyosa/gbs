@@ -16,6 +16,7 @@ const categories: { key: WishlistCategory; label: string; tag: string }[] = [
   { key: "clothing", label: "Clothing", tag: "Clothing" },
   { key: "shoes", label: "Shoes", tag: "Shoes" },
   { key: "scent", label: "Scent", tag: "Scent" },
+  { key: "books", label: "Books", tag: "Book" },
   { key: "wellness", label: "Self-care", tag: "Self-care" },
   { key: "everyday", label: "Everyday", tag: "Everyday" },
 ];
@@ -43,7 +44,7 @@ const priorityCount = items.filter((item) => item.priority).length;
 const claims = await getClaims();
 ---
 
-<Layout title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd.">
+<Layout title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
   <div class="page-shell collection-shell">
     <SiteHeader current="wishlist" />
     <main>

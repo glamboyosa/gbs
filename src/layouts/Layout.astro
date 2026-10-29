@@ -2,9 +2,13 @@
 export interface Props {
 	title: string;
 	description?: string;
+	/** Link preview video and poster in /public, recorded at 1200x630. */
+	preview?: { name: string; alt: string };
 }
 
 const { title, description = "Default description" } = Astro.props;
+const preview = Astro.props.preview ?? (Astro.url.pathname === "/" ? { name: "og-preview", alt: "Osa’s product engineering portfolio." } : undefined);
+const pageUrl = new URL(Astro.url.pathname, "https://www.glamboyosa.xyz").href;
 import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 ---
 
@@ -18,17 +22,17 @@ import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
-		{Astro.url.pathname === "/" && (
+		{preview && (
 			<>
-				<link rel="canonical" href="https://www.glamboyosa.xyz/" />
-				<meta property="og:url" content="https://www.glamboyosa.xyz/" />
-				<meta property="og:image" content="https://www.glamboyosa.xyz/og-preview.jpg" />
+				<link rel="canonical" href={pageUrl} />
+				<meta property="og:url" content={pageUrl} />
+				<meta property="og:image" content={`https://www.glamboyosa.xyz/${preview.name}.jpg`} />
 				<meta property="og:image:type" content="image/jpeg" />
 				<meta property="og:image:width" content="1200" />
 				<meta property="og:image:height" content="630" />
-				<meta property="og:image:alt" content="Osa’s product engineering portfolio." />
-				<meta property="og:video" content="https://www.glamboyosa.xyz/og-preview.mp4" />
-				<meta property="og:video:secure_url" content="https://www.glamboyosa.xyz/og-preview.mp4" />
+				<meta property="og:image:alt" content={preview.alt} />
+				<meta property="og:video" content={`https://www.glamboyosa.xyz/${preview.name}.mp4`} />
+				<meta property="og:video:secure_url" content={`https://www.glamboyosa.xyz/${preview.name}.mp4`} />
 				<meta property="og:video:type" content="video/mp4" />
 				<meta property="og:video:width" content="1200" />
 				<meta property="og:video:height" content="630" />

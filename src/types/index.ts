@@ -14,7 +14,7 @@ export type RotationItem = {
   featured?: boolean;
 };
 
-export type WishlistCategory = "watches" | "accessories" | "cameras" | "tech" | "games" | "clothing" | "shoes" | "scent" | "wellness" | "everyday";
+export type WishlistCategory = "watches" | "accessories" | "cameras" | "tech" | "games" | "clothing" | "shoes" | "scent" | "books" | "wellness" | "everyday";
 
 export type WishlistItem = {
   /** Stable key for claims. Changing it drops the claim. */

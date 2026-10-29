@@ -2,12 +2,10 @@ import type { WishlistItem } from "@/types";
 import rolexOysterPerpetual34Image from "@/assets/wishlist/watches/rolex-oyster-perpetual-34.jpg";
 import craftdCurbBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-curb-bracelet-gold-2mm.jpg";
 import craftdClassicCuffGold3mmImage from "@/assets/wishlist/jewellery/craftd-classic-cuff-gold-3mm.jpg";
-import craftdOnyxSquaredSignetGoldImage from "@/assets/wishlist/jewellery/craftd-onyx-squared-signet-gold.jpg";
-import craftdVintageStoneSignetSilverImage from "@/assets/wishlist/jewellery/craftd-vintage-stone-signet-silver.jpg";
 import craftdRopeBraceletGold2mmImage from "@/assets/wishlist/jewellery/craftd-rope-bracelet-gold-2mm.jpg";
 import craftdInceptionRingSilverImage from "@/assets/wishlist/jewellery/craftd-inception-ring-silver.jpg";
 import beelinkSer8Image from "@/assets/wishlist/tech/beelink-ser8.jpg";
-import abercrombieEssentialTeeImage from "@/assets/wishlist/clothing/abercrombie-essential-tee.jpg";
+import abercrombie5PackClassicEssentialTeesImage from "@/assets/wishlist/clothing/abercrombie-5-pack-classic-essential-tees.jpg";
 import abercrombieEssentialPopoverHoodieImage from "@/assets/wishlist/clothing/abercrombie-essential-popover-hoodie.jpg";
 import lvImaginationImage from "@/assets/wishlist/scents/lv-imagination.jpg";
 import joMaloneMyrrhTonkaImage from "@/assets/wishlist/scents/jo-malone-myrrh-tonka.jpg";
@@ -21,10 +19,10 @@ import silkSleepMaskImage from "@/assets/wishlist/everyday/silk-sleep-mask.jpg";
 import nailGroomingKitImage from "@/assets/wishlist/everyday/nail-grooming-kit.jpg";
 import orikiMassageRoomImage from "@/assets/wishlist/experiences/oriki-massage-room.jpg";
 import orikiReceptionImage from "@/assets/wishlist/experiences/oriki-reception.jpg";
-import orikiUnwindImage from "@/assets/wishlist/experiences/oriki-unwind.jpg";
 import orikiSpaHallImage from "@/assets/wishlist/experiences/oriki-spa-hall.jpg";
 import orikiSpaLobbyImage from "@/assets/wishlist/experiences/oriki-spa-lobby.jpg";
-import orikiSpaLoungeImage from "@/assets/wishlist/experiences/oriki-spa-lounge.jpg";
+import dunesdayImage from "@/assets/wishlist/experiences/dunesday.jpg";
+import seGourmetSalmonQuinoaImage from "@/assets/wishlist/experiences/se-gourmet-salmon-quinoa.jpg";
 import filmhouseImaxImage from "@/assets/wishlist/experiences/filmhouse-imax.jpg";
 import modernWarfare4Image from "@/assets/wishlist/games/modern-warfare-4.jpg";
 import controlResonantImage from "@/assets/wishlist/games/control-resonant.jpg";
@@ -43,11 +41,7 @@ import giovannisRoomImage from "@/assets/wishlist/books/giovannis-room.jpg";
 import unbearableLightnessOfBeingImage from "@/assets/wishlist/books/unbearable-lightness-of-being.jpg";
 import staffEngineersPathImage from "@/assets/wishlist/books/staff-engineers-path.jpg";
 import orientStarSemiSkeletonImage from "@/assets/wishlist/watches/orient-star-semi-skeleton.jpg";
-import orientBambinoOpenHeartBlueImage from "@/assets/wishlist/watches/orient-bambino-open-heart-blue.jpg";
 import seikoPresageSsa379Image from "@/assets/wishlist/watches/seiko-presage-ssa379.jpg";
-import seikoPresageCocktailTimeGreenImage from "@/assets/wishlist/watches/seiko-presage-cocktail-time-green.jpg";
-import hamiltonJazzmasterOpenHeartImage from "@/assets/wishlist/watches/hamilton-jazzmaster-open-heart.jpg";
-import longinesDolcevitaImage from "@/assets/wishlist/watches/longines-dolcevita.jpg";
 import casioA168wg9Image from "@/assets/wishlist/watches/casio-a168wg-9.jpg";
 import timexQReissueLcaImage from "@/assets/wishlist/watches/timex-q-reissue-lca.jpg";
 import cartierTankMustLargeImage from "@/assets/wishlist/watches/cartier-tank-must-large.jpg";
@@ -59,7 +53,6 @@ import fujifilmXM5Image from "@/assets/wishlist/cameras/fujifilm-x-m5.jpg";
 import nikonZFcImage from "@/assets/wishlist/cameras/nikon-z-fc.png";
 import fujifilmXE5Image from "@/assets/wishlist/cameras/fujifilm-x-e5.jpg";
 import fujifilmX100viImage from "@/assets/wishlist/cameras/fujifilm-x100vi.jpg";
-import macMiniImage from "@/assets/wishlist/tech/mac-mini-24gb-512gb.jpg";
 import theragunMiniImage from "@/assets/wishlist/tech/theragun-mini.jpg";
 import princeOfPersiaImage from "@/assets/wishlist/games/prince-of-persia-the-lost-crown.jpg";
 import ayblRefuseTeeBlackImage from "@/assets/wishlist/clothing/aybl-refuse-to-blend-in-tee-black.jpg";
@@ -69,7 +62,6 @@ import gymsharkChromeSweatshirtImage from "@/assets/wishlist/clothing/gymshark-c
 import gymsharkChromePantsImage from "@/assets/wishlist/clothing/gymshark-chrome-graphic-pants-black.jpg";
 import ayblCore7ShortsImage from "@/assets/wishlist/clothing/aybl-core-7-shorts-black.jpg";
 import newBalance1000Image from "@/assets/wishlist/shoes/new-balance-1000-black.jpg";
-import newBalanceAbzorb2000Image from "@/assets/wishlist/shoes/new-balance-abzorb-2000-black.jpg";
 import newBalance5030SilverBlueImage from "@/assets/wishlist/shoes/new-balance-5030-silver-blue.jpg";
 import nikeReactxRejuven8Image from "@/assets/wishlist/shoes/nike-reactx-rejuven8-black.jpg";
 import crocsEchoImage from "@/assets/wishlist/shoes/crocs-echo-gum-ro-clog-black.jpg";
@@ -97,16 +89,6 @@ export const wishlistItems: WishlistItem[] = [
     priority: 2,
   },
   {
-    id: "orient-bambino-open-heart",
-    name: "Bambino Open Heart",
-    brand: "Orient",
-    category: "watches",
-    image: orientBambinoOpenHeartBlueImage,
-    href: "https://longislandwatch.com/products/orient-ra-ag0005l10a-bambino-watch-ra-ag0005l10a",
-    note: "Blue dial, RA-AG0005L10A.",
-    price: 295,
-  },
-  {
     id: "seiko-presage-japanese-garden-open-heart",
     name: "Presage Japanese Garden Open Heart",
     brand: "Seiko",
@@ -115,37 +97,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://longislandwatch.com/products/seiko-ssa379-presage-watch-ssa379",
     note: "SSA379.",
     price: 550,
-  },
-  {
-    id: "seiko-presage-cocktail-time",
-    name: "Presage Cocktail Time",
-    brand: "Seiko",
-    category: "watches",
-    image: seikoPresageCocktailTimeGreenImage,
-    href: "https://longislandwatch.com/products/seiko-presage-cocktail-time-with-green-dial-hcb002",
-    note: "Green dial.",
-    price: 475,
-  },
-  {
-    id: "hamilton-jazzmaster-open-heart",
-    name: "Jazzmaster Open Heart",
-    brand: "Hamilton",
-    category: "watches",
-    image: hamiltonJazzmasterOpenHeartImage,
-    href: "https://www.hamiltonwatch.com/en-us/h32705141-jazzmaster-open-heart-auto.html",
-    note: "42mm automatic, H32705141.",
-    price: 1295,
-  },
-  {
-    id: "longines-dolcevita",
-    name: "DolceVita",
-    brand: "Longines",
-    category: "watches",
-    image: longinesDolcevitaImage,
-    href: "https://www.watchmaxx.com/longines-watch-l5-767-4-73-0",
-    note: "Automatic, silver dial, leather strap.",
-    price: 1675,
-    priceTo: 1775,
   },
   {
     id: "casio-a168wg-9-gold-digital",
@@ -222,26 +173,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://craftdlondon.com/products/classic-cuff-3mm-gold",
     note: "3mm, gold.",
     price: 57,
-  },
-  {
-    id: "craftd-black-onyx-signet-ring",
-    name: "Onyx Squared Signet Ring",
-    brand: "CRAFTD",
-    category: "accessories",
-    image: craftdOnyxSquaredSignetGoldImage,
-    href: "https://craftdlondon.com/products/squared-stone-ring-gold",
-    note: "Gold.",
-    price: 73,
-  },
-  {
-    id: "craftd-vintage-stone-signet-ring",
-    name: "Vintage Stone Signet Ring",
-    brand: "CRAFTD",
-    category: "accessories",
-    image: craftdVintageStoneSignetSilverImage,
-    href: "https://craftdlondon.com/products/vintage-stone-signet-ring-silver",
-    note: "Silver.",
-    price: 55,
   },
   {
     id: "craftd-slim-rope-bracelet",
@@ -350,17 +281,6 @@ export const wishlistItems: WishlistItem[] = [
     price: 650,
     priceTo: 800,
     priority: 1,
-  },
-  {
-    id: "apple-mac-mini",
-    name: "Mac mini",
-    brand: "Apple",
-    category: "tech",
-    image: macMiniImage,
-    href: "https://www.apple.com/shop/refurbished/mac/mac-mini",
-    note: "M4, 24GB RAM, 512GB SSD. Refurbished is fine. The alternative to the mini PC.",
-    price: 700,
-    priceTo: 800,
   },
   {
     id: "therabody-theragun-mini",
@@ -604,15 +524,14 @@ export const wishlistItems: WishlistItem[] = [
     price: 87,
   },
   {
-    id: "abercrombie-fitch-essential-tee",
-    name: "Essential Tee",
+    id: "abercrombie-5-pack-classic-essential-tees",
+    name: "5-Pack Classic Essential Tees",
     brand: "Abercrombie & Fitch",
     category: "clothing",
-    image: abercrombieEssentialTeeImage,
-    href: "https://www.abercrombie.com/shop/us/mens-tees-and-henleys-tops",
-    note: "Plain, XL.",
-    price: 30,
-    priceTo: 40,
+    image: abercrombie5PackClassicEssentialTeesImage,
+    href: "https://www.abercrombie.com/shop/us/mens-multipacks",
+    note: "Black, brown, green, white and sage. XL.",
+    price: 90,
   },
   {
     id: "abercrombie-fitch-essential-popover-hoodie",
@@ -632,16 +551,6 @@ export const wishlistItems: WishlistItem[] = [
     image: newBalance1000Image,
     note: "Black, EU 46. 46.5 or US 12 also fits.",
     price: 150,
-  },
-  {
-    id: "new-balance-abzorb-2000",
-    name: "ABZORB 2000",
-    brand: "New Balance",
-    category: "shoes",
-    image: newBalanceAbzorb2000Image,
-    href: "https://www.newbalance.com/pd/abzorb-2000/U2000V1-50934-PMG-NA.html",
-    note: "EU 46. 46.5 or US 12 also fits.",
-    price: 170,
   },
   {
     id: "new-balance-5030-silver-blue",
@@ -757,59 +666,56 @@ export const wishlistItems: WishlistItem[] = [
     price: 74,
   },
   {
-    id: "oriki-unwind-membership",
-    name: "Unwind Membership",
-    brand: "Oríkì Spa",
-    category: "wellness",
-    image: orikiUnwindImage,
-    href: "https://www.orikigroup.com/pages/oriki-membership",
-    note: "₦1,073,800 a year. A massage, facial and mani-pedi every month.",
-    price: 812,
-    dream: true,
-  },
-  {
-    id: "professional-facial",
-    name: "Professional Facial",
+    id: "oriki-time-for-him",
+    name: "Time for Him",
     brand: "Oríkì Spa",
     category: "wellness",
     image: orikiSpaHallImage,
-    href: "https://oriki.zenoti.com/webstoreNew/services",
-    note: "Once a quarter.",
-    price: 100,
-    priceTo: 150,
+    href: "https://oriki.zenoti.com/webstoreNew/services/27593b34-d1fc-41e6-bad6-9ce717138be4",
+    note: "₦81,500. Two hours: a sport or deep tissue massage and a Neroli facial.",
+    price: 62,
   },
   {
-    id: "manicure-pedicure",
-    name: "Manicure & Pedicure",
+    id: "oriki-dapper-mani-pedi",
+    name: "Dapper Men’s with Mani & Pedi",
     brand: "Oríkì Spa",
     category: "wellness",
     image: orikiSpaLobbyImage,
-    href: "https://oriki.zenoti.com/webstoreNew/services",
-    note: "Professional.",
-    price: 60,
-    priceTo: 90,
-  },
-  {
-    id: "spa-day",
-    name: "Spa Day",
-    brand: "Oríkì Spa",
-    category: "wellness",
-    image: orikiSpaLoungeImage,
-    href: "https://payment.unwindapp.co/gift-cards",
-    note: "A relaxation package.",
-    price: 150,
-    priceTo: 300,
+    href: "https://oriki.zenoti.com/webstoreNew/services/27593b34-d1fc-41e6-bad6-9ce717138be4",
+    note: "₦59,500. A deluxe mani-pedi with a sport or deep tissue massage.",
+    price: 45,
   },
   {
     id: "premium-cinema",
     name: "Filmhouse IMAX or EbonyLife Recliner",
     brand: "Cinema",
-    category: "wellness",
+    category: "experiences",
     image: filmhouseImaxImage,
     href: "https://filmhouseng.com",
     note: "A night at the movies.",
     price: 25,
     priceTo: 40,
+  },
+  {
+    id: "dunesday-tickets",
+    name: "Dunesday Tickets",
+    brand: "Filmhouse IMAX",
+    category: "experiences",
+    image: dunesdayImage,
+    href: "https://filmhouseng.com",
+    note: "Dune: Part Three and Avengers: Doomsday, back to back from December 18. About ₦50,000.",
+    price: 38,
+  },
+  {
+    id: "se-gourmet-meal-plan",
+    name: "Meal Plan",
+    brand: "SE Gourmet",
+    category: "experiences",
+    image: seGourmetSalmonQuinoaImage,
+    href: "https://segourmet.africa.restaurant/menu",
+    note: "₦125,000 for five meals, up to ₦190,000 for a meal, drink and side daily.",
+    price: 95,
+    priceTo: 144,
   },
   {
     id: "amouage-guidance",

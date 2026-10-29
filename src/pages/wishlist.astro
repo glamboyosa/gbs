@@ -18,6 +18,7 @@ const categories: { key: WishlistCategory; label: string; tag: string }[] = [
   { key: "scent", label: "Scent", tag: "Scent" },
   { key: "books", label: "Books", tag: "Book" },
   { key: "wellness", label: "Self-care", tag: "Self-care" },
+  { key: "experiences", label: "Experiences", tag: "Experience" },
   { key: "everyday", label: "Everyday", tag: "Everyday" },
 ];
 
@@ -98,6 +99,16 @@ const claims = await getClaims();
         ))}
       </div>
       <p class="wishlist-empty" hidden>Nothing here at that price.</p>
+
+      <section class="cash-fund" aria-labelledby="cash-fund-title">
+        <p class="cash-amount" aria-hidden="true">₦?</p>
+        <div>
+          <h2 id="cash-fund-title">Rather send something?</h2>
+          <p>Any amount, for whatever you think I’d like.</p>
+        </div>
+        <button class="claim-button pressable" type="button" data-cash-reveal>Show account details</button>
+        <ul class="cash-accounts" data-cash-accounts hidden></ul>
+      </section>
     </main>
 
     <dialog class="claim-dialog" aria-labelledby="claim-title">
@@ -176,6 +187,35 @@ const claims = await getClaims();
       price = button.dataset.price!;
       render();
     }));
+
+    // Account numbers live only in this script so they stay out of the page's HTML.
+    const accounts = [
+      { bank: "Providus Bank", number: "REDACTED" },
+      { bank: "GTBank", number: "REDACTED" },
+    ];
+    const cashReveal = document.querySelector<HTMLButtonElement>("[data-cash-reveal]")!;
+    const cashAccounts = document.querySelector<HTMLUListElement>("[data-cash-accounts]")!;
+    cashReveal.addEventListener("click", () => {
+      cashAccounts.replaceChildren(...accounts.map(({ bank, number }) => {
+        const row = document.createElement("li");
+        const label = document.createElement("span");
+        label.innerHTML = `<strong></strong> ${bank}`;
+        label.querySelector("strong")!.textContent = number;
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "claim-undo pressable";
+        copy.textContent = "Copy";
+        copy.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(number).catch(() => {});
+          copy.textContent = "Copied";
+          setTimeout(() => { copy.textContent = "Copy"; }, 1600);
+        });
+        row.append(label, copy);
+        return row;
+      }));
+      cashAccounts.hidden = false;
+      cashReveal.hidden = true;
+    });
 
     const dialog = document.querySelector<HTMLDialogElement>(".claim-dialog")!;
     const form = dialog.querySelector("form")!;

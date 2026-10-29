@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { wishlistItems } from "@/data/wishlist";
 import Layout from "@/layouts/Layout.astro";
+import { getUsdToNgnRate } from "@/server/exchange-rate";
 import { getClaims } from "@/server/wishlist-claims";
 import type { WishlistCategory, WishlistItem } from "@/types";
 import "@/styles/global.css";
@@ -36,8 +37,15 @@ const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD",
 
 const priceBandFor = (item: WishlistItem) => priceBands.find((band) => item.price >= band.min && item.price < band.max)!.key;
 const formatPrice = (item: WishlistItem) => (item.priceTo ? `${usd.format(item.price)}–${usd.format(item.priceTo)}` : usd.format(item.price));
+// Converted prices are estimates, so round them to avoid false precision.
+const toNaira = (amount: number) => {
+  const naira = amount * ngnRate!;
+  const step = naira >= 100_000 ? 5_000 : naira >= 10_000 ? 500 : 100;
+  return `₦${(Math.round(naira / step) * step).toLocaleString("en-US")}`;
+};
+const formatNaira = (item: WishlistItem) => (item.priceTo ? `${toNaira(item.price)}–${toNaira(item.priceTo)}` : toNaira(item.price));
 
-const claims = await getClaims();
+const [claims, ngnRate] = await Promise.all([getClaims(), getUsdToNgnRate()]);
 const ranked = [
   ...wishlistItems.filter((item) => item.priority).sort((a, b) => a.priority! - b.priority!),
   ...wishlistItems.filter((item) => !item.priority),
@@ -106,7 +114,7 @@ const priorityCount = items.filter((item) => item.priority).length;
                 <p class="product-brand">{item.brand}</p>
                 <h2>{item.name}</h2>
               </div>
-              <p class="product-price">{item.dream && <span>Dream</span>} {formatPrice(item)}</p>
+              <p class="product-price">{item.dream && <span>Dream</span>} {formatPrice(item)}{ngnRate && <span class="product-naira">≈ {formatNaira(item)}</span>}</p>
             </div>
             <p class="product-note">{item.note}</p>
             <div class="claim" data-claim={item.id} data-item-name={`${item.brand} ${item.name}`}>
@@ -143,7 +151,7 @@ const priorityCount = items.filter((item) => item.priority).length;
     </dialog>
 
     <footer class="site-footer collection-footer">
-      <span>Prices are US retail before any sales.</span>
+      <span>Prices are US retail before any sales.{ngnRate && ` Naira at ₦${Math.round(ngnRate).toLocaleString("en-US")} to the dollar.`}</span>
       <a href="/clothing">See what I already own ↗</a>
     </footer>
   </div>

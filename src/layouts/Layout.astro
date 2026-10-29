@@ -4,12 +4,22 @@ export interface Props {
 	description?: string;
 	/** Link preview video and poster in /public, recorded at 1200x630. */
 	preview?: { name: string; alt: string };
+	/** Core font files the page renders above the fold. */
+	preloadFonts?: (keyof typeof coreFonts)[];
 }
 
-const { title, description = "Default description" } = Astro.props;
+const coreFonts = {
+	inter: interCore,
+	lacquer: lacquerCore,
+	"rubik-marker-hatch": rubikMarkerHatchCore,
+};
+const { title, description = "Default description", preloadFonts = [] } = Astro.props;
 const preview = Astro.props.preview ?? (Astro.url.pathname === "/" ? { name: "og-preview", alt: "Osa’s product engineering portfolio." } : undefined);
 const pageUrl = new URL(Astro.url.pathname, "https://www.glamboyosa.xyz").href;
-import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
+import interCore from "../assets/fonts/inter-core.woff2?url";
+import lacquerCore from "../assets/fonts/lacquer-core.woff2?url";
+import rubikMarkerHatchCore from "../assets/fonts/rubik-marker-hatch-core.woff2?url";
+import "../styles/fonts.css";
 ---
 
 <!DOCTYPE html>
@@ -39,9 +49,7 @@ import { GoogleFontsOptimizer } from 'astro-google-fonts-optimizer'
 			</>
 		)}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<GoogleFontsOptimizer url="https://fonts.googleapis.com/css2?family=Lacquer&family=Inter:wght@400;500;600;700&family=Rubik+Marker+Hatch&display=swap" />
+		{preloadFonts.map((font) => <link rel="preload" href={coreFonts[font]} as="font" type="font/woff2" crossorigin />)}
 		<title>{title}</title>
 	</head>
 	<body>

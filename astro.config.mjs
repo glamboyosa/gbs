@@ -5,6 +5,12 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   integrations: [tailwind(), react()],
+  vite: {
+    build: {
+      // Inlined fonts would ship in every page's CSS instead of loading only when a page needs them.
+      assetsInlineLimit: (filePath) => (filePath.endsWith('.woff2') ? false : undefined),
+    },
+  },
   output: 'server',
   adapter: vercel({
     webAnalytics: true,

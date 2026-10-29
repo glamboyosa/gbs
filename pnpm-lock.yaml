@@ -23,9 +23,6 @@ importers:
       astro:
         specifier: ^5.0.3
         version: 5.18.2(@upstash/redis@1.38.4)(@vercel/functions@2.2.13)(jiti@1.21.7)(rollup@4.63.1)(typescript@5.9.3)(yaml@2.9.0)
-      astro-google-fonts-optimizer:
-        specifier: ^0.2.2
-        version: 0.2.2
       chess.js:
         specifier: 1.4.0
         version: 1.4.0
@@ -1181,9 +1178,6 @@ packages:
 
   array-iterate@2.0.1:
     resolution: {integrity: sha512-I1jXZMjAgCMmxT4qxXfPXa6SthSoE8h6gkSI9BGGNv8mP8G/v0blc+qFnZu6K42vTOiuME596QaLO0TP3Lk0xg==}
-
-  astro-google-fonts-optimizer@0.2.2:
-    resolution: {integrity: sha512-YQxp/ExF3NzUomAGuu1VKecO7/ETRnhnE50gqwAqfpbGPZFj4MYa4XxK1ukBg3R63QmKuE5uurOiKmXiLzttuw==}
 
   astro@5.18.2:
     resolution: {integrity: sha512-TnFwLnAXty5MXKPDGuKXqK4AMBXG+FH6RUdK7Oyc3gyfNoFIthT+4eRbzOK43bdRlLaZuxgciDSjgtggZ3OtGQ==}
@@ -3564,8 +3558,6 @@ snapshots:
   aria-query@5.3.2: {}
 
   array-iterate@2.0.1: {}
-
-  astro-google-fonts-optimizer@0.2.2: {}
 
   astro@5.18.2(@upstash/redis@1.38.4)(@vercel/functions@2.2.13)(jiti@1.21.7)(rollup@4.63.1)(typescript@5.9.3)(yaml@2.9.0):
     dependencies:

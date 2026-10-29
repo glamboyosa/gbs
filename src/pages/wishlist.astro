@@ -47,7 +47,7 @@ const items = [...ranked.filter((item) => !claims[item.id]), ...ranked.filter((i
 const priorityCount = items.filter((item) => item.priority).length;
 ---
 
-<Layout title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
+<Layout preloadFonts={["inter", "rubik-marker-hatch"]} title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
   <div class="page-shell collection-shell">
     <SiteHeader current="wishlist" />
     <main>

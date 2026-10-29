@@ -9,7 +9,7 @@ const fiction = reading.books.filter((book) => book.category === "fiction");
 const comics = reading.books.filter((book) => book.category === "comics");
 ---
 
-<Layout title="On the shelf | Osa" description="Books, comics and manga on Osa’s shelf in 2026.">
+<Layout preloadFonts={["inter", "rubik-marker-hatch"]} title="On the shelf | Osa" description="Books, comics and manga on Osa’s shelf in 2026.">
   <div class="page-shell neutral-shell">
     <SiteHeader current="reading" />
     <main class="reading-page">

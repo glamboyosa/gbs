@@ -1,0 +1,324 @@
+---
+import { Image } from "astro:assets";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { wishlistItems } from "@/data/wishlist";
+import Layout from "@/layouts/Layout.astro";
+import { getClaims } from "@/server/wishlist-claims";
+import type { WishlistCategory, WishlistItem } from "@/types";
+import "@/styles/global.css";
+
+const categories: { key: WishlistCategory; label: string; tag: string }[] = [
+  { key: "watches", label: "Watches", tag: "Watch" },
+  { key: "accessories", label: "Accessories", tag: "Accessory" },
+  { key: "cameras", label: "Cameras", tag: "Camera" },
+  { key: "tech", label: "Tech", tag: "Tech" },
+  { key: "games", label: "Games", tag: "Game" },
+  { key: "clothing", label: "Clothing", tag: "Clothing" },
+  { key: "shoes", label: "Shoes", tag: "Shoes" },
+  { key: "scent", label: "Scent", tag: "Scent" },
+  { key: "wellness", label: "Self-care", tag: "Self-care" },
+  { key: "everyday", label: "Everyday", tag: "Everyday" },
+];
+
+// Bands use each item's lowest price, so a $200–$350 watch counts as $150–$500.
+const priceBands = [
+  { key: "under-50", label: "Under $50", min: 0, max: 50 },
+  { key: "50-150", label: "$50–$150", min: 50, max: 150 },
+  { key: "150-500", label: "$150–$500", min: 150, max: 500 },
+  { key: "500-1500", label: "$500–$1.5k", min: 500, max: 1500 },
+  { key: "1500-plus", label: "$1.5k+", min: 1500, max: Infinity },
+];
+
+const tags = Object.fromEntries(categories.map((category) => [category.key, category.tag]));
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+const priceBandFor = (item: WishlistItem) => priceBands.find((band) => item.price >= band.min && item.price < band.max)!.key;
+const formatPrice = (item: WishlistItem) => (item.priceTo ? `${usd.format(item.price)}–${usd.format(item.priceTo)}` : usd.format(item.price));
+
+const items = [
+  ...wishlistItems.filter((item) => item.priority).sort((a, b) => a.priority! - b.priority!),
+  ...wishlistItems.filter((item) => !item.priority),
+];
+const priorityCount = items.filter((item) => item.priority).length;
+const claims = await getClaims();
+---
+
+<Layout title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd.">
+  <div class="page-shell collection-shell">
+    <SiteHeader current="wishlist" />
+    <main>
+      <header class="collection-hero">
+        <p class="eyebrow">BIRTHDAY · DECEMBER 3 · {items.length} THINGS</p>
+        <h1>Wishlist<span>.</span></h1>
+        <p>Watches, cameras, clothes, scents and small luxuries. Filter by what it is or what it costs.</p>
+      </header>
+
+      <div class="wishlist-filters">
+        <div class="filter-bar" role="group" aria-label="Filter by type">
+          <button class="filter-pill active pressable" type="button" data-category="all" aria-pressed="true">All <span data-count>{items.length}</span></button>
+          <button class="filter-pill pressable" type="button" data-category="priority" aria-pressed="false">Priorities <span data-count>{priorityCount}</span></button>
+          {categories.map((category) => (
+            <button class="filter-pill pressable" type="button" data-category={category.key} aria-pressed="false">{category.label} <span data-count>{items.filter((item) => item.category === category.key).length}</span></button>
+          ))}
+        </div>
+        <div class="filter-bar" role="group" aria-label="Filter by price">
+          <button class="filter-pill active pressable" type="button" data-price="all" aria-pressed="true">Any price <span data-count>{items.length}</span></button>
+          {priceBands.map((band) => (
+            <button class="filter-pill pressable" type="button" data-price={band.key} aria-pressed="false">{band.label} <span data-count>{items.filter((item) => priceBandFor(item) === band.key).length}</span></button>
+          ))}
+        </div>
+      </div>
+
+      <div class="collection-grid">
+        {items.map((item, index) => (
+          <article class:list={["collection-item", { "is-claimed": claims[item.id] }]} data-category={item.category} data-price={priceBandFor(item)} data-priority={item.priority ? "true" : undefined} style={`--delay: ${Math.min(index, 7) * 45}ms`}>
+            <a class:list={["product-image", { "product-image-text": !item.image }]} href={item.href} target={item.href ? "_blank" : undefined} rel={item.href ? "noopener noreferrer" : undefined} aria-label={item.href ? `View ${item.brand} ${item.name}` : undefined}>
+              <span class="product-type">{item.priority ? `Priority ${item.priority}` : tags[item.category]}</span>
+              {item.href && <span class="external-mark" aria-hidden="true">↗</span>}
+              <span class="claim-stamp" aria-hidden="true">Claimed</span>
+              {item.image
+                ? <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 640, 960]} sizes="(max-width: 700px) 45vw, (max-width: 900px) 30vw, 300px" quality={75} loading={index < 4 ? "eager" : "lazy"} />
+                : <span class="product-text" aria-hidden="true">{item.name}</span>}
+            </a>
+            <div class="product-meta">
+              <div>
+                <p class="product-brand">{item.brand}</p>
+                <h2>{item.name}</h2>
+              </div>
+              <p class="product-price">{item.dream && <span>Dream</span>} {formatPrice(item)}</p>
+            </div>
+            <p class="product-note">{item.note}</p>
+            <div class="claim" data-claim={item.id} data-item-name={`${item.brand} ${item.name}`}>
+              <p class="claim-status" data-claimed-by hidden={!claims[item.id]}>Claimed by <strong>{claims[item.id]}</strong></p>
+              <button class="claim-button pressable" type="button" data-claim-open hidden={Boolean(claims[item.id])}>Claim</button>
+              <button class="claim-undo pressable" type="button" data-claim-undo hidden>Undo</button>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="wishlist-empty" hidden>Nothing here at that price.</p>
+    </main>
+
+    <dialog class="claim-dialog" aria-labelledby="claim-title">
+      <form>
+        <h2 id="claim-title">Claim <span data-claim-item></span></h2>
+        <label for="claim-name">Name shown on the card</label>
+        <input id="claim-name" name="name" type="text" maxlength="40" autocomplete="name" required />
+        <p class="claim-error" role="alert" hidden></p>
+        <div class="claim-actions">
+          <button class="claim-cancel pressable" type="button" data-claim-cancel>Cancel</button>
+          <button class="claim-submit pressable" type="submit">Claim</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer class="site-footer collection-footer">
+      <span>Prices are US retail before any sales.</span>
+      <a href="/clothing">See what I already own ↗</a>
+    </footer>
+  </div>
+
+  <script>
+    const categoryButtons = document.querySelectorAll<HTMLButtonElement>("[data-category]:is(button)");
+    const priceButtons = document.querySelectorAll<HTMLButtonElement>("[data-price]:is(button)");
+    const items = [...document.querySelectorAll<HTMLElement>(".collection-item")];
+    const empty = document.querySelector<HTMLElement>(".wishlist-empty");
+    let category = "all";
+    let price = "all";
+
+    /**
+     * Reports whether an item belongs to a type filter, where "priority" means the ranked items.
+     *
+     * @param {HTMLElement} item - The wishlist card.
+     * @param {string} filter - The selected type filter.
+     * @returns {boolean} Whether the item matches.
+     */
+    const matchesCategory = (item: HTMLElement, filter: string) =>
+      filter === "all" || (filter === "priority" ? item.dataset.priority === "true" : item.dataset.category === filter);
+
+    const matchesPrice = (item: HTMLElement, filter: string) => filter === "all" || item.dataset.price === filter;
+
+    /**
+     * Applies both filters, then recounts each pill against the other filter so the numbers show what a click would reveal.
+     *
+     * @returns {void}
+     */
+    const render = () => {
+      let visible = 0;
+      items.forEach((item) => {
+        item.hidden = !(matchesCategory(item, category) && matchesPrice(item, price));
+        if (!item.hidden) visible += 1;
+      });
+      if (empty) empty.hidden = visible > 0;
+
+      categoryButtons.forEach((button) => {
+        const selected = button.dataset.category === category;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-pressed", selected ? "true" : "false");
+        const count = items.filter((item) => matchesCategory(item, button.dataset.category!) && matchesPrice(item, price)).length;
+        button.querySelector("[data-count]")!.textContent = String(count);
+      });
+      priceButtons.forEach((button) => {
+        const selected = button.dataset.price === price;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-pressed", selected ? "true" : "false");
+        const count = items.filter((item) => matchesPrice(item, button.dataset.price!) && matchesCategory(item, category)).length;
+        button.querySelector("[data-count]")!.textContent = String(count);
+      });
+    };
+
+    categoryButtons.forEach((button) => button.addEventListener("click", () => {
+      category = button.dataset.category!;
+      render();
+    }));
+    priceButtons.forEach((button) => button.addEventListener("click", () => {
+      price = button.dataset.price!;
+      render();
+    }));
+
+    const dialog = document.querySelector<HTMLDialogElement>(".claim-dialog")!;
+    const form = dialog.querySelector("form")!;
+    const nameInput = dialog.querySelector<HTMLInputElement>("#claim-name")!;
+    const submitButton = dialog.querySelector<HTMLButtonElement>(".claim-submit")!;
+    const errorText = dialog.querySelector<HTMLElement>(".claim-error")!;
+    const tokensKey = "osa-wishlist-claim-tokens";
+    const nameKey = "osa-wishlist-claim-name";
+    let activeClaim: HTMLElement | null = null;
+
+    // Undo tokens live in the claimer's browser, so only they can take a claim back.
+    const readTokens = (): Record<string, string> => {
+      try { return JSON.parse(localStorage.getItem(tokensKey) ?? "{}"); } catch { return {}; }
+    };
+    const writeTokens = (tokens: Record<string, string>) => {
+      try { localStorage.setItem(tokensKey, JSON.stringify(tokens)); } catch {}
+    };
+
+    /**
+     * Shows the claim state for one card: who claimed it, a claim button, and undo for the claimer.
+     *
+     * @param {HTMLElement} claim - The card's claim container.
+     * @param {string | null} name - The claimer's name, or null when unclaimed.
+     * @returns {void}
+     */
+    const showClaim = (claim: HTMLElement, name: string | null) => {
+      const status = claim.querySelector<HTMLElement>("[data-claimed-by]")!;
+      status.querySelector("strong")!.textContent = name ?? "";
+      status.hidden = !name;
+      claim.querySelector<HTMLElement>("[data-claim-open]")!.hidden = Boolean(name);
+      claim.querySelector<HTMLElement>("[data-claim-undo]")!.hidden = !(name && readTokens()[claim.dataset.claim!]);
+      claim.closest(".collection-item")!.classList.toggle("is-claimed", Boolean(name));
+    };
+
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const burstColors = ["#6d4aff", "#181716", "#e3b341", "#dcd3ff"];
+
+    /**
+     * Plays the one-off claim celebration: the stamp lands, the card thuds, and a ring of dots bursts from the stamp.
+     *
+     * @param {HTMLElement} claim - The card's claim container.
+     * @returns {void}
+     */
+    const celebrateClaim = (claim: HTMLElement) => {
+      if (reducedMotion.matches) return;
+      const card = claim.closest<HTMLElement>(".collection-item")!;
+      card.classList.remove("just-claimed");
+      void card.offsetWidth;
+      card.classList.add("just-claimed");
+      // The status line finishes last, at 420ms.
+      setTimeout(() => card.classList.remove("just-claimed"), 500);
+
+      const stamp = card.querySelector<HTMLElement>(".claim-stamp")!.getBoundingClientRect();
+      const originX = stamp.left + stamp.width / 2;
+      const originY = stamp.top + stamp.height / 2;
+      // Dots launch as the stamp hits, roughly 60% into its 380ms landing.
+      for (let index = 0; index < 14; index += 1) {
+        const dot = document.createElement("span");
+        dot.className = "claim-dot";
+        dot.style.left = `${originX}px`;
+        dot.style.top = `${originY}px`;
+        dot.style.background = burstColors[index % burstColors.length];
+        dot.style.opacity = "0";
+        document.body.append(dot);
+        const angle = (index / 14) * Math.PI * 2 + Math.random() * 0.4;
+        const distance = 54 + Math.random() * 40;
+        dot.animate([
+          { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+          { transform: `translate(calc(-50% + ${Math.cos(angle) * distance}px), calc(-50% + ${Math.sin(angle) * distance}px)) scale(0.4)`, opacity: 0 },
+        ], { duration: 560, delay: 220, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)", fill: "forwards" }).finished.then(() => dot.remove());
+      }
+    };
+
+    const claimContainers = [...document.querySelectorAll<HTMLElement>("[data-claim]")];
+    claimContainers.forEach((claim) => {
+      const name = claim.querySelector("[data-claimed-by] strong")!.textContent || null;
+      showClaim(claim, name);
+
+      claim.querySelector("[data-claim-open]")!.addEventListener("click", () => {
+        activeClaim = claim;
+        dialog.querySelector("[data-claim-item]")!.textContent = claim.dataset.itemName!;
+        try { nameInput.value = localStorage.getItem(nameKey) ?? ""; } catch {}
+        errorText.hidden = true;
+        dialog.showModal();
+      });
+
+      const undoButton = claim.querySelector<HTMLButtonElement>("[data-claim-undo]")!;
+      undoButton.addEventListener("click", async () => {
+        const itemId = claim.dataset.claim!;
+        undoButton.disabled = true;
+        undoButton.textContent = "Undo";
+        const response = await fetch("/api/wishlist/claims", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId, token: readTokens()[itemId] }),
+        }).catch(() => null);
+        undoButton.disabled = false;
+
+        if (response?.ok || response?.status === 403) {
+          // A 403 means this browser's claim is already gone, so drop the stale token and show the current owner.
+          const { [itemId]: _removed, ...tokens } = readTokens();
+          writeTokens(tokens);
+          const current = response.ok ? null : await fetch("/api/wishlist/claims").then((res) => res.json()).then((body) => body.claims?.[itemId] ?? null).catch(() => null);
+          showClaim(claim, current);
+          return;
+        }
+        undoButton.textContent = "Undo failed, retry";
+      });
+    });
+
+    dialog.querySelector("[data-claim-cancel]")!.addEventListener("click", () => dialog.close());
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!activeClaim || submitButton.disabled) return;
+      const claim = activeClaim;
+      const name = nameInput.value.trim();
+      submitButton.disabled = true;
+      errorText.hidden = true;
+
+      const response = await fetch("/api/wishlist/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId: claim.dataset.claim, name }),
+      }).catch(() => null);
+      const result: { status?: string; token?: string } = await response?.json().catch(() => ({})) ?? {};
+      submitButton.disabled = false;
+
+      if (result.status === "claimed" && result.token) {
+        writeTokens({ ...readTokens(), [claim.dataset.claim!]: result.token });
+        try { localStorage.setItem(nameKey, name); } catch {}
+        showClaim(claim, name.replace(/\s+/g, " "));
+        dialog.close();
+        celebrateClaim(claim);
+        return;
+      }
+      if (result.status === "taken") {
+        const claims: { claims?: Record<string, string> } = await fetch("/api/wishlist/claims").then((res) => res.json()).catch(() => ({}));
+        showClaim(claim, claims.claims?.[claim.dataset.claim!] ?? "someone else");
+        dialog.close();
+        return;
+      }
+      errorText.textContent = { invalid: "Enter a name up to 40 characters.", limited: "Too many claims for now. Try again later." }[result.status ?? ""] ?? "Couldn’t save the claim. Try again.";
+      errorText.hidden = false;
+    });
+  </script>
+</Layout>

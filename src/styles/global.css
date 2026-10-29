@@ -200,6 +200,58 @@ p, li { text-wrap: pretty; }
 .product-price span { color: var(--muted); font-weight: 400; }
 .product-note { margin: 8px 3px 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .collection-footer { margin-top: 100px; padding-top: 24px; border-top: 1px solid rgba(0, 0, 0, 0.1); }
+.wishlist-filters { position: sticky; top: 12px; z-index: 20; display: grid; justify-items: start; gap: 8px; margin-bottom: 34px; }
+.wishlist-filters .filter-bar { position: static; margin: 0; }
+.product-image-text { padding: 18%; }
+.product-text { font-size: clamp(18px, 2vw, 26px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.05; text-align: center; text-wrap: balance; }
+.wishlist-empty { margin: 0; padding: 60px 0; color: var(--muted); font-size: 14px; text-align: center; }
+.claim { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; margin: 12px 3px 0; }
+.claim-status { margin: 0; color: var(--muted); font-size: 12px; }
+.claim-status strong { color: var(--ink); font-weight: 600; }
+.claim-button, .claim-undo, .claim-cancel, .claim-submit { min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, scale 160ms ease-out; }
+.claim-button, .claim-cancel { background: rgba(255, 255, 255, 0.7); box-shadow: var(--shadow-border); color: var(--ink); }
+.claim-undo { padding: 0 4px; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.claim-submit { background: var(--ink); color: white; }
+.claim-submit:disabled { opacity: 0.5; cursor: progress; }
+.product-image > img { transition: transform 240ms cubic-bezier(0.2, 0, 0, 1), opacity 240ms ease-out; }
+.collection-item.is-claimed .product-image > img, .collection-item.is-claimed .product-text { opacity: 0.4; }
+.claim-stamp { position: absolute; z-index: 3; top: 50%; left: 50%; padding: 8px 14px 7px; border: 2px solid var(--purple); border-radius: 10px; background: rgba(255, 255, 255, 0.82); color: var(--purple); font-size: 13px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0; transform: translate(-50%, -50%) rotate(-8deg) scale(0.95); transition: opacity 150ms ease-in, transform 150ms ease-in; pointer-events: none; }
+.collection-item.is-claimed .claim-stamp { opacity: 1; transform: translate(-50%, -50%) rotate(-8deg) scale(1); }
+.collection-item.just-claimed .claim-stamp { animation: stamp-land 380ms cubic-bezier(0.32, 0.72, 0, 1); }
+.collection-item.just-claimed .product-image { animation: card-thud 380ms cubic-bezier(0.32, 0.72, 0, 1); }
+.collection-item.just-claimed .claim-status { animation: claim-status-in 240ms cubic-bezier(0.32, 0.72, 0, 1) 180ms both; }
+@keyframes stamp-land {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(-14deg) scale(1.6); }
+  60% { opacity: 1; transform: translate(-50%, -50%) rotate(-7deg) scale(0.94); }
+  100% { opacity: 1; transform: translate(-50%, -50%) rotate(-8deg) scale(1); }
+}
+@keyframes card-thud {
+  0%, 50% { translate: 0 0; }
+  62% { translate: 0 2px; }
+  100% { translate: 0 0; }
+}
+@keyframes claim-status-in { from { opacity: 0; transform: translateY(4px); } }
+.claim-dot { position: fixed; z-index: 60; width: 7px; height: 7px; border-radius: 999px; pointer-events: none; will-change: transform, opacity; }
+.claim-dialog, .claim-dialog::backdrop { opacity: 0; transition: opacity 160ms ease-in, transform 160ms ease-in, overlay 160ms allow-discrete, display 160ms allow-discrete; }
+.claim-dialog { transform: scale(0.97); }
+.claim-dialog[open], .claim-dialog[open]::backdrop { opacity: 1; transition-duration: 220ms; transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
+.claim-dialog[open] { transform: scale(1); }
+@starting-style {
+  .claim-dialog[open], .claim-dialog[open]::backdrop { opacity: 0; }
+  .claim-dialog[open] { transform: scale(0.97); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .claim-stamp, .claim-dialog, .claim-dialog::backdrop, .product-image > img { transition: none; }
+  .collection-item.just-claimed .claim-stamp, .collection-item.just-claimed .product-image, .collection-item.just-claimed .claim-status { animation: none; }
+}
+.claim-dialog { width: min(100% - 32px, 380px); padding: 24px; border: 0; border-radius: 22px; background: #f6f4ef; box-shadow: var(--shadow-border), 0 24px 60px rgba(0, 0, 0, 0.18); color: var(--ink); }
+.claim-dialog::backdrop { background: rgba(20, 18, 14, 0.35); backdrop-filter: blur(4px); }
+.claim-dialog h2 { margin: 0 0 18px; font-size: 20px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.2; text-wrap: balance; }
+.claim-dialog label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
+.claim-dialog input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: white; box-shadow: var(--shadow-border); color: var(--ink); font: inherit; font-size: 16px; }
+.claim-dialog input:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.claim-error { margin: 10px 0 0; color: #b42318; font-size: 12px; }
+.claim-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
 
 /* Uses */
 .uses-hero { max-width: 860px; padding: clamp(54px, 9vw, 110px) 0 64px; }

@@ -14,6 +14,27 @@ export type RotationItem = {
   featured?: boolean;
 };
 
+export type WishlistCategory = "watches" | "accessories" | "cameras" | "tech" | "games" | "clothing" | "shoes" | "scent" | "wellness" | "everyday";
+
+export type WishlistItem = {
+  /** Stable key for claims. Changing it drops the claim. */
+  id: string;
+  name: string;
+  brand: string;
+  category: WishlistCategory;
+  /** Experiences have no product shot. */
+  image?: ImageMetadata;
+  href?: string;
+  note: string;
+  /** Lowest expected USD price. Affordability filters use this. */
+  price: number;
+  /** Upper USD bound when the price is a range. */
+  priceTo?: number;
+  /** Position in the current priorities list, 1 first. */
+  priority?: number;
+  dream?: boolean;
+};
+
 export type SpotifyTrackSummary = {
   isPlaying: boolean;
   title: string;

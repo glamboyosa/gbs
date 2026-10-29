@@ -200,7 +200,7 @@ p, li { text-wrap: pretty; }
 .product-price span { color: var(--muted); font-weight: 400; }
 .product-note { margin: 8px 3px 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .collection-footer { margin-top: 100px; padding-top: 24px; border-top: 1px solid rgba(0, 0, 0, 0.1); }
-.wishlist-filters { position: sticky; top: 12px; z-index: 20; display: grid; justify-items: start; gap: 8px; margin-bottom: 34px; }
+.wishlist-filters { position: sticky; top: 12px; z-index: 20; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 8px; margin-bottom: 34px; }
 .wishlist-filters .filter-bar { position: static; margin: 0; }
 .product-image-text { padding: 18%; }
 .product-text { font-size: clamp(18px, 2vw, 26px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.05; text-align: center; text-wrap: balance; }

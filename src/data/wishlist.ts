@@ -1,6 +1,8 @@
 import type { WishlistItem } from "@/types";
 import arcteryxBetaJacketBlackImage from "@/assets/wishlist/clothing/arcteryx-beta-jacket-black.jpg";
-import maisonMargielaTabiAnkleBootsImage from "@/assets/wishlist/shoes/maison-margiela-tabi-ankle-boots.jpg";
+import maisonMargielaTabiLaceUpsImage from "@/assets/wishlist/shoes/maison-margiela-tabi-lace-ups.jpg";
+import maisonMargielaTabiSlipOnImage from "@/assets/wishlist/shoes/maison-margiela-tabi-slip-on.jpg";
+import maisonMargielaTabiChelseaBootImage from "@/assets/wishlist/shoes/maison-margiela-tabi-chelsea-boot.jpg";
 import abercrombieHeavyweight3PackImage from "@/assets/wishlist/clothing/abercrombie-heavyweight-3-pack-black-navy-white.jpg";
 import skimsCottonBoxerBrief3PackImage from "@/assets/wishlist/clothing/skims-cotton-boxer-brief-3-pack.jpg";
 import phlurVanillaSkinDeodorantImage from "@/assets/wishlist/scents/phlur-vanilla-skin-deodorant.jpg";
@@ -456,7 +458,7 @@ export const wishlistItems: WishlistItem[] = [
     brand: "Arc’teryx",
     category: "clothing",
     image: arcteryxBetaJacketBlackImage,
-    href: "https://arcteryx.com/us/en/shop/mens/beta-jacket",
+    href: "https://arcteryx.com/us/en/shop/mens/beta-jacket-0868",
     note: "GORE-TEX shell, black. The one the rain beads off. XL.",
     price: 400,
     priority: 10,
@@ -523,15 +525,20 @@ export const wishlistItems: WishlistItem[] = [
     price: 70,
   },
   {
-    id: "maison-margiela-tabi-ankle-boots",
-    name: "Tabi Ankle Boots",
+    id: "maison-margiela-tabis",
+    name: "Tabis",
     brand: "Maison Margiela",
     category: "shoes",
-    image: maisonMargielaTabiAnkleBootsImage,
-    href: "https://www.farfetch.com/shopping/men/search/items.aspx?q=maison%20margiela%20tabi%20ankle%20boots",
-    note: "Black leather, split toe. EU 46. AU$1,794–1,991 on Farfetch.",
-    price: 1175,
-    priceTo: 1305,
+    image: maisonMargielaTabiLaceUpsImage,
+    variants: [
+      { label: "Lace-ups", image: maisonMargielaTabiLaceUpsImage, href: "https://www.maisonmargiela.com/en-us/tabi-lace-ups-S97WQ0052P3827H8396.html" },
+      { label: "Slip-on", image: maisonMargielaTabiSlipOnImage, href: "https://www.maisonmargiela.com/en-us/tabi-slip-on-S57WR0117P3827H8396.html" },
+      { label: "Chelsea boot", image: maisonMargielaTabiChelseaBootImage, href: "https://www.maisonmargiela.com/en-us/tabi-chelsea-boot-S57WU0275P3827H8396.html" },
+    ],
+    href: "https://www.maisonmargiela.com/en-us/tabi-lace-ups-S97WQ0052P3827H8396.html",
+    note: "Black leather, split toe. Lace-ups or slip-on $1,280, Chelsea boot $1,750. EU 46.",
+    price: 1280,
+    priceTo: 1750,
   },
   {
     id: "new-balance-fuelcell-rebel-v5",

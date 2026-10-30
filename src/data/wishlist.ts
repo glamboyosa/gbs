@@ -1,4 +1,10 @@
 import type { WishlistItem } from "@/types";
+import marbleTrayImage from "@/assets/wishlist/everyday/marble-tray.jpg";
+import runningSocksGymsharkImage from "@/assets/wishlist/clothing/running-socks-gymshark.jpg";
+import runningSocksSauconyImage from "@/assets/wishlist/clothing/running-socks-saucony.jpg";
+import runningSocksAdidasImage from "@/assets/wishlist/clothing/running-socks-adidas.jpg";
+import runningSocksNewBalanceImage from "@/assets/wishlist/clothing/running-socks-new-balance.jpg";
+import keychronQ1MaxImage from "@/assets/wishlist/tech/keychron-q1-max.jpg";
 import arcteryxBetaJacketBlackImage from "@/assets/wishlist/clothing/arcteryx-beta-jacket-black.jpg";
 import maisonMargielaTabiLaceUpsImage from "@/assets/wishlist/shoes/maison-margiela-tabi-lace-ups.jpg";
 import maisonMargielaTabiSlipOnImage from "@/assets/wishlist/shoes/maison-margiela-tabi-slip-on.jpg";
@@ -18,7 +24,6 @@ import abercrombieEssentialPopoverHoodieImage from "@/assets/wishlist/clothing/a
 import lvImaginationImage from "@/assets/wishlist/scents/lv-imagination.jpg";
 import joMaloneMyrrhTonkaImage from "@/assets/wishlist/scents/jo-malone-myrrh-tonka.jpg";
 import newBalance5030BlackImage from "@/assets/wishlist/shoes/new-balance-5030-black.jpg";
-import valetTrayImage from "@/assets/wishlist/everyday/valet-tray.jpg";
 import cedarShoeTreesImage from "@/assets/wishlist/everyday/cedar-shoe-trees.jpg";
 import corkMassageBallImage from "@/assets/wishlist/everyday/cork-massage-ball.jpg";
 import watchRollImage from "@/assets/wishlist/everyday/watch-roll.jpg";
@@ -238,6 +243,16 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.amazon.com/dp/B0CFPJYX7P",
     note: "16GB.",
     price: 200,
+  },
+  {
+    id: "keychron-q1-max",
+    name: "Q1 Max Mechanical Keyboard",
+    brand: "Keychron",
+    category: "tech",
+    image: keychronQ1MaxImage,
+    href: "https://www.keychron.com/products/keychron-q1-max-qmk-via-wireless-custom-mechanical-keyboard",
+    note: "Wireless, aluminium, Mac layout. Gateron Jupiter Brown switches.",
+    price: 210,
   },
   {
     id: "claude-subscription",
@@ -473,6 +488,23 @@ export const wishlistItems: WishlistItem[] = [
     note: "3\" leg. XL.",
     price: 45,
     priceTo: 60,
+  },
+  {
+    id: "running-socks",
+    name: "Running Socks",
+    brand: "Gymshark, Saucony, adidas or NB",
+    category: "clothing",
+    image: runningSocksGymsharkImage,
+    variants: [
+      { label: "Gymshark", image: runningSocksGymsharkImage, href: "https://www.gymshark.com/products/gymshark-running-elite-crew-single-sock-socks-black-aw26" },
+      { label: "Saucony", image: runningSocksSauconyImage, href: "https://www.amazon.com/dp/B01D2GRTIE" },
+      { label: "adidas", image: runningSocksAdidasImage, href: "https://www.amazon.com/dp/B0F3LKW7PB" },
+      { label: "New Balance", image: runningSocksNewBalanceImage, href: "https://www.amazon.com/dp/B0DRDF1B5R" },
+    ],
+    href: "https://www.gymshark.com/products/gymshark-running-elite-crew-single-sock-socks-black-aw26",
+    note: "Any of these. Size L / US 12.",
+    price: 15,
+    priceTo: 22,
   },
   {
     id: "abercrombie-fitch-essential-popover-hoodie",
@@ -721,14 +753,14 @@ export const wishlistItems: WishlistItem[] = [
     priceTo: 228,
   },
   {
-    id: "bull-sheath-leather-leather-valet-tray",
-    name: "Leather Valet Tray",
-    brand: "SITHON",
+    id: "marble-valet-tray",
+    name: "Marble Valet Tray",
+    brand: "Any brand",
     category: "everyday",
-    image: valetTrayImage,
-    href: "https://www.amazon.com/dp/B08C5BJ8VT",
-    note: "For watches and jewellery.",
-    price: 19,
+    image: marbleTrayImage,
+    href: "https://www.amazon.com/dp/B0D4F55946",
+    note: "Natural marble or stone, for watches and jewellery.",
+    price: 29,
   },
   {
     id: "thursday-boot-co-cedar-shoe-trees",

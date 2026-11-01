@@ -104,3 +104,17 @@ test("decodes XML entities exactly once", () => {
 
   assert.equal(parseDiaryEntries(feed)[0]?.title, "Fish &amp; Chips");
 });
+
+test("reads member ratings without inventing ratings for unrated or invalid entries", () => {
+  const values = ["0.5", "3", "3.5", "5.0", "", "0", "5.5", "3.25", "NaN", " 4 "];
+  const entries = parseDiaryEntries(values.map((rating, index) => `
+    <item>
+      <link>https://example.com/film/${index}</link>
+      <letterboxd:watchedDate>2026-11-01</letterboxd:watchedDate>
+      <letterboxd:filmTitle>Test Film ${index}</letterboxd:filmTitle>
+      <letterboxd:memberRating>${rating}</letterboxd:memberRating>
+    </item>
+  `).join(""));
+
+  assert.deepEqual(entries.map((entry) => entry.rating), [0.5, 3, 3.5, 5, undefined, undefined, undefined, undefined, undefined, undefined]);
+});

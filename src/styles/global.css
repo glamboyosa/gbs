@@ -143,7 +143,9 @@ p, li { text-wrap: pretty; }
 
 .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 28px 4px 0; color: var(--muted); font-size: 10px; letter-spacing: 0.04em; }
 .site-footer a { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: color 160ms ease-out, text-decoration-color 160ms ease-out; }
-.activity-summary { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.latest-film { display: inline-flex; align-items: center; max-width: 100%; }
+.playstation-activity { flex-basis: 100%; text-align: center; }
+.activity-summary { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 4px; }
 
 .connect-shell { display: grid; min-height: 100vh; padding: 24px; place-items: center; }
 .connect-card { width: min(100%, 720px); padding: clamp(28px, 6vw, 64px); border-radius: 24px; background: var(--card); box-shadow: var(--shadow-border); }
@@ -319,6 +321,9 @@ p, li { text-wrap: pretty; }
   .uses-panel .panel-label { grid-column: 1; }
   .site-footer { flex-direction: column; gap: 6px; }
   .activity-summary { justify-content: flex-start; }
+  .playstation-activity { text-align: left; }
+  .activity-summary > a:first-child { flex-basis: 100%; }
+  .activity-separator { display: none; }
   .connect-shell { padding: 12px; }
   .connect-input-row { grid-template-columns: 1fr; }
   .collection-hero { display: block; padding: 58px 0 42px; }

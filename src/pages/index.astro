@@ -1,5 +1,6 @@
 ---
 import { NowPlaying } from "@/components/now-playing";
+import FilmRating from "@/components/FilmRating.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
@@ -183,17 +184,17 @@ try {
         <a href="https://letterboxd.com/glamboyosa/" target="_blank" rel="noopener noreferrer">{letterboxdSummary.yearCount} films this year</a>
         {letterboxdSummary.latestFilm && (
           <>
-            <span aria-hidden="true">·</span>
-            <a href={letterboxdSummary.latestFilm.url} target="_blank" rel="noopener noreferrer">Last watched: {letterboxdSummary.latestFilm.title}{letterboxdSummary.latestFilm.filmYear ? ` (${letterboxdSummary.latestFilm.filmYear})` : ""} ↗</a>
+            <span class="activity-separator" aria-hidden="true">·</span>
+            <span class="latest-film"><a href={letterboxdSummary.latestFilm.url} target="_blank" rel="noopener noreferrer">Last watched: {letterboxdSummary.latestFilm.title}{letterboxdSummary.latestFilm.filmYear ? ` (${letterboxdSummary.latestFilm.filmYear})` : ""} ↗</a>
+            <FilmRating rating={letterboxdSummary.latestFilm.rating} /></span>
           </>
         )}
         {playStationSummary && (
-          <>
-            <span aria-hidden="true">·</span>
+          <span class="playstation-activity">
             <a href="https://profile.playstation.com/glamboyosa" target="_blank" rel="noopener noreferrer">
               Last played on PlayStation: {playStationSummary.title}{playStationSummary.platform ? ` on ${playStationSummary.platform}` : ""} ↗
             </a>
-          </>
+          </span>
         )}
       </span>
       <span>GMT+1 · probably online</span>

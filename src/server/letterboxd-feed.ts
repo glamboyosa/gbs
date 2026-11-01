@@ -3,6 +3,7 @@ export interface LetterboxdDiaryEntry {
   watchedYear: number;
   title: string;
   filmYear?: number;
+  rating?: number;
   url: string;
 }
 
@@ -56,6 +57,11 @@ export const parseDiaryEntries = (feed: string): LetterboxdDiaryEntry[] => {
     const filmYearText = item.match(/<letterboxd:filmYear>(\d{4})<\/letterboxd:filmYear>/)?.[1];
     const filmYear = filmYearText && Number(filmYearText) > 0 ? Number(filmYearText) : undefined;
 
+    const ratingText = item.match(/<letterboxd:memberRating>([^<]*)<\/letterboxd:memberRating>/)?.[1];
+    const rating = ratingText && /^(?:[0-4](?:\.5|\.0)?|5(?:\.0)?)$/.test(ratingText)
+      ? Number(ratingText)
+      : undefined;
+
     return url && watchedDate && watchedYear !== null && title
       ? [{
           key: `${url}|${watchedDate}`,
@@ -63,6 +69,7 @@ export const parseDiaryEntries = (feed: string): LetterboxdDiaryEntry[] => {
           title,
           ...(filmYear ? { filmYear } : {}),
           url,
+          ...(rating !== undefined && rating > 0 ? { rating } : {}),
         }]
       : [];
   });

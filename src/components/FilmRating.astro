@@ -1,0 +1,54 @@
+---
+interface Props {
+  rating?: number;
+}
+
+const { rating } = Astro.props;
+---
+
+{rating !== undefined && (
+  <button type="button" class="film-rating" aria-label={`My rating: ${rating} out of 5 stars. Replay star fill`} title={`${rating}/5`}>
+    {Array.from({ length: 5 }, (_, index) => (
+      <span class="rating-star" aria-hidden="true" style={`--unfilled: ${100 - Math.max(0, Math.min(1, rating - index)) * 100}%; --star-index: ${index}`}>
+        <span class="star-outline">☆</span>
+        <span class="star-fill">★</span>
+      </span>
+    ))}
+  </button>
+)}
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.film-rating').forEach((button) => {
+    button.addEventListener('click', () => {
+      button.classList.add('is-gold');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      button.querySelectorAll<HTMLElement>('.star-fill').forEach((star, index) => {
+        star.getAnimations().forEach((animation) => animation.cancel());
+        star.animate([
+          { clipPath: 'inset(0 100% 0 0)' },
+          { clipPath: `inset(0 ${getComputedStyle(star).getPropertyValue('--unfilled')} 0 0)` },
+        ], { duration: 280, delay: index * 50, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
+      });
+    });
+  });
+</script>
+
+<style>
+  .film-rating { display: inline-flex; align-items: center; justify-content: center; gap: 1px; min-height: 44px; padding: 0 6px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; white-space: nowrap; vertical-align: middle; }
+  .rating-star { display: inline-grid; position: relative; width: 1em; line-height: 1; pointer-events: none; user-select: none; }
+  .star-outline, .star-fill { grid-area: 1 / 1; }
+  .star-outline { opacity: 0.4; }
+  .star-fill { clip-path: inset(0 var(--unfilled) 0 0); }
+  .film-rating.is-gold .star-fill { color: #e8b323; }
+  .film-rating:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+  @keyframes star-fill {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 var(--unfilled) 0 0); }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .film-rating:hover .star-fill { color: #e8b323; }
+    @media (prefers-reduced-motion: no-preference) {
+      .film-rating:hover .star-fill { animation: star-fill 280ms cubic-bezier(0.32, 0.72, 0, 1) backwards; animation-delay: calc(var(--star-index) * 50ms); }
+    }
+  }
+</style>

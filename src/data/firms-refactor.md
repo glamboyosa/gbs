@@ -187,6 +187,66 @@ All four derived tables reference their territory or grouping with `ON DELETE CA
 3. **Boundaries:** a point exactly on a polygon's edge is buffer-only, because `ST_Contains` excludes the boundary.
 4. **Groupings:** a fire counts once per grouping, inside if any member territory contains it. Member counts are never added together, so overlapping buffers never double count.
 
+## What "recompute" means
+
+The database holds two kinds of FIRMS data.
+
+- **Source data:** the fires themselves, exactly as NASA reported them. That is `firms_detections_yearly` and `firms_detections_7day`. A fire's date, time and position never depend on our territories, so this data only changes when a load runs.
+- **Derived data:** what those fires mean for our territories. That is the four result tables: `firms_territory_detections`, `firms_groupings_detections`, `firms_territory_counts` and `firms_groupings_counts`. Every row answers a question like "which fires fall in Territory 130's buffer?" or "how many fires were inside it in 2023?"
+
+**Recompute** means: delete the derived data and rebuild it from the source data and the territories as they are right now. It never touches the source tables. It reads no CSV and calls no NASA endpoint. A spreadsheet is a good picture: the detections are the raw rows, the result tables are a pivot table, and recompute refreshes the pivot.
+
+### When the derived data goes stale
+
+Three things make the stored results wrong:
+
+1. **New source data.** A yearly load or a 7-day load adds or replaces fires, so the matches and counts for those dates are out of date.
+2. **Territories change.** A territory is added, redrawn, removed, or moved to another grouping. Every fire that territory touches, in every year back to 2019, may now match differently.
+3. **The calendar moves.** The daily chart shows the seven UTC days ending on the run date. Tomorrow's chart needs a different seven days.
+
+### Full recompute
+
+A full recompute rebuilds everything:
+
+- it deletes every row in the four result tables;
+- it matches every stored detection against every territory again: the 124.5 million archived ones plus the current year's 7-day rows;
+- it rebuilds the grouping matches;
+- it writes a count row for every territory and grouping, for every loaded year and each of the last seven days.
+
+Territory changes are why it has to cover every year. Redraw one boundary and its fires change in 2019 as much as in 2026, and every grouping that territory belongs to changes with it. The only safe answer is to rebuild everything.
+
+It runs in one transaction, so the dashboard keeps showing the previous results until the new ones commit. In production it takes 24 minutes on E4ds, 22 of them in the territory spatial join. That's why we scale the database up before running it.
+
+`firms recompute` always runs a full recompute. `firms load-yearly` runs one at the end, because it can replace any year.
+
+### Partial recompute
+
+A partial recompute rebuilds only the years it is given, plus the seven daily bars. `firms load-7day` is the only command that uses it. It passes the years its file covers, which is one year, or two when the file spans New Year.
+
+It is safe because of what a 7-day file can and can't change. The file only holds the last seven days, so it can only change the dates it covers: the current year, plus the previous year when the file spans New Year. Every other year either comes from NASA's archive, which a 7-day load never touches, or has no new rows. The territories haven't changed either, because a territory update is always followed by a full recompute.
+
+So a partial recompute for 2026:
+
+- deletes the 2026 matches, the 2026 year counts and all the day counts;
+- matches only the 2026 detections;
+- writes the 2026 year rows and the seven day rows.
+
+It leaves 2019 to 2025 exactly as they were. On B1ms the whole daily load took 2 minutes 6 seconds on 20 October, 96 seconds of it this recompute. Tests check that a partial rebuild gives the same charts and map tiles as a full one.
+
+Two consequences worth knowing:
+
+- **The partial recompute gets slower through the year.** The 7-day table is never pruned, so every daily download adds a day to it until NASA publishes that year's archive. On 20 October it held about 490,000 rows, from 9 to 20 October. Just before the archive arrives it can hold most of a year, up to 15 to 19 million rows. The 96 seconds was measured near the start of that curve.
+- **The current year's bar only counts days we downloaded.** The first 7-day file, loaded on 16 October 2026, reached back to 9 October, so the 2026 bar covers 9 October onward. When NASA publishes the 2026 archive, `firms load-yearly --append=2026` loads the full year, and the view switches 2026 from the 7-day rows to the archive.
+
+### Which one runs when
+
+| Event | Command | Recompute |
+| --- | --- | --- |
+| NASA publishes a new yearly archive | `firms load-yearly --append=<year>` | Full, at the end |
+| Daily 7-day refresh | `firms load-7day` | Partial: the years in the file, plus the seven days |
+| A territory is added, redrawn, removed or regrouped | `territories refresh-groupings`, then `firms recompute` | Full |
+| A load succeeded but its recompute failed | `firms recompute` | Full |
+
 ## The three commands
 
 ```text
@@ -297,7 +357,7 @@ My working rules: every pull request under about 500 lines, an independent code 
 
 ## After launch
 
-**Making the daily update cheap.** The plan was a daily job for the 7-day file on the smallest tier, B1ms. My lead's concern was that every `load-7day` ran the full 24-minute recompute, and scaling the database up every day was unrealistic. I measured the part a daily run needs: matching the 7-day detections to territories took 0.8 seconds. A 7-day file can only change the year it covers, since older years come from NASA's archive and never change. So I made the recompute take an optional list of years. `load-7day` passes the years its file covers. In production on B1ms the daily load now takes 2 minutes 6 seconds, about 30 seconds to download and load and 96 seconds to recompute the current year and the seven days. Tests check that the partial rebuild gives the same charts and tiles as a full one.
+**Making the daily update cheap.** The plan was a daily job for the 7-day file on the smallest tier, B1ms. My lead's concern was that every `load-7day` ran the full 24-minute recompute, and scaling the database up every day was unrealistic. I measured the part a daily run needs: matching the 7-day detections to territories took 0.8 seconds. A 7-day file can only change the dates it covers: the current year, plus the previous year when the file spans New Year. So I made the recompute take an optional list of years. `load-7day` passes the years its file covers. In production on B1ms the daily load now takes 2 minutes 6 seconds, about 30 seconds to download and load and 96 seconds to recompute the current year and the seven days. Tests check that the partial rebuild gives the same charts and tiles as a full one.
 
 **The partial day.** My lead noticed today's bar looked complete. NASA's dates are UTC, the file is rebuilt hourly, and detections arrive about three hours after a satellite pass, so the newest day is always partial. Scheduling the daily job late in the UTC day captures every afternoon satellite pass over the territories, which is when most fires are detected.
 
@@ -333,6 +393,7 @@ My working rules: every pull request under about 500 lines, an independent code 
 - **Grouping rules exist in two places.** The recompute copies the tag rules from grouping refresh. A shared function would keep them in step.
 - **Territory matching dominates the full recompute.** 22 of the 24 minutes are the territory join. When one territory changes, only that territory needs re-matching, so an incremental path would make territory updates take seconds.
 - **The current day is partial.** The job timing handles it. Ending the chart at the last full UTC day is a small change if users want it.
+- **The 7-day table grows until the archive loads.** Pruning days that a loaded archive already covers would keep the daily recompute fast all year.
 - **Storage grows about 3.3 GB per year.** 64 GB covers years of growth. Older years could move to cheaper storage if that ever matters.
 
 ## Questions I expect, with answers

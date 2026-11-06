@@ -14,7 +14,7 @@ interface RefreshOptions {
   openAIKey?: string;
 }
 
-const repositories = ["docket", "conclave", "katalepsis", "swig", "ore"] as const;
+const repositories = ["docket", "conclave", "katalepsis", "Pulse", "swig", "ore"] as const;
 const historyKey = "project_updates_v1";
 const checkedKey = "project_updates_checked_v2";
 const refreshLockKey = "project_updates_refresh_lock_v1";

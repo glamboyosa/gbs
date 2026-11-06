@@ -14,6 +14,7 @@ const fixture = {
   docket: feed("docket", "a".repeat(40), "feat: Add document review", "2026-10-15T12:00:00Z"),
   conclave: feed("conclave", "b".repeat(40), "Update dependencies", "2026-10-15T13:00:00Z"),
   katalepsis: feed("katalepsis", "c".repeat(40), "&lt;Improve&gt; browser checks", "2026-10-15T14:00:00Z"),
+  Pulse: feed("Pulse", "f".repeat(40), "Add spots for per-table QR codes", "2026-10-15T11:00:00Z"),
   swig: feed("swig", "d".repeat(40), "Add queue metrics", "2026-10-15T14:30:00Z"),
   ore: feed("ore", "e".repeat(40), "Add stream recovery", "2026-10-15T14:40:00Z"),
 };
@@ -64,7 +65,7 @@ test("a visit after an hour checks GitHub again without reclassifying old commit
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T15:00:00Z"), openRouterKey: "test-key" });
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T15:30:00Z"), openRouterKey: "test-key" });
   await getProjectUpdates(store, { fetcher, now: new Date("2026-10-15T16:01:00Z"), openRouterKey: "test-key" });
-  assert.equal(feedCalls, 10);
+  assert.equal(feedCalls, 12);
   assert.equal(modelCalls, 1);
 });
 

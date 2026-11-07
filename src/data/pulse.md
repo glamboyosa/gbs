@@ -1,70 +1,64 @@
-# Pulse v2: from voice notes to what to fix
+# Pulse: hearing what customers really think
 
-Notes on rebuilding Pulse, the voice feedback app I designed and built, in November 2026. Live at [pulseapp.click](https://www.pulseapp.click). Code: [github.com/glamboyosa/Pulse](https://github.com/glamboyosa/Pulse). Walkthrough: [36-second video](https://youtu.be/n0NAYKywunA).
+The story of Pulse, a voice feedback product I designed and built, first launched in February 2026. Live at [pulseapp.click](https://www.pulseapp.click). Code: [github.com/glamboyosa/Pulse](https://github.com/glamboyosa/Pulse). Walkthrough: [36-second video](https://youtu.be/n0NAYKywunA).
 
 ## The one-minute version
 
-Customers rarely fill in feedback forms, but most will talk for 30 seconds if it takes one tap. Pulse puts a QR code on the table. The customer scans it, records a voice note in the browser, and leaves. No app, no account.
+Restaurants, salons and shops rarely hear what most customers think. Customers have plenty to say, but few fill in a form.
 
-The first version recorded those notes and transcribed them. That was the easy half. An owner with forty transcripts still has to read them all, and half of them might be in Yoruba or Pidgin.
+My bet is that far more will talk for 30 seconds if it takes one tap. So Pulse is a QR code on the table. The customer scans it, records a voice note in the browser and leaves. No app, no account.
 
-v2 is about the other half: turning voice notes into something an owner acts on. Every note now arrives transcribed in the language it was spoken, translated to English, summarised in one line and tagged with themes and sentiment. An unhappy customer triggers an email straight away. Every Monday the owner gets up to three things to fix, each with a count and a real quote.
+The first version mostly stopped there: it recorded the notes, transcribed them and tagged a sentiment. That turned out to be the easy half. An owner with forty transcripts a week still has to read them all, and some of them are in Yoruba or Pidgin. Version 2 is the other half. Every note now arrives in English, translated if it was spoken in another language, summarised in one line and tagged with what it's about. An unhappy customer triggers an email straight away. Every Monday the owner gets up to three things to fix, each with how many people raised it and their own words.
 
-Before any of that, I audited v1 and found it wasn't safe to sell. Anyone could buy any number of credits at a price they chose, and anyone could read any business's transcripts. So v2 started with security and tests, then features, then a redesign.
+## Who it's for
 
-## What the audit found
+Two people use Pulse, and they want different things.
 
-I read the whole codebase before writing anything. The short list:
+**The customer** has an opinion and about a minute. They won't download an app or make an account, and they may not want to write in English. For them, Pulse is one big record button. They can listen back and send. Their name and email are optional and asked for only after the recording, because asking first loses people before they start.
 
-- **Billing could be gamed.** The custom checkout had no login check and took the price from the browser. The Polar webhook had no idempotency, so a retried delivery credited a pack twice. Refunds took back the whole pack, even for a partial refund.
-- **Customer data was public.** Two endpoints returned any business's transcripts and audio links to anyone who passed a user ID. Transcription was an open, unlimited endpoint billed to my ElevenLabs and OpenAI keys.
-- **Login was weak.** One-time codes came from `Math.random`, lived for about 20 minutes and had no attempt limit. The session secret fell back to a hard-coded default.
-- **Recording was fragile.** Older Android Chrome couldn't record at all. Transcription was hard-coded to English. Errors were `alert()` boxes.
-- **No tests, no CI**, and about a third of the repo was a dead copy of the app in another framework.
+**The owner** runs a busy place and has no time for a dashboard they need to study. They want to know three things: is anyone unhappy right now, what keeps coming up, and is it getting better. Everything in v2 answers one of those.
 
-## Phase 1: safe to sell
+## What the owner gets
 
-- Checkout needs a session, and the server prices every pack and custom amount itself. The browser only says which pack.
-- The webhook is idempotent: Polar's payment ID is unique in the purchases table, so a replayed event is a no-op. Partial refunds take back only the pulses they paid for.
-- Every owner endpoint checks the session. The open transcription endpoint is gone; transcription only happens inside a feedback submission that has spent a pulse.
-- Login codes come from `crypto`, expire in 10 minutes and allow 5 attempts. Session secrets shorter than 32 characters are rejected.
-- One Postgres-backed rate limiter covers login, submissions, replies and the digest. It is a single upsert, so two concurrent requests can't both slip under the limit.
-- Spending a pulse is one conditional update (`pulses_remaining > 0`), so two customers can't both spend the last pulse. If saving the feedback fails, the pulse goes back. A business with no credit is told so before the customer records, not after.
+- **Every note, in English.** Notes spoken in another language show the original next to an English translation. Every note gets a one-line summary, a few themes and a sentiment: happy, neutral or unhappy.
+- **An alert when someone is unhappy.** It arrives as an email with the summary, while the customer may still be in the building.
+- **A Monday list of what to fix.** Up to three issues, each with a count and a real quote.
+- **Insights.** Sentiment over the last 30 days against the 30 before, and the themes that come up unhappy most often.
+- **A QR code per table or branch.** Spots tag each note with where it came from, so "the patio is too hot" shows up as a patio problem.
+- **Their own look.** Their question, logo, colour and thank-you message, plus a link to leave a Google review.
+- **A way to reply.** If a customer leaves an email, the owner can answer once. Pulse sends it from the business's name, and the owner never sees the address unless the customer writes back.
+- **Table tents to print.** One click gives a ready-to-fold A4 sheet for any QR code.
 
-Then tests. Vitest runs against a real Postgres, not mocks: 166 tests across billing, auth, submission, replies, branding, the digest and account deletion. Playwright drives the full journey on desktop and a Pixel 7 profile. A fake microphone streams a real WAV file into the browser, so the real ElevenLabs and OpenAI calls run end to end.
+## Decisions that shaped it
 
-## Phase 2: what owners pay for
+**Voice first, typing as a fallback.** Typed feedback would be easier to build and easier to read, but a text box is the form people already skip. Typing only appears when the microphone is blocked or the browser can't record, and it's labelled so the owner knows.
 
-I ranked features by one question: what makes an owner check Pulse every week?
+**Pay per note, no subscription.** One voice note spends one "pulse". New businesses get 5 free, then buy packs. A small café that gets 20 notes a month pays for 20, and doesn't have to think about a plan.
 
-1. **Any language.** ElevenLabs Scribe detects the language instead of assuming English. GPT-5 mini, through the AI SDK with an OpenRouter fallback, returns a structured result: English translation, a one-line summary, up to four themes and a sentiment. I ran it on real recordings and text in Yoruba, Nigerian Pidgin, French and Portuguese.
-2. **Unhappy-customer alerts.** Negative feedback emails the owner at once, with the summary in the subject, while the customer may still be on site.
-3. **Insights and the Monday digest.** Sentiment over the last 30 days against the 30 before, and themes ranked by how often they come up negative. A cron job writes a digest every Monday: up to three things to fix, each with a count and a quote.
-4. **Spots.** Extra QR codes for a table, a branch or an event. Each one tags its feedback, and the dashboard filters by spot.
-5. **Branding.** Owners set the question, logo, an accent colour, a thank-you message and a Google review link.
-6. **A typed fallback.** Voice stays the default. Typing appears only when the microphone is refused or the browser can't record, and typed feedback is labelled so owners can tell the two apart.
-7. **Print.** Table tents and sticker sheets for any QR code, laid out for A4 and the browser's Save as PDF.
-8. **Close the loop.** A customer can leave an email after recording. The owner sends one reply from the dashboard. Pulse sends it from the business's name, and the owner never sees the address unless the customer writes back.
-9. **Privacy basics.** Export everything as JSON, delete any feedback or the whole account, audio deleted after 12 months, a privacy page listing every sub-processor and a DPA template for business customers.
+**Any language, read in English.** The speech-to-text model detects the language instead of assuming English, then a second step translates and summarises. I tried it on Yoruba, Nigerian Pidgin, French and Portuguese, because those are languages customers in Lagos and beyond actually speak.
 
-## Phase 3: the redesign
+**Protect the customer's contact details.** Customers will share an email when they want an answer, but not to be added to a mailing list. So the business can reply without ever holding the address.
 
-v1 called itself neobrutalist, but the look came from classes copied into every component, white shadows on a white page and three display fonts nobody used.
+**Cheap protections first.** Replies are capped at 20 a day per business. Confirming the customer's address first would close that gap, but it adds friction for everyone. I wrote down when I'd add it, and didn't build it.
 
-v2 keeps neobrutalism and makes it a system: design tokens for 2px ink borders and hard offset shadows, one display face (Bricolage Grotesque) and ink on paper with one yellow accent. Colour appears only where it means something: green, amber and red for sentiment, and red for errors. I checked the sentiment colours for contrast (5.6:1 and 5.4:1).
+## Making it safe to sell
 
-- **The recorder** is one big round button with a live level meter, so customers can see the mic is hearing them. Name and email come after the recording, never before it.
-- **The landing page** shows the product working: a hero card that cycles through real-looking feedback in Pidgin, Yoruba, English and Portuguese. The pricing is the real pricing.
-- **The dashboard** got a compact stats strip, sentiment pills and a little motion on the cards. Reduced motion is respected everywhere.
-- **Link previews** have a 1200×630 image and a short video. LinkedIn's crawler gets the image without the video, because LinkedIn shows no image at all when `og:video` is present.
+Before adding anything, I read the whole of v1 as if I were about to charge money for it. It worked, but it wasn't ready. The checkout trusted the price sent by the browser. Payment notifications could credit an account twice. Some pages showed one business's feedback to anyone who knew where to look. There were no automated tests.
 
-## Numbers
+So the order of work was fixed: safety first, then features, then design. Payments are now priced on the server and can't be counted twice. Every owner page checks who is asking. Two customers can't both spend a business's last pulse. And 166 automated tests run against a real database, plus browser tests that play a real recording through a fake microphone, in a desktop browser and an emulated Pixel 7.
 
-- 16 commits, about 14,600 lines added and 9,600 removed, including the dead framework copy.
-- 7 database migrations, all applied to production.
-- 166 Vitest tests against real Postgres, and 3 Playwright journeys on desktop and mobile.
-- Pricing unchanged: one pulse per voice note, no subscription, 5 free to start.
+## The redesign
 
-## Stack
+Pulse kept its neobrutalist style: thick ink borders and hard shadows. This time it's a real system rather than a look copied from screen to screen. It is ink on paper with one yellow accent. Colour only appears where it means something: green, amber and red for how a customer felt, and red for errors.
 
-Next.js 16 (App Router) with an Elysia API mounted inside it. Postgres on Neon with Drizzle. ElevenLabs Scribe for speech to text. The AI SDK with GPT-5 mini and an OpenRouter fallback. Cloudflare R2 for audio, Resend for email, Polar for payments, and Vercel for hosting and crons.
+The record button is big and round, with a live level meter so customers can see the microphone hears them. The landing page shows the product working, cycling through real-looking feedback in four languages. It shows the real pricing and makes no made-up claims.
+
+## Launch
+
+v2 relaunches on Product Hunt on 8 November 2026, with posts on X, LinkedIn and Reddit the same weekend. From 10 November I'm emailing restaurants, cafés and salons in Nigeria, the UK and the US, offering each the 5 free pulses.
+
+What I'm watching next is simple: which owners come back every week, and what they do after an unhappy-customer alert.
+
+## Built with
+
+Next.js 16 with an Elysia API, Postgres with Drizzle, ElevenLabs for speech to text, GPT-5 mini through the AI SDK for translation and summaries, Cloudflare R2 for audio, Resend for email, Polar for payments, and Vercel for hosting.

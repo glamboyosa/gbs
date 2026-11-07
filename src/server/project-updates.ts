@@ -30,12 +30,15 @@ const decodeTitle = (text: string): string => text.replace(/&(?:amp|lt|gt|quot|a
   "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&apos;": "'", "&#39;": "'",
 })[entity] ?? entity).replace(/\s+/g, " ").trim();
 
+// Where a long commit subject can end and still read as a complete headline.
+const clauseBreak = /,\s+|;\s+|\s+(?:and|but|so|before|after|while|when)\s+/gi;
+
 const shortTitle = (title: string, project: string): string => {
   const clean = title.replace(/(?:…|\.\.\.)$/, "").trim();
-  const firstClause = clean.split(/\s+(?:and|but)\s+/i)[0];
-  if (firstClause !== clean && firstClause.length >= 20 && firstClause.length <= 64) return firstClause;
   if (title.length <= 64 && clean === title) return title;
-  return `${project} update`;
+  const ends = Array.from(clean.matchAll(clauseBreak), (match) => match.index ?? 0);
+  const longest = ends.filter((end) => end >= 20 && end <= 64).at(-1);
+  return longest === undefined ? `${project} update` : clean.slice(0, longest);
 };
 
 const parseFeed = (xml: string, repo: string): Commit[] => Array.from(xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)).flatMap(([, entry]) => {
@@ -144,14 +147,28 @@ export const refreshProjectUpdates = async (options: RefreshOptions = {}): Promi
     const cutoff = Math.max(initialCutoff, lastChecked ? Date.parse(lastChecked) || 0 : 0);
     const previousChecked = lastChecked ? null : await store.get<string>("project_updates_checked_v1");
     const existingRepoCutoff = Math.max(cutoff, previousChecked ? Date.parse(previousChecked) || 0 : 0);
+    const parsedFeeds: Commit[][] = [];
     const feeds = await Promise.all(repositories.map(async (repo) => {
       const response = await fetcher(`https://github.com/glamboyosa/${repo}/commits/main.atom`, { signal: AbortSignal.timeout(10_000) });
       if (!response.ok) throw new Error(`${repo} feed returned ${response.status}`);
       const xml = await response.text();
       if (!/<feed\b/.test(xml) || !/<\/feed>/.test(xml)) throw new Error(`${repo} returned an invalid Atom feed`);
       const repoCutoff = repo === "swig" || repo === "ore" ? cutoff : existingRepoCutoff;
-      return parseFeed(xml, repo).filter((commit) => Date.parse(commit.date) > repoCutoff);
+      const parsed = parseFeed(xml, repo);
+      parsedFeeds.push(parsed);
+      return parsed.filter((commit) => Date.parse(commit.date) > repoCutoff);
     }));
+    // Saved updates that fell back to "<Project> update" get a real headline once
+    // their commit is still in the feed.
+    const subjects = new Map(parsedFeeds.flat().map((commit) => [commit.url, commit.title]));
+    const saved = await store.get<ProjectUpdate[]>(historyKey);
+    if (Array.isArray(saved)) {
+      const repaired = saved.map((item) => {
+        const subject = item.title === `${item.project} update` ? subjects.get(item.url) : undefined;
+        return subject ? { ...item, title: shortTitle(subject, item.project) } : item;
+      });
+      if (repaired.some((item, index) => item.title !== saved[index].title)) await store.set(historyKey, repaired);
+    }
     const commits = feeds.flat().filter((commit) => Date.parse(commit.date) <= now.getTime())
       .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30);
     if (commits.length === 0) {

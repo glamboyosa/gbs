@@ -381,3 +381,26 @@ test("a hand-written update appears from its date and leads the homepage banner"
   assert.equal(after[0].project, "Pulse");
   assert.equal(getHomepageUpdate(after, launchDay)?.url, "/pulse");
 });
+
+test("a saved generic headline is repaired from the commit subject while it is still in the feed", async () => {
+  const store = makeStore();
+  const sha = "9".repeat(40);
+  const url = `https://github.com/glamboyosa/Pulse/commit/${sha}`;
+  await store.set("project_updates_checked_v2", "2026-11-07T12:00:00Z");
+  await store.set("project_updates_v1", [{
+    date: "2026-11-07", dateLabel: "7 Nov 2026", project: "Pulse", reference: "9999999",
+    title: "Pulse update", url, linkText: "Commit",
+  }]);
+  const subject = "Map each pack to its real Polar product, sell custom amounts as Pulse credits, start custom at 11 pulses";
+  const fetcher: typeof fetch = async (input) => {
+    const target = String(input);
+    if (target.endsWith(".atom")) {
+      return new Response(target.includes("/Pulse/") ? feed("Pulse", sha, subject, "2026-11-07T11:00:00Z") : "<feed></feed>");
+    }
+    throw new Error("no model call expected");
+  };
+
+  await refreshProjectUpdates({ store, fetcher, now: new Date("2026-11-07T13:30:00Z"), openRouterKey: "test-key" });
+  const history = await getProjectUpdates(store, { now: new Date("2026-11-07T13:30:00Z") });
+  assert.equal(history.find((update) => update.url === url)?.title, "Map each pack to its real Polar product");
+});

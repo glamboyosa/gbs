@@ -1,4 +1,5 @@
 import type { WishlistItem } from "@/types";
+import jacquemusLeBanetoBlackImage from "@/assets/wishlist/bags/jacquemus-le-baneto-black.jpg";
 import marbleTrayImage from "@/assets/wishlist/everyday/marble-tray.jpg";
 import runningSocksGymsharkImage from "@/assets/wishlist/clothing/running-socks-gymshark.jpg";
 import runningSocksSauconyImage from "@/assets/wishlist/clothing/running-socks-saucony.jpg";
@@ -176,6 +177,17 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.coach.com/products/hitch-crossbody/CW461-BLK.html",
     note: "Black leather.",
     price: 408,
+  },
+  {
+    id: "jacquemus-le-baneto",
+    name: "Le Baneto",
+    brand: "Jacquemus",
+    category: "accessories",
+    image: jacquemusLeBanetoBlackImage,
+    href: "https://www.farfetch.com/shopping/men/search/items.aspx?q=jacquemus%20baneto",
+    note: "Black leather crossbody. About $665–$700 full price; under $500 on Farfetch promos.",
+    price: 400,
+    priceTo: 700,
   },
   {
     id: "fujifilm-x-half",

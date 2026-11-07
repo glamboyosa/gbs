@@ -19,6 +19,10 @@ const fixture = {
   ore: feed("ore", "e".repeat(40), "Add stream recovery", "2026-10-15T14:40:00Z"),
 };
 
+// Reads the feed as of late October 2026, before any hand-written update dated later.
+const readUpdates = (store: ReturnType<typeof makeStore>) =>
+  getProjectUpdates(store, { now: new Date("2026-10-31T00:00:00Z") });
+
 const makeStore = () => {
   const values = new Map<string, unknown>();
   return {
@@ -153,7 +157,7 @@ test("daily refresh publishes a selected public commit and keeps its source link
   });
 
   assert.equal(result, "published");
-  const updates = await getProjectUpdates(store);
+  const updates = await readUpdates(store);
   assert.equal(updates[0].project, "Docket");
   assert.equal(updates[0].title, "Add document review");
   assert.equal(updates[0].url, `https://github.com/glamboyosa/docket/commit/${"a".repeat(40)}`);
@@ -171,7 +175,7 @@ for (const repo of ["swig", "ore"] as const) {
     };
 
     assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }), "published");
-    const update = (await getProjectUpdates(store))[0];
+    const update = (await readUpdates(store))[0];
     assert.equal(update.project, repo === "swig" ? "Swig" : "Ore");
     assert.equal(update.url, `https://github.com/glamboyosa/${repo}/commit/${sha}`);
     assert.equal(getHomepageUpdate([update], new Date("2026-10-15T22:00:00Z"))?.url, update.url);
@@ -192,7 +196,7 @@ test("new repositories are checked even when the previous feed cursor is newer",
   };
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }), "published");
-  assert.equal((await getProjectUpdates(store))[0].project, "Swig");
+  assert.equal((await readUpdates(store))[0].project, "Swig");
 });
 
 test("long Atom subjects become a concise headline while keeping the selected commit", async () => {
@@ -210,7 +214,7 @@ test("long Atom subjects become a concise headline while keeping the selected co
   };
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
-  const history = await getProjectUpdates(store);
+  const history = await readUpdates(store);
   assert.equal(history[0].title, "Explain agent checks and site guarantees");
   assert.equal(getHomepageUpdate(history, new Date("2026-10-19T22:00:00Z"))?.title, "Explain agent checks and site guarantees");
   assert.equal(history[0].url, `https://github.com/glamboyosa/katalepsis/commit/${sha}`);
@@ -264,7 +268,7 @@ test("a long full Atom subject remains eligible for summarization", async () => 
   };
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
-  assert.equal((await getProjectUpdates(store))[0].title, "Explain agent checks and visible guarantees");
+  assert.equal((await readUpdates(store))[0].title, "Explain agent checks and visible guarantees");
 });
 
 test("invalid AI headlines fall back to a complete clause", async () => {
@@ -277,7 +281,7 @@ test("invalid AI headlines fall back to a complete clause", async () => {
     : Response.json({ choices: [{ message: { content: JSON.stringify({ sha, headline: "t…" }) } }] });
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-19T22:00:00Z"), openRouterKey: "test-key" }), "published");
-  assert.equal((await getProjectUpdates(store))[0].title, "Spell out how agent checks are enforced");
+  assert.equal((await readUpdates(store))[0].title, "Spell out how agent checks are enforced");
 });
 
 test("refresh publishes with the working OpenRouter selection model", async () => {
@@ -292,7 +296,7 @@ test("refresh publishes with the working OpenRouter selection model", async () =
 
   const result = await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" });
   assert.equal(result, "published");
-  assert.equal((await getProjectUpdates(store))[0].title, "Add document review");
+  assert.equal((await readUpdates(store))[0].title, "Add document review");
 });
 
 test("invalid OpenRouter choice falls back to OpenAI without publishing an invented commit", async () => {
@@ -316,7 +320,7 @@ test("invalid OpenRouter choice falls back to OpenAI without publishing an inven
 
   assert.equal(result, "published");
   assert.equal(used.length, 2);
-  assert.equal((await getProjectUpdates(store))[0].title, "<Improve> browser checks");
+  assert.equal((await readUpdates(store))[0].title, "<Improve> browser checks");
 });
 
 test("no noteworthy commit leaves the existing update in place", async () => {
@@ -328,7 +332,7 @@ test("no noteworthy commit leaves the existing update in place", async () => {
   };
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-15T22:00:00Z"), openRouterKey: "test-key" }), "unchanged");
-  assert.equal((await getProjectUpdates(store))[0].reference, "v0.4.0");
+  assert.equal((await readUpdates(store))[0].reference, "v0.4.0");
 });
 
 test("an invalid repository feed does not advance the daily cursor", async () => {
@@ -356,14 +360,24 @@ test("refresh catches up with commits still in the feed after a missed week", as
   };
 
   assert.equal(await refreshProjectUpdates({ store, fetcher, now: new Date("2026-10-25T22:00:00Z"), openRouterKey: "test-key" }), "published");
-  assert.equal((await getProjectUpdates(store))[0].project, "Docket");
+  assert.equal((await readUpdates(store))[0].project, "Docket");
 });
 
 test("homepage stops featuring an update after 14 calendar days while history keeps it", async () => {
-  const history = await getProjectUpdates(null);
+  const history = await getProjectUpdates(null, { now: new Date("2026-10-31T00:00:00Z") });
   const latest = history[0];
 
   assert.equal(getHomepageUpdate(history, new Date("2026-10-27T23:59:59Z")), latest);
   assert.equal(getHomepageUpdate(history, new Date("2026-10-28T00:00:00Z")), null);
   assert.equal(history[0], latest);
+});
+
+test("a hand-written update appears from its date and leads the homepage banner", async () => {
+  const before = await getProjectUpdates(null, { now: new Date("2026-11-06T23:59:59Z") });
+  assert.equal(before.some((update) => update.project === "Pulse"), false);
+
+  const launchDay = new Date("2026-11-07T09:00:00Z");
+  const after = await getProjectUpdates(null, { now: launchDay });
+  assert.equal(after[0].project, "Pulse");
+  assert.equal(getHomepageUpdate(after, launchDay)?.url, "/pulse");
 });

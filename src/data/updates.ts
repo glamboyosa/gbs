@@ -11,6 +11,17 @@ export interface ProjectUpdate {
 
 export const updates: ProjectUpdate[] = [
   {
+    date: "2026-11-07",
+    dateLabel: "7 Nov 2026",
+    project: "Pulse",
+    reference: "v2",
+    title: "Voice feedback in any language, turned into what to fix.",
+    description:
+      "Pulse v2 translates and summarises every voice note, emails the owner when a customer is unhappy, and sends a Monday list of what to fix. It relaunches on Product Hunt on 8 November.",
+    url: "/pulse",
+    linkText: "Product notes",
+  },
+  {
     date: "2026-10-13",
     dateLabel: "13 Oct 2026",
     project: "Docket",

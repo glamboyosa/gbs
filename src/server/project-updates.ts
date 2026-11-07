@@ -18,7 +18,7 @@ const repositories = ["docket", "conclave", "katalepsis", "Pulse", "swig", "ore"
 const historyKey = "project_updates_v1";
 const checkedKey = "project_updates_checked_v2";
 const refreshLockKey = "project_updates_refresh_lock_v1";
-const initialCutoff = Date.parse(`${updates[0].date}T23:59:59Z`);
+const initialCutoff = Math.min(...updates.map((update) => Date.parse(`${update.date}T23:59:59Z`)));
 
 const configuredStore = (): Store | null => {
   const url = import.meta.env?.UPSTASH_REDIS_REST_URL;
@@ -104,22 +104,26 @@ export const getHomepageUpdate = (history: ProjectUpdate[], now = new Date()): P
   return Number.isInteger(ageInDays) && ageInDays >= 0 && ageInDays <= 14 ? latest : null;
 };
 
+// Hand-written updates appear from their date on, so one can be added ahead of a launch.
+const publishedUpdates = (now: Date) => updates.filter((update) => Date.parse(`${update.date}T00:00:00Z`) <= now.getTime());
+
 export const getProjectUpdates = async (store = configuredStore(), options: Omit<RefreshOptions, "store"> = {}): Promise<ProjectUpdate[]> => {
-  if (!store) return updates;
+  const now = options.now ?? new Date();
+  if (!store) return publishedUpdates(now);
   try {
-    const now = options.now ?? new Date();
     const checked = await store.get<string>(checkedKey);
     const checkedAt = checked ? Date.parse(checked) : NaN;
     if (!Number.isFinite(checkedAt) || now.getTime() - checkedAt >= 60 * 60 * 1000) {
       await refreshProjectUpdates({ ...options, store, now }).catch(() => {});
     }
     const saved = await store.get<ProjectUpdate[]>(historyKey);
-    if (!Array.isArray(saved)) return updates;
-    return [...saved.map((item) => typeof item.title === "string" && (item.title.length > 64 || /(?:…|\.\.\.)$/.test(item.title))
+    if (!Array.isArray(saved)) return publishedUpdates(now);
+    // Hand-written updates come first so they win a same-day tie with a commit.
+    return [...publishedUpdates(now), ...saved.map((item) => typeof item.title === "string" && (item.title.length > 64 || /(?:…|\.\.\.)$/.test(item.title))
       ? { ...item, title: shortTitle(item.title, item.project) }
-      : item), ...updates].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 20);
+      : item)].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 20);
   } catch {
-    return updates;
+    return publishedUpdates(now);
   }
 };
 

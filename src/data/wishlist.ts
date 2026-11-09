@@ -1,4 +1,7 @@
 import type { WishlistItem } from "@/types";
+import duneAwakeningImage from "@/assets/wishlist/games/dune-awakening.jpg";
+import avatarLegendsFightingGameImage from "@/assets/wishlist/games/avatar-legends-the-fighting-game.jpg";
+import starWarsGalacticRacerImage from "@/assets/wishlist/games/star-wars-galactic-racer.jpg";
 import jacquemusLeBanetoBlackImage from "@/assets/wishlist/bags/jacquemus-le-baneto-black.jpg";
 import marbleTrayImage from "@/assets/wishlist/everyday/marble-tray.jpg";
 import runningSocksGymsharkImage from "@/assets/wishlist/clothing/running-socks-gymshark.jpg";
@@ -357,6 +360,36 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://www.amazon.com/dp/B0G6157JKW",
     note: "Standard Edition.",
     price: 69,
+  },
+  {
+    id: "dune-awakening",
+    name: "Dune: Awakening",
+    brand: "PlayStation 5",
+    category: "games",
+    image: duneAwakeningImage,
+    href: "https://www.playstation.com/en-us/games/dune-awakening/",
+    note: "Standard Edition.",
+    price: 50,
+  },
+  {
+    id: "avatar-legends-the-fighting-game",
+    name: "Avatar Legends: The Fighting Game",
+    brand: "PS5 or Switch 2",
+    category: "games",
+    image: avatarLegendsFightingGameImage,
+    href: "https://www.gamestop.com/video-games/products/avatar-legends-the-fighting-game/20034507.html",
+    note: "Standard Edition.",
+    price: 30,
+  },
+  {
+    id: "star-wars-galactic-racer",
+    name: "Star Wars: Galactic Racer",
+    brand: "PS5 or Xbox",
+    category: "games",
+    image: starWarsGalacticRacerImage,
+    href: "https://www.xbox.com/en-US/games/store/-/9NM753GDJ8FS",
+    note: "Switch 2 if it gets a version. None is confirmed yet.",
+    price: 60,
   },
   {
     id: "aybl-refuse-to-blend-in-tee-black",

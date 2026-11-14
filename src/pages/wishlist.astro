@@ -54,6 +54,21 @@ const ranked = [
 const items = [...ranked.filter((item) => !claims[item.id]), ...ranked.filter((item) => claims[item.id])];
 const priorityCount = items.filter((item) => item.priority).length;
 const claimedCount = items.filter((item) => claims[item.id]).length;
+
+// Shared links like ?type=priority&price=under-50 open already filtered. Matching ignores case and punctuation,
+// so ?price=under50 or ?type=self-care work too, and an unknown value falls back to showing everything.
+const normalise = (value: string | null) => (value ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const typeFilters = new Map<string, string>([
+  ["priority", "priority"], ["priorities", "priority"], ["claimed", "claimed"],
+  ...categories.flatMap((category) => [[normalise(category.key), category.key], [normalise(category.label), category.key]] as [string, string][]),
+]);
+const priceFilters = new Map<string, string>(priceBands.map((band) => [normalise(band.key), band.key]));
+const initialType = typeFilters.get(normalise(Astro.url.searchParams.get("type"))) ?? "all";
+const initialPrice = priceFilters.get(normalise(Astro.url.searchParams.get("price"))) ?? "all";
+const matchesInitialType = (item: WishlistItem) =>
+  initialType === "all" || (initialType === "priority" ? Boolean(item.priority) : initialType === "claimed" ? Boolean(claims[item.id]) : item.category === initialType);
+const isInitiallyVisible = (item: WishlistItem) => matchesInitialType(item) && (initialPrice === "all" || priceBandFor(item) === initialPrice);
+const initiallyEmpty = !items.some(isInitiallyVisible);
 ---
 
 <Layout preloadFonts={["inter", "rubik-marker-hatch"]} title="Birthday wishlist | Osa" description="Osa’s birthday wishlist for December 3rd." preview={{ name: "wishlist-preview", alt: "Osa’s birthday wishlist: filter by type and price, then claim a gift." }}>
@@ -66,26 +81,26 @@ const claimedCount = items.filter((item) => claims[item.id]).length;
         <p>Watches, cameras, clothes, scents and small luxuries. Filter by what it is or what it costs.</p>
       </header>
 
-      <div class="wishlist-filters">
+      <div class="wishlist-filters" data-initial-type={initialType} data-initial-price={initialPrice}>
         <div class="filter-bar" role="group" aria-label="Filter by type">
-          <button class="filter-pill active pressable" type="button" data-category="all" aria-pressed="true">All <span data-count>{items.length}</span></button>
-          <button class="filter-pill pressable" type="button" data-category="priority" aria-pressed="false">Priorities <span data-count>{priorityCount}</span></button>
-          <button class="filter-pill pressable" type="button" data-category="claimed" aria-pressed="false">Claimed <span data-count>{claimedCount}</span></button>
+          <button class:list={["filter-pill pressable", { active: initialType === "all" }]} type="button" data-category="all" aria-pressed={initialType === "all" ? "true" : "false"}>All <span data-count>{items.length}</span></button>
+          <button class:list={["filter-pill pressable", { active: initialType === "priority" }]} type="button" data-category="priority" aria-pressed={initialType === "priority" ? "true" : "false"}>Priorities <span data-count>{priorityCount}</span></button>
+          <button class:list={["filter-pill pressable", { active: initialType === "claimed" }]} type="button" data-category="claimed" aria-pressed={initialType === "claimed" ? "true" : "false"}>Claimed <span data-count>{claimedCount}</span></button>
           {categories.map((category) => (
-            <button class="filter-pill pressable" type="button" data-category={category.key} aria-pressed="false">{category.label} <span data-count>{items.filter((item) => item.category === category.key).length}</span></button>
+            <button class:list={["filter-pill pressable", { active: initialType === category.key }]} type="button" data-category={category.key} aria-pressed={initialType === category.key ? "true" : "false"}>{category.label} <span data-count>{items.filter((item) => item.category === category.key).length}</span></button>
           ))}
         </div>
         <div class="filter-bar" role="group" aria-label="Filter by price">
-          <button class="filter-pill active pressable" type="button" data-price="all" aria-pressed="true">Any price <span data-count>{items.length}</span></button>
+          <button class:list={["filter-pill pressable", { active: initialPrice === "all" }]} type="button" data-price="all" aria-pressed={initialPrice === "all" ? "true" : "false"}>Any price <span data-count>{items.length}</span></button>
           {priceBands.map((band) => (
-            <button class="filter-pill pressable" type="button" data-price={band.key} aria-pressed="false">{band.label} <span data-count>{items.filter((item) => priceBandFor(item) === band.key).length}</span></button>
+            <button class:list={["filter-pill pressable", { active: initialPrice === band.key }]} type="button" data-price={band.key} aria-pressed={initialPrice === band.key ? "true" : "false"}>{band.label} <span data-count>{items.filter((item) => priceBandFor(item) === band.key).length}</span></button>
           ))}
         </div>
       </div>
 
       <div class="collection-grid">
         {items.map((item, index) => (
-          <article class:list={["collection-item", { "is-claimed": claims[item.id] }]} data-category={item.category} data-price={priceBandFor(item)} data-priority={item.priority ? "true" : undefined} style={`--delay: ${Math.min(index, 7) * 45}ms`}>
+          <article class:list={["collection-item", { "is-claimed": claims[item.id] }]} data-category={item.category} data-price={priceBandFor(item)} data-priority={item.priority ? "true" : undefined} hidden={!isInitiallyVisible(item)} style={`--delay: ${Math.min(index, 7) * 45}ms`}>
             <a class:list={["product-image", { "product-image-text": !item.image }]} href={item.href} target={item.href ? "_blank" : undefined} rel={item.href ? "noopener noreferrer" : undefined} aria-label={item.href ? `View ${item.brand} ${item.name}` : undefined}>
               <span class="product-type">{item.priority ? `Priority ${item.priority}` : tags[item.category]}</span>
               {item.href && <span class="external-mark" aria-hidden="true">↗</span>}
@@ -127,7 +142,7 @@ const claimedCount = items.filter((item) => claims[item.id]).length;
           </article>
         ))}
       </div>
-      <p class="wishlist-empty" hidden>Nothing here at that price.</p>
+      <p class="wishlist-empty" hidden={!initiallyEmpty}>{initialType === "claimed" && initialPrice === "all" ? "Nothing’s been claimed yet." : "Nothing here at that price."}</p>
 
       <section class="cash-fund" aria-labelledby="cash-fund-title">
         <p class="cash-amount" aria-hidden="true">₦?</p>
@@ -163,8 +178,19 @@ const claimedCount = items.filter((item) => claims[item.id]).length;
     const priceButtons = document.querySelectorAll<HTMLButtonElement>("[data-price]:is(button)");
     const items = [...document.querySelectorAll<HTMLElement>(".collection-item")];
     const empty = document.querySelector<HTMLElement>(".wishlist-empty");
-    let category = "all";
-    let price = "all";
+    const filters = document.querySelector<HTMLElement>(".wishlist-filters")!;
+    let category = filters.dataset.initialType ?? "all";
+    let price = filters.dataset.initialPrice ?? "all";
+
+    // Keeps the address bar matching the filters, so the current view can be copied and shared.
+    const syncUrl = () => {
+      const url = new URL(location.href);
+      url.searchParams.delete("type");
+      url.searchParams.delete("price");
+      if (category !== "all") url.searchParams.set("type", category);
+      if (price !== "all") url.searchParams.set("price", price);
+      history.replaceState(null, "", url);
+    };
 
     /**
      * Reports whether an item belongs to a type filter, where "priority" means the ranked items and "claimed" the ones someone has taken.
@@ -217,11 +243,15 @@ const claimedCount = items.filter((item) => claims[item.id]).length;
     categoryButtons.forEach((button) => button.addEventListener("click", () => {
       category = button.dataset.category!;
       render();
+      syncUrl();
     }));
     priceButtons.forEach((button) => button.addEventListener("click", () => {
       price = button.dataset.price!;
       render();
+      syncUrl();
     }));
+    // Tidies a hand-typed link (?price=under50) into the canonical form once the page has read it.
+    syncUrl();
 
     const dialog = document.querySelector<HTMLDialogElement>(".claim-dialog")!;
     const form = dialog.querySelector("form")!;

@@ -238,7 +238,7 @@ test("already-saved Atom ellipses display as complete headlines", async () => {
   assert.equal(getHomepageUpdate(history, new Date("2026-10-19T09:45:00Z"))?.title, "Spell out how agent checks are enforced");
 });
 
-test("cached ellipses without a complete clause use a safe fallback", async () => {
+test("cached ellipses without a complete clause end before a detail phrase", async () => {
   const store = makeStore();
   await store.set("project_updates_checked_v2", "2026-10-19T09:30:00Z");
   await store.set("project_updates_v1", [{
@@ -252,7 +252,51 @@ test("cached ellipses without a complete clause use a safe fallback", async () =
   }]);
 
   const history = await getProjectUpdates(store, { now: new Date("2026-10-19T09:45:00Z") });
-  assert.equal(history[0].title, "Katalepsis update");
+  assert.equal(history[0].title, "Add a setting that lets users control browser checks");
+});
+
+const savedTitle = async (title: string) => {
+  const store = makeStore();
+  await store.set("project_updates_checked_v2", "2026-11-16T09:30:00Z");
+  await store.set("project_updates_v1", [{
+    date: "2026-11-15",
+    dateLabel: "15 Nov 2026",
+    project: "Pulse",
+    reference: "abc1234",
+    title,
+    url: "https://github.com/glamboyosa/Pulse/commit/abc1234",
+    linkText: "Commit",
+  }]);
+  return (await getProjectUpdates(store, { now: new Date("2026-11-16T09:45:00Z") }))[0].title;
+};
+
+test("long subjects end before a detail phrase", async () => {
+  assert.equal(
+    await savedTitle("React Native support: copy-paste PulseFeedback component with the website button's options, in-app close and heading"),
+    "React Native support: copy-paste PulseFeedback component",
+  );
+});
+
+test("long subjects with only a colon keep the lead-in", async () => {
+  assert.equal(
+    await savedTitle('Stop notes showing "Transcribing…" forever: the dashboard retries one stuck note per visit, the list says when'),
+    'Stop notes showing "Transcribing…" forever',
+  );
+});
+
+test("long subjects with no natural break keep whole words without a dangling end", async () => {
+  assert.equal(
+    await savedTitle("Rework the owner dashboard header layout plus each balance badge the logout button now"),
+    "Rework the owner dashboard header layout plus each balance badge",
+  );
+  assert.equal(
+    await savedTitle("Rework the owner dashboard header layout plus a badge the internationalisation settings"),
+    "Rework the owner dashboard header layout plus a badge",
+  );
+});
+
+test("long subjects without spaces fall back to the project name", async () => {
+  assert.equal(await savedTitle(`Rename-${"x".repeat(80)}`), "Pulse update");
 });
 
 test("a long full Atom subject remains eligible for summarization", async () => {

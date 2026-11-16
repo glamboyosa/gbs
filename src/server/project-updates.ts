@@ -32,13 +32,27 @@ const decodeTitle = (text: string): string => text.replace(/&(?:amp|lt|gt|quot|a
 
 // Where a long commit subject can end and still read as a complete headline.
 const clauseBreak = /,\s+|;\s+|\s+(?:and|but|so|before|after|while|when)\s+/gi;
+// Next best: just before a phrase that only adds detail.
+const phraseBreak = /\s+(?:with|without|for|from|in|on|to|by|across|via|using|instead of|so that|because|wherever)\s+/gi;
+// Then the end of a "Subject: details" lead-in.
+const colonBreak = /:\s+/g;
+// Words a headline shouldn't end on.
+const danglingWord = /\s+(?:and|or|but|the|a|an|of|to|for|with|in|on|by|from|so|its|their)$/i;
+
+const lastBreak = (text: string, breaks: RegExp) =>
+  Array.from(text.matchAll(breaks), (match) => match.index ?? 0).filter((end) => end >= 20 && end <= 64).at(-1);
 
 const shortTitle = (title: string, project: string): string => {
   const clean = title.replace(/(?:…|\.\.\.)$/, "").trim();
   if (title.length <= 64 && clean === title) return title;
-  const ends = Array.from(clean.matchAll(clauseBreak), (match) => match.index ?? 0);
-  const longest = ends.filter((end) => end >= 20 && end <= 64).at(-1);
-  return longest === undefined ? `${project} update` : clean.slice(0, longest);
+  const end = lastBreak(clean, clauseBreak) ?? lastBreak(clean, phraseBreak) ?? lastBreak(clean, colonBreak);
+  if (end !== undefined) return clean.slice(0, end);
+  // Whole words that fit, so a generic "<Project> update" is a rare last resort.
+  const lastSpace = clean.lastIndexOf(" ", 64);
+  if (lastSpace < 20) return `${project} update`;
+  let words = clean.slice(0, lastSpace).replace(/[,;:]$/, "");
+  while (danglingWord.test(words)) words = words.replace(danglingWord, "");
+  return words.length >= 20 ? words : `${project} update`;
 };
 
 const parseFeed = (xml: string, repo: string): Commit[] => Array.from(xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)).flatMap(([, entry]) => {

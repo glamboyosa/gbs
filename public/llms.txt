@@ -12,10 +12,10 @@
 
 ## Projects
 
-- [Katalepsis](https://katalepsis.glamboyosa.xyz): Tests your preview deploys and shows you what broke. [Notes](https://www.glamboyosa.xyz/katalepsis)
+- [Katalepsis](https://katalepsis.glamboyosa.xyz): Tests your preview deploys and shows you what broke
 - [Docket](https://docket.glamboyosa.xyz): A terminal document classifier built around Jev
 - [Conclave](https://conclave.click): An AI council for decisions. Challenge its memo and switch models as you refine it
-- [Pulse](https://pulseapp.click): QR-code voice feedback in any language, turned into what to fix. [Notes](https://www.glamboyosa.xyz/pulse)
+- [Pulse](https://pulseapp.click): QR-code voice feedback in any language, turned into what to fix
 - [Swig](https://swig.glamboyosa.xyz): A PostgreSQL job queue for Go
 - [Things](https://things.glamboyosa.xyz): Small projects and experiments
 - [Animations](https://animations.glamboyosa.xyz)

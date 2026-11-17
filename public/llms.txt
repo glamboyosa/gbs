@@ -1,0 +1,37 @@
+# Osa Ogbemudia
+
+> Osa (also known as glamboyosa) is a product engineer who makes software and other things for the internet. Osa works mostly with Go, TypeScript, Next.js and Python, likes shipping useful things, learning in public and taking side projects too far.
+
+## Pages
+
+- [Home](https://www.glamboyosa.xyz/): Intro, current projects, writing, reading, and Spotify, Strava and Letterboxd activity
+- [Updates](https://www.glamboyosa.xyz/updates): Recent changes across Osa's projects
+- [Uses](https://www.glamboyosa.xyz/uses): The hardware, software and services Osa uses daily
+- [Reading](https://www.glamboyosa.xyz/reading): Books, comics and manga on Osa's shelf in 2026
+- [Clothing](https://www.glamboyosa.xyz/clothing): Clothes, accessories, gear and fragrances in Osa's rotation
+
+## Projects
+
+- [Katalepsis](https://katalepsis.glamboyosa.xyz): Tests your preview deploys and shows you what broke. [Notes](https://www.glamboyosa.xyz/katalepsis)
+- [Docket](https://docket.glamboyosa.xyz): A terminal document classifier built around Jev
+- [Conclave](https://conclave.click): An AI council for decisions. Challenge its memo and switch models as you refine it
+- [Pulse](https://pulseapp.click): QR-code voice feedback in any language, turned into what to fix. [Notes](https://www.glamboyosa.xyz/pulse)
+- [Swig](https://swig.glamboyosa.xyz): A PostgreSQL job queue for Go
+- [Things](https://things.glamboyosa.xyz): Small projects and experiments
+- [Animations](https://animations.glamboyosa.xyz)
+
+## Writing
+
+- [Notes](https://blog.glamboyosa.xyz): Code, design and whatever Osa is figuring out
+- [freeCodeCamp](https://www.freecodecamp.org/news/author/glamboyosa/): Tutorials and longer technical writing
+- [Handbook](https://zesty-blanket-089.notion.site/Timothy-Osa-Ogbemudia-s-Handbook-Engineering-Design-More-d21a912f9f4e4c07991c3e39e3c0f477): How Osa approaches engineering, design and more
+
+## Profiles
+
+- [GitHub](https://github.com/glamboyosa)
+- [Letterboxd](https://letterboxd.com/glamboyosa/)
+- [PlayStation](https://profile.playstation.com/glamboyosa)
+
+## Contact
+
+- [Book a call](https://cal.com/glamboyosa/15min)

@@ -6,6 +6,7 @@ export interface Props {
 }
 
 const { title, description, noindex = false } = Astro.props
+const pageUrl = new URL(Astro.url.pathname.replace(/\/$/, ""), Astro.site).href
 ---
 
 <!doctype html>
@@ -15,6 +16,19 @@ const { title, description, noindex = false } = Astro.props
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="description" content={description} />
+    {!noindex && (
+      <>
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:url" content={pageUrl} />
+      </>
+    )}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Osa" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>

@@ -6,6 +6,7 @@ export interface Props {
 	preview?: { name: string; alt: string };
 	/** Core font files the page renders above the fold. */
 	preloadFonts?: (keyof typeof coreFonts)[];
+	noindex?: boolean;
 }
 
 const coreFonts = {
@@ -13,9 +14,27 @@ const coreFonts = {
 	lacquer: lacquerCore,
 	"rubik-marker-hatch": rubikMarkerHatchCore,
 };
-const { title, description = "Default description", preloadFonts = [] } = Astro.props;
+const { title, description = "Osa is a product engineer who makes software and other things for the internet.", preloadFonts = [], noindex = false } = Astro.props;
 const preview = Astro.props.preview ?? (Astro.url.pathname === "/" ? { name: "og-preview", alt: "Osa’s product engineering portfolio." } : undefined);
-const pageUrl = new URL(Astro.url.pathname, "https://www.glamboyosa.xyz").href;
+const canonicalPath = Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/$/, "");
+// Astro.site pins the canonical host to www, so preview deployments and the apex redirect never become canonical.
+const pageUrl = new URL(canonicalPath, Astro.site).href;
+const isHome = canonicalPath === "/";
+const personJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	name: "Osa Ogbemudia",
+	alternateName: "glamboyosa",
+	jobTitle: "Product engineer",
+	url: Astro.site?.href,
+	sameAs: [
+		"https://github.com/glamboyosa",
+		"https://blog.glamboyosa.xyz",
+		"https://www.freecodecamp.org/news/author/glamboyosa/",
+		"https://letterboxd.com/glamboyosa/",
+		"https://profile.playstation.com/glamboyosa",
+	],
+};
 import interCore from "../assets/fonts/inter-core.woff2?url";
 import lacquerCore from "../assets/fonts/lacquer-core.woff2?url";
 import rubikMarkerHatchCore from "../assets/fonts/rubik-marker-hatch-core.woff2?url";
@@ -31,16 +50,28 @@ import "../styles/fonts.css";
 		<meta name="generator" content={Astro.generator} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:type" content="website" />
-		{preview && (
+		<meta property="og:type" content={isHome ? "profile" : "website"} />
+		<meta property="og:site_name" content="Osa" />
+		<meta name="twitter:card" content={preview ? "summary_large_image" : "summary"} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		{noindex && <meta name="robots" content="noindex" />}
+		{!noindex && (
 			<>
 				<link rel="canonical" href={pageUrl} />
 				<meta property="og:url" content={pageUrl} />
+			</>
+		)}
+		{isHome && <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />}
+		{preview && (
+			<>
 				<meta property="og:image" content={`https://www.glamboyosa.xyz/${preview.name}.jpg`} />
 				<meta property="og:image:type" content="image/jpeg" />
 				<meta property="og:image:width" content="1200" />
 				<meta property="og:image:height" content="630" />
 				<meta property="og:image:alt" content={preview.alt} />
+				<meta name="twitter:image" content={`https://www.glamboyosa.xyz/${preview.name}.jpg`} />
+				<meta name="twitter:image:alt" content={preview.alt} />
 				<meta property="og:video" content={`https://www.glamboyosa.xyz/${preview.name}.mp4`} />
 				<meta property="og:video:secure_url" content={`https://www.glamboyosa.xyz/${preview.name}.mp4`} />
 				<meta property="og:video:type" content="video/mp4" />

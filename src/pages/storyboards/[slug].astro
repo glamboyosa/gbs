@@ -1,0 +1,108 @@
+---
+import NotesLayout from '../../layouts/NotesLayout.astro'
+import { frameSrc, storyboards } from '../../data/storyboards'
+
+export const prerender = true
+
+export const getStaticPaths = () =>
+  storyboards.map((storyboard) => ({ params: { slug: storyboard.slug }, props: { storyboard } }))
+
+const { storyboard } = Astro.props
+const others = storyboards.filter((other) => other.slug !== storyboard.slug)
+---
+
+<NotesLayout title={storyboard.title} description={storyboard.description} noindex={storyboard.noindex}>
+  <h1>{storyboard.title}</h1>
+  <p>{storyboard.intro}</p>
+  <p class="key">{storyboard.accent}</p>
+
+  {
+    storyboard.strips.map((strip, stripIndex) => (
+      <section>
+        <h2>{strip.title}</h2>
+        <p>{strip.premise}</p>
+        <ol class="frames">
+          {strip.frames.map((frame, frameIndex) => (
+            <li>
+              <figure>
+                <img
+                  src={frameSrc(storyboard.slug, stripIndex, frameIndex)}
+                  alt={`${frame.tag}: ${frame.alt}`}
+                  width="640"
+                  height="460"
+                  loading={stripIndex === 0 && frameIndex < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+                <figcaption>{frame.caption}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))
+  }
+
+  <nav class="more" aria-label="More">
+    {storyboard.notes && <a href={storyboard.notes.href}>{storyboard.notes.label}</a>}
+    {others.map((other) => <a href={`/storyboards/${other.slug}`}>{other.title}</a>)}
+  </nav>
+</NotesLayout>
+
+<style>
+  .key {
+    font-size: 0.92rem;
+    color: var(--ink-secondary);
+  }
+
+  .frames {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    gap: 2rem 1.5rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Frames get more room than the text column on wide screens, centred on it. */
+  @media (min-width: 48rem) {
+    .frames {
+      width: min(76rem, calc(100vw - 4rem));
+      margin-left: calc(50% - min(38rem, 50vw - 2rem));
+    }
+  }
+
+  .frames li {
+    margin: 0;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+    margin-top: 4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .more a {
+    padding-block: 0.6rem;
+  }
+</style>

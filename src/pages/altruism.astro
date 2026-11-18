@@ -1,0 +1,241 @@
+---
+import NotesLayout from '../layouts/NotesLayout.astro'
+
+export const prerender = true
+
+const sections = [
+  ['prep-card', 'Prep card'],
+  ['cea', 'CEA and effective altruism'],
+  ['role', 'The role and senior criteria'],
+  ['stories', 'Your experience'],
+  ['motivation', 'Why CEA?'],
+  ['practice', 'Mock interview'],
+  ['questions', 'Questions for CEA'],
+  ['logistics', 'Team, pay and hiring process'],
+  ['sources', 'Sources'],
+]
+
+const prompts = [
+  {
+    question: 'Tell me about yourself and what drew you to this role.',
+    answer: 'I’m a full-stack engineer working primarily with TypeScript, React, Node and PostgreSQL. At Conservation Metrics I work on conservation software across geospatial APIs, data pipelines and production performance. I’ve also worked as a founding engineer at Shepherd and built Katalepsis to verify UI changes made by coding agents. I’m interested in bringing that mix of technical ownership and evidence-based engineering to a small team whose products help people take useful action.',
+    followUp: 'Which recent project best illustrates how you work? Start with one example and name your decision.',
+  },
+  {
+    question: 'Why CEA?',
+    answer: 'Conservation work made me want to keep building software where the usefulness of the work matters beyond whether a feature ships. I’m interested in how CEA evaluates whether its products lead to learning or action. The team’s size and the combination of product and infrastructure work also match the kind of broad ownership I enjoy.',
+    followUp: 'Which project would you like to learn more about, and what would you ask about its users?',
+  },
+  {
+    question: 'What does effective altruism mean to you?',
+    answer: 'It asks how to use limited resources to help as much as possible. I’d look at the scale of the problem, the available evidence and what an additional contribution could achieve. I also care about outcomes that are difficult to quantify. Working in conservation made me pay attention to local context and to what the people using the software actually need.',
+    followUp: 'Where might a quantitative metric lead a team in the wrong direction?',
+  },
+  {
+    question: 'Why are you exploring a new role?',
+    answer: 'My current commitment is expected to run through January. I’ve enjoyed the conservation and data engineering work, and I’m looking for a role where I can carry that experience into broader product and technical ownership.',
+    followUp: 'Confirm your dates and the details of your current contract before rehearsing this answer.',
+  },
+  {
+    question: 'Tell me about a project you owned.',
+    answer: 'Use the FIRMS case. Explain who needed the data and what was slow, then identify the bottleneck and the decision you owned. Scope the approximately 11.7-second to 2-millisecond result to the fire-footprint query. Explain how you checked correctness and what you observed after shipping.',
+    followUp: 'What did you reject, and what evidence would have changed your mind?',
+  },
+  {
+    question: 'How do you prioritize competing requests?',
+    answer: 'I clarify the user problem, who is affected, how serious it is and what delaying it would cost. Then I consider the effort, risk and dependencies. I share that reasoning with the product owners and agree on what we’ll tackle first and when we’ll revisit the other requests.',
+    followUp: 'A Forum outage, unreliable analytics and a course launch request arrive together. What do you do in the first hour?',
+  },
+  {
+    question: 'How do you use AI coding agents?',
+    answer: 'I use agents to explore and implement changes. I define the expected behavior, review the diff and use checks that can establish whether it works. Katalepsis grew out of wanting concrete browser evidence for UI changes. I still own the architecture, risk assessment and release decision.',
+    followUp: 'Give one observed failure and explain what the tool could verify and what still needed human judgment.',
+  },
+  {
+    question: 'How do you evaluate impact?',
+    answer: 'I establish a baseline and decide what should change. For a slow API I’d measure comparable requests and check latency and correctness. To understand the effect on users I’d separately look for faster task completion, fewer abandoned workflows or feedback from the people using it.',
+    followUp: 'How would you measure whether an Opportunities Board redesign actually helped applicants?',
+  },
+  {
+    question: 'How do you handle ambiguity on a small team?',
+    answer: 'I agree on the outcome, identify the assumptions that could change the design and pick a small step that tests one of them. I explain my trade-offs and agree on when we should reassess. Shepherd is a good example if I can point to a specific decision and what we learned after shipping.',
+    followUp: 'Describe an early decision you revised when new information arrived.',
+  },
+  {
+    question: 'How do you work with nontechnical stakeholders?',
+    answer: 'I ask what the person is trying to accomplish, then describe what the realistic options mean for delivery, reliability and future work. If a short-term approach has a known cost, I make that cost and the condition for revisiting it explicit.',
+    followUp: 'When did a stakeholder’s feedback materially change your technical approach?',
+  },
+  {
+    question: 'Why should we consider you for the senior level?',
+    answer: 'I’ve owned decisions across the stack as a founding engineer and worked on production systems where performance and correctness mattered. I’d demonstrate that with a real architecture decision, the outcome I can substantiate and a project I turned into a plan with limited direction.',
+    followUp: 'Name a decision that affected more than your own implementation. How did you get agreement?',
+  },
+  {
+    question: 'When can you start, and what compensation are you looking for?',
+    answer: 'February is the natural start for me, given my current commitment. I saw the published US benchmarks for both levels and would like to understand the senior criteria and how the compensation framework applies to my location.',
+    followUp: 'Confirm employment in your location, expected overlap and whether February is workable.',
+  },
+  {
+    question: 'Tell me about a production incident and how you’d share on-call.',
+    answer: 'Pick a real incident. Describe the signal, how you determined the scope, the mitigation and how you confirmed recovery. Explain what changed afterward. If your experience is production support without a formal rotation, describe the responsibilities you actually held and ask how escalation works at CEA.',
+    followUp: 'What would make you roll back immediately, and how would you communicate it?',
+  },
+]
+---
+
+<NotesLayout
+  title="CEA software engineering interview prep"
+  description="First-round preparation for the Centre for Effective Altruism Online Team."
+  noindex
+>
+  <h1>CEA software engineering interview prep</h1>
+  <p>First-round screening · Friday, 20 November 2026</p>
+
+  <nav aria-label="On this page">
+    <ul class="contents">
+      {sections.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}
+    </ul>
+  </nav>
+
+  <h2 id="prep-card">Prep card</h2>
+  <ul>
+    <li><strong>Positioning.</strong> Full-stack engineer with founding-engineer ownership, production geospatial experience and a practical approach to verifying AI-generated work.</li>
+    <li><strong>Motivation.</strong> Build software for a public purpose and learn whether it helps people do something useful. The Online Team offers ownership across product and infrastructure.</li>
+    <li><strong>Three stories.</strong> CMI for performance and reliability, Shepherd for architecture and ambiguity, Katalepsis for AI judgment.</li>
+    <li><strong>Senior evidence.</strong> Bring one decision you owned, one user outcome you can substantiate and one example of turning a broad goal into a plan.</li>
+    <li><strong>Confirm early.</strong> Employment in Nigeria and a possible move to Brazil, start date, level, location-specific compensation and on-call expectations.</li>
+  </ul>
+  <p>Start each answer with the point, give one example and leave room for follow-ups. Before the call, say “Why CEA?” aloud, rehearse the FIRMS decision and pick two questions for the interviewer.</p>
+
+  <h2 id="cea">CEA and effective altruism</h2>
+  <p>Effective altruism asks how limited time, money and talent can do the most good. Compare the scale of problems, how much attention they already receive and whether plausible interventions exist. Look for evidence, account for what you give up by choosing one option and update your view as you learn.</p>
+  <p>The wider movement includes people working on global health, poverty, animal welfare, biosecurity and AI risk. The Centre for Effective Altruism helps people learn about those ideas, connect with each other and act through work, research and giving. Its software is part of how that happens.</p>
+  <h3>Online products and the outcomes they could support</h3>
+  <ul>
+    <li><strong>EA Forum.</strong> A discussion and publishing platform. The posting cited about 700,000 annual visitors and ongoing Next.js migration work. Ask whether readers find useful ideas, participate constructively and apply what they learn. <a href="https://forum.effectivealtruism.org/">EA Forum</a></li>
+    <li><strong>Opportunities Board.</strong> Helps people find jobs, fellowships, internships and other ways to contribute. Relevant applications and placements would tell you more about success than clicks alone. <a href="https://www.effectivealtruism.org/opportunities">Opportunities Board</a></li>
+    <li><strong>EA Funds.</strong> Pools donations for expert-directed grantmaking. Consider whether internal tooling could shorten administrative work, clarify review status or reduce errors. <a href="https://funds.effectivealtruism.org/">EA Funds</a></li>
+    <li><strong>Courses and digital learning.</strong> Help people understand and apply EA ideas. Possible signals include completion, retention and actions learners take later. <a href="https://www.effectivealtruism.org/courses/introductory-program">Introductory EA Program</a></li>
+  </ul>
+  <p>These are candidate measures for discussion. The vacancy connects the team’s work to better understanding of EA, more people taking significant action and more diverse funding for high-impact work. It also points to analytics, digital learning and AI-assisted internal workflows as areas for engineering. The posting reported 20–25% year-over-year growth in program participation in 2025 and growth from 42 to 66 core staff.</p>
+  <h3>Questions and criticisms to understand</h3>
+  <p>Metrics can miss outcomes that matter to the people affected. Estimates about future risks can be particularly sensitive to assumptions. Other concerns include whose views shape priorities, the influence of large donors and governance lessons from the collapse of FTX. An honest position is to value evidence and prioritization while asking whose evidence counts, how uncertainty is handled and how input from affected people informs decisions.</p>
+
+  <h2 id="role">The role and senior criteria</h2>
+  <p>CEA advertised a full-stack individual contributor on the Online Team, with scope across React and web migration work, APIs, data, deployments and integrations. The hire would initially share engineering capacity and production ownership with one other engineer. The posting targeted mid-level and allowed senior hiring for candidates who met additional criteria.</p>
+  <ul>
+    <li><strong>Full-stack delivery.</strong> Follow a user problem through the UI, API, database and release. Explain how you tested the system where those boundaries meet.</li>
+    <li><strong>Reliability.</strong> Discuss caching, monitoring, testing, bot mitigation and infrastructure cost through real examples. Prepare one incident you can walk through from detection to recovery.</li>
+    <li><strong>Product judgment.</strong> Connect work to the intended outcome. CEA’s phrase “product-market-impact fit” is a prompt to ask whether product use advances the mission.</li>
+    <li><strong>AI fluency.</strong> Explain how you scope agent work, verify results and handle failures. For internal AI tooling, discuss review of consequential outputs, evaluation and data access.</li>
+    <li><strong>Autonomy.</strong> Show how you identified a problem, brought in the right people and delivered with limited direction.</li>
+  </ul>
+  <p>The vacancy lists TypeScript and Node.js, React and Next.js, PostgreSQL and Elasticsearch. It names Render, Vercel and Cloudflare for hosting and PostHog for analytics. Ask where the Forum migration is hardest and what decisions the analytics work should support.</p>
+  <h3>What would make the senior case credible?</h3>
+  <ol>
+    <li><strong>Architectural ownership.</strong> Name a decision, alternatives, constraints and the consequence of the choice. Shepherd and FIRMS can each supply an example.</li>
+    <li><strong>Demonstrated impact.</strong> Latency gives you a strong baseline. Add task completion, feedback or adoption if you have it. Say explicitly when you only measured the technical result.</li>
+    <li><strong>Strategic autonomy.</strong> Explain how you converted a broad objective into milestones, risks and success measures. Use an actual plan and be precise about whether you owned quarterly objectives.</li>
+  </ol>
+  <p>Full-stack breadth, hands-on production performance and agent verification are strong areas to emphasize. Prepare clearer evidence for organizational influence, user outcomes and roadmap decisions. Treat formal on-call and adversarial traffic as separate experience to substantiate.</p>
+
+  <h2 id="stories">Your experience</h2>
+  <h3>Conservation Metrics · FIRMS and PostGIS</h3>
+  <p>NASA FIRMS data, PostGIS and production APIs give you a concrete case about making conservation data usable. The prep notes cite a territory API improvement from 8.2 to 1.2 seconds, a fire-footprint query from 11.7 seconds to approximately 2 milliseconds and FIRMS requests from around 10 to 1 second. Check the workload and measurement context for each number before quoting it.</p>
+  <p>Rehearse the sequence. Who reported the delay? Which query or data path caused it? What did the execution plan or profiling tell you? What did you change, what alternatives did you consider and what checks established that the output stayed correct? Explain rollout evidence and any feedback separately. <a href="/firms-refactor">Wildfire pipeline case study</a></p>
+  <p>Keep territory filtering as a separate decision story. Explain how validated filter shapes and middleware moved validation to the request boundary, what failing inputs motivated the change and how you exercised those cases. For production ownership, choose a real incident and cover triage, mitigation, communication, recovery and follow-through.</p>
+  <h3>Shepherd · Founding engineer ownership</h3>
+  <p>Use a specific collaborative editing project with React, TypeScript and Tiptap. Explain the user workflow and why collaboration mattered, the alternatives you considered, the complexity you accepted and how you scoped the first release. Bring a concrete outcome and identify who owned product and architecture decisions.</p>
+  <h3>Katalepsis · Verifying coding-agent work</h3>
+  <p>Explain why a successful build doesn’t prove a changed user flow works. Describe how you define a browser check, collect evidence and act on failures. One example to validate for rehearsal is a signup check where an empty submission produced no required-field alert because the handler returned early. Be clear about what the check observed and what source inspection established. <a href="/katalepsis">Katalepsis notes</a></p>
+  <p>Use Pulse as a supplemental product judgment example. Explain what you built to test an assumption, which signals you observed and what further evidence would support a claim about customer outcomes.</p>
+
+  <h2 id="motivation">Why CEA?</h2>
+  <h3>30 seconds</h3>
+  <blockquote>I work on conservation software, and I’ve enjoyed building tools where the purpose goes beyond shipping features. What drew me to CEA was the question of how you know whether the software you build helps people take useful action. The small Online Team also appeals to me because I like owning a problem across product and infrastructure.</blockquote>
+  <h3>60–90 seconds</h3>
+  <blockquote>
+    <p>At Conservation Metrics I work on software that helps people use environmental monitoring data. That’s made me care about whether someone can actually do the thing the software was built for. Performance and reliability matter because they affect that experience.</p>
+    <p>I’m still learning about effective altruism. I’m interested in the emphasis on evidence, choosing where to spend limited effort and changing course when you learn something. I’d like to understand how the Online Team applies that thinking to its own products, especially in analytics and digital learning.</p>
+    <p>There’s also a good fit with the way I like to work. I’ve been a founding engineer and enjoy owning problems across the stack. The Forum migration, production responsibilities and the work on AI-assisted internal workflows all give me a concrete sense of where I could contribute.</p>
+  </blockquote>
+  <h3>Follow-up angles</h3>
+  <ul>
+    <li><strong>Why this nonprofit?</strong> The Forum, courses and Opportunities Board are ways CEA delivers its mission. Engineering decisions help shape how people use those programs.</li>
+    <li><strong>What part of EA resonates?</strong> Use evidence and opportunity cost to decide where a contribution could matter, then update as you learn.</li>
+    <li><strong>Where do you have reservations?</strong> Discuss how to balance quantitative measures with local knowledge and how to account for benefits or harms that resist measurement.</li>
+  </ul>
+
+  <h2 id="practice">Mock interview</h2>
+  <p>Take 30 minutes. Answer each question aloud before opening it, then try the follow-up. Check whether you answered directly, used a specific example, explained your own role and distinguished measured outcomes from plausible effects.</p>
+  {prompts.map(({ question, answer, followUp }) => (
+    <details class="prompt">
+      <summary>{question}</summary>
+      <div class="answer">
+        <p>{answer}</p>
+        <p><strong>Follow-up.</strong> {followUp}</p>
+      </div>
+    </details>
+  ))}
+
+  <h2 id="questions">Questions for CEA</h2>
+  <ol>
+    <li><strong>How do you tell whether your online products are having the intended impact?</strong> Listen for what they measure today and what decisions better analytics should enable.</li>
+    <li><strong>How do you prioritize work across multiple products with a small engineering team?</strong> Ask who makes the call when reliability, roadmap work and urgent requests compete.</li>
+    <li><strong>What would success look like six months in?</strong> Listen for the first projects, the level of autonomy and what outcomes they expect.</li>
+    <li><strong>How do software engineer and senior software engineer expectations differ in practice?</strong> Ask what examples would demonstrate the senior expectations during the process.</li>
+    <li><strong>Can CEA employ someone currently based in Nigeria who may later relocate to Brazil?</strong> Clarify the arrangement in each country and what would happen to an offer or employment terms after a move.</li>
+  </ol>
+  <p>If there’s time, ask what prompted the hire, how far along the Forum migration is, how the incoming product lead will work with engineering, what AI workflows they want to improve and when the on-call engineer is expected to be reachable.</p>
+
+  <h2 id="logistics">Team, pay and hiring process</h2>
+  <h3>The team in the vacancy</h3>
+  <ul>
+    <li><strong>Ollie Etherington</strong>, senior software engineer and the advertised partner in the weekly on-call rotation.</li>
+    <li><strong>Agnes Stenlund</strong>, senior product designer.</li>
+    <li><strong>Toby Tremlett</strong>, EA Forum product lead.</li>
+    <li><strong>Joris Pijpers</strong>, interim reporting lead in the vacancy. The permanent reporting line was to an incoming Head of Digital Product. Confirm the current structure on the call.</li>
+  </ul>
+  <h3>Advertised compensation and working arrangements</h3>
+  <p>The US annual base benchmarks were <strong>$134,900</strong> for Software Engineer and <strong>$166,725</strong> for Senior Software Engineer. The vacancy listed a 10% US 401(k) contribution, health coverage, paid leave and professional development and mental-health allowances. It describes fixed-rate currency conversion for non-US compensation. Ask what would apply in each country, including benefits and any change on relocation.</p>
+  <ul>
+    <li><strong>Start.</strong> The vacancy specified January 2027 or earlier. Confirm whether February will work.</li>
+    <li><strong>Overlap.</strong> The advertised preference was US Eastern through Central European time. Ask about core hours and how overlap would work from Lagos or São Paulo.</li>
+    <li><strong>On-call.</strong> Ask about alert volume, night and weekend coverage, backup, severity thresholds and expectations during travel.</li>
+    <li><strong>Travel.</strong> The vacancy anticipated 2–4 trips annually. Ask about destinations, visa support and expenses.</li>
+  </ul>
+  <h3>Hiring stages</h3>
+  <p>The vacancy listed application, screening, engineering interview, pair-programming task, approximately two to three final interviews and references. Ask for the estimated timeline, what the later assessments evaluate and whether any are paid.</p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li><a href="https://app.rvc.global/vacancy/view/centre-for-effective-altruism-software-engineer-616537">CEA vacancy preserved on RVC</a></li>
+    <li><a href="https://www.centreforeffectivealtruism.org/careers">CEA careers and hiring FAQ</a></li>
+    <li><a href="https://www.effectivealtruism.org/">Effective Altruism</a></li>
+  </ul>
+</NotesLayout>
+
+<style>
+  .contents {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    padding: 0;
+    list-style: none;
+    border-block: 1px solid var(--line);
+  }
+
+  .contents li { margin: 0; }
+  .contents a { display: flex; align-items: center; min-height: 44px; }
+  h2 { scroll-margin-top: 1rem; }
+  blockquote {
+    margin: 0 0 1rem;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid var(--line);
+  }
+
+  .prompt { border-bottom: 1px solid var(--line); }
+  .prompt summary { padding: 0.65rem 0; cursor: pointer; font-weight: 600; }
+  .prompt summary:hover { color: var(--link); }
+  .answer { padding: 0.25rem 0 0 1.25rem; }
+</style>

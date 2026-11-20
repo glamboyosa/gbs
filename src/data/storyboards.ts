@@ -114,7 +114,6 @@ export const storyboards: Storyboard[] = [
       'A conservation dashboard shows fires around the territories a programme team supports, from NASA satellite detections. I rebuilt the pipeline behind it.',
     accent: 'Orange marks a fire detection. Territory names are placeholders.',
     noindex: true,
-    notes: { href: '/firms-refactor', label: 'Read the technical notes' },
     strips: [
       {
         title: 'Fire counts a programme team can trust',
@@ -200,7 +199,6 @@ export const storyboards: Storyboard[] = [
       'katalepsis is an open source tool that checks frontend work in a real browser against a preview deployment and writes an evidence report.',
     accent: 'Blue marks evidence the browser produced.',
     noindex: true,
-    notes: { href: '/katalepsis', label: 'Read the technical notes' },
     strips: [
       {
         title: 'Proof before “it works”',

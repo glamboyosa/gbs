@@ -1,0 +1,237 @@
+---
+import "@/styles/fonts.css";
+
+const photos = Array.from({ length: 39 }, (_, index) => `/ore-travel/photos/${String(index + 1).padStart(2, "0")}.jpg`);
+const clips = Array.from({ length: 14 }, (_, index) => ({
+  src: `/ore-travel/clips/${String(index + 1).padStart(2, "0")}.mp4`,
+  poster: `/ore-travel/posters/${String(index + 1).padStart(2, "0")}.jpg`,
+}));
+
+const stops = [
+  { city: "Accra", country: "Ghana", x: 64, y: 71, delay: 0.8 },
+  { city: "Sharm El Sheikh", country: "Egypt", x: 86, y: 38, delay: 4 },
+  { city: "Cairo", country: "Egypt", x: 84, y: 34, delay: 7 },
+  { city: "Toronto", country: "Canada", x: 14, y: 20, delay: 10 },
+  { city: "Cotonou", country: "Benin", x: 66, y: 72, delay: 13 },
+];
+
+const moments = [
+  { src: photos[4], x: 10, y: 49, delay: 1.2, angle: -9 },
+  { src: clips[1].src, poster: clips[1].poster, x: 46, y: 26, delay: 3.2, angle: 7 },
+  { src: photos[20], x: 68, y: 59, delay: 5.2, angle: -5 },
+  { src: clips[2].src, poster: clips[2].poster, x: 12, y: 13, delay: 7.2, angle: 8 },
+  { src: photos[27], x: 52, y: 75, delay: 9.2, angle: 6 },
+  { src: photos[33], x: 75, y: 13, delay: 11.2, angle: -8 },
+  { src: clips[11].src, poster: clips[11].poster, x: 21, y: 72, delay: 13.2, angle: -5 },
+  { src: photos[1], x: 48, y: 49, delay: 15.2, angle: 6 },
+];
+const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Ore's 2026 travel recap, told through her photos and videos." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Ore's 2026 | Travel recap</title>
+  </head>
+  <body class={capture ? "capture" : ""}>
+    <div class="page">
+      <header class="topbar"><a href="/">← Osa</a><span>ORE / 2026</span></header>
+
+      <main>
+        <div class="introduction">
+          <p class="eyebrow">A YEAR ON CAMERA</p>
+          <h1>Ore's 2026<span>.</span></h1>
+          <p>Five stops. 39 photos. 14 clips.</p>
+        </div>
+
+        <section class="recap" aria-label="Ore's 2026 travel film">
+          <div class:list={["film", { poster: !capture }]} id="film">
+            <div class="film-top"><span>ORE / TRAVEL LOG</span><span>2026</span></div>
+            <div class="film-tally"><strong id="moment-count">{capture ? "00" : "53"}</strong><span>moments<br />collected</span></div>
+            <div class="film-field">
+              <svg class="route" viewBox="0 0 540 420" preserveAspectRatio="none" aria-hidden="true">
+                <path class="route-shadow" d="M 346 298 C 356 231 425 207 464 160 L 454 143 C 340 32 154 36 76 84 C 56 186 213 335 356 302" />
+                <path class="route-line" d="M 346 298 C 356 231 425 207 464 160 L 454 143 C 340 32 154 36 76 84 C 56 186 213 335 356 302" />
+              </svg>
+              {stops.map((stop, index) => (
+                <span class="stop" style={`--x:${stop.x}%;--y:${stop.y}%;--delay:${stop.delay}s`} title={`${stop.city}, ${stop.country}`} aria-label={`Stop ${index + 1}: ${stop.city}, ${stop.country}`}></span>
+              ))}
+              {moments.map((moment, index) => (
+                <div class="moment" style={`--x:${moment.x}%;--y:${moment.y}%;--delay:${moment.delay}s;--angle:${moment.angle}deg`}>
+                  {moment.poster ? (
+                    <video src={moment.src} poster={moment.poster} muted loop playsinline preload="none" aria-label={`Travel clip ${index + 1}`} />
+                  ) : (
+                    <img src={moment.src} alt={`Travel photograph ${index + 1}`} width="120" height="150" />
+                  )}
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                </div>
+              ))}
+            </div>
+            <div class="film-location"><span id="stop-number">{capture ? "01 / 05" : "05 / 05"}</span><strong id="stop-name">{capture ? "ACCRA, GHANA" : "COTONOU, BENIN"}</strong></div>
+            <div class="film-footer"><span>39 PHOTOS · 14 CLIPS</span><span>5 STOPS</span></div>
+            <div class="film-progress" aria-hidden="true"><span></span></div>
+            {!capture && <img class="film-static" src="/ore-travel/poster.png" alt="" aria-hidden="true" width="540" height="675" />}
+            {!capture && <video class="film-export" id="film-export" src="/ore-travel/ore-2026-recap.mp4" poster="/ore-travel/poster.png" controls playsinline preload="metadata" aria-label="Ore's 2026 travel recap video" />}
+          </div>
+          <div class="film-actions">
+            <button type="button" id="play-film" aria-label="Play travel recap">Play recap <span aria-hidden="true">▶</span></button>
+            <a href="/ore-travel/ore-2026-recap.mp4" download>Download film ↗</a>
+          </div>
+        </section>
+
+        <section class="archive" aria-labelledby="archive-title">
+          <div class="archive-heading"><div><p class="eyebrow">THE CAMERA ROLL</p><h2 id="archive-title">Every frame.</h2></div><span>53 moments</span></div>
+          <div class="archive-grid">
+            {photos.map((src, index) => <figure><img src={src} alt={`Ore's travel photograph ${index + 1}`} loading="lazy" decoding="async" /><figcaption>PHOTO {String(index + 1).padStart(2, "0")}</figcaption></figure>)}
+            {clips.map((clip, index) => <figure><video src={clip.src} poster={clip.poster} controls playsinline preload="none" aria-label={`Ore's travel clip ${index + 1}`} /><figcaption>CLIP {String(index + 1).padStart(2, "0")}</figcaption></figure>)}
+          </div>
+        </section>
+      </main>
+      <footer><span>ORE / 2026</span><a href="/">Back to Osa ↗</a></footer>
+    </div>
+
+    <script>
+      const film = document.querySelector<HTMLElement>("#film");
+      const count = document.querySelector<HTMLElement>("#moment-count");
+      const stopNumber = document.querySelector<HTMLElement>("#stop-number");
+      const stopName = document.querySelector<HTMLElement>("#stop-name");
+      const playButton = document.querySelector<HTMLButtonElement>("#play-film");
+      const exportVideo = document.querySelector<HTMLVideoElement>("#film-export");
+      const duration = 19_700;
+      const stopLabels = ["ACCRA, GHANA", "SHARM EL SHEIKH, EGYPT", "CAIRO, EGYPT", "TORONTO, CANADA", "COTONOU, BENIN"];
+      let startTime = 0;
+      let frame = 0;
+
+      const tick = (now: number) => {
+        if (!film || !count) return;
+        const progress = Math.min((now - startTime) / duration, 1);
+        count.textContent = String(Math.round(progress * 53)).padStart(2, "0");
+        const stopIndex = Math.min(Math.floor(progress * stopLabels.length), stopLabels.length - 1);
+        if (stopNumber) stopNumber.textContent = `${String(stopIndex + 1).padStart(2, "0")} / 05`;
+        if (stopName) stopName.textContent = stopLabels[stopIndex];
+        film.style.setProperty("--progress", String(progress));
+        if (progress < 1) {
+          frame = requestAnimationFrame(tick);
+        } else if (playButton) {
+          playButton.innerHTML = 'Replay recap <span aria-hidden="true">↻</span>';
+          playButton.setAttribute("aria-label", "Replay travel recap");
+        }
+      };
+
+      const playFilm = () => {
+        if (!film || !count) return;
+        if (exportVideo) {
+          film.classList.add("show-export");
+          exportVideo.currentTime = 0;
+          void exportVideo.play();
+          if (playButton) {
+            playButton.innerHTML = 'Replay recap <span aria-hidden="true">↻</span>';
+            playButton.setAttribute("aria-label", "Replay travel recap");
+          }
+          return;
+        }
+        cancelAnimationFrame(frame);
+        film.classList.remove("poster");
+        film.classList.remove("playing");
+        void film.offsetWidth;
+        film.classList.add("playing");
+        count.textContent = "00";
+        film.style.setProperty("--progress", "0");
+        film.querySelectorAll("video").forEach((video) => {
+          video.currentTime = 0;
+          void video.play();
+        });
+        if (playButton) {
+          playButton.innerHTML = 'Playing <span aria-hidden="true">●</span>';
+          playButton.setAttribute("aria-label", "Travel recap playing");
+        }
+        startTime = performance.now();
+        frame = requestAnimationFrame(tick);
+      };
+
+      playButton?.addEventListener("click", playFilm);
+      exportVideo?.addEventListener("ended", () => {
+        if (playButton) playButton.innerHTML = 'Replay recap <span aria-hidden="true">↻</span>';
+      });
+      Object.assign(window, { startOreFilm: playFilm });
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(body) { margin: 0; background: #f5f2ec; color: #202523; font-family: Inter, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  :global(body.capture) { width: 540px; height: 675px; overflow: hidden; }
+  :global(astro-dev-toolbar) { display: none; }
+  :global(body.capture .page > header), :global(body.capture .introduction), :global(body.capture .film-actions), :global(body.capture .archive), :global(body.capture .page > footer) { display: none; }
+  :global(body.capture .page), :global(body.capture .recap) { width: 540px; margin: 0; padding: 0; }
+  :global(body.capture .film) { width: 540px; border: 0; border-radius: 0; box-shadow: none; }
+  .page { max-width: 1380px; margin: auto; padding: 0 32px; }
+  .topbar, footer { display: flex; justify-content: space-between; align-items: center; min-height: 80px; border-bottom: 1px solid #d6d2c9; font-size: 11px; font-weight: 700; letter-spacing: .13em; }
+  .topbar a, footer a { display: inline-flex; min-height: 44px; align-items: center; }
+  a { color: inherit; text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .introduction { padding: 92px 0 42px; }
+  .eyebrow { margin: 0 0 20px; color: #527b78; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+  h1 { margin: 0; font-size: clamp(56px, 9vw, 130px); line-height: .96; letter-spacing: -.075em; text-wrap: balance; }
+  h1 span { color: #d67760; }
+  .introduction > p:last-child { margin: 25px 0 0; color: #5f6662; font-size: 15px; }
+  .recap { width: min(100%, 540px); margin: 0 auto 110px; }
+  .film { --progress: 0; position: relative; isolation: isolate; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid #d6d2c9; border-radius: 16px; background: #eeeae2; box-shadow: 0 20px 50px rgba(32, 37, 35, .08); }
+  .film::before { position: absolute; inset: 0; z-index: -1; background: radial-gradient(#c4c7bd 1px, transparent 1px) 0 0 / 11px 11px; content: ""; opacity: .72; }
+  .film-top, .film-footer { position: absolute; z-index: 3; right: 30px; left: 30px; display: flex; justify-content: space-between; color: #345855; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+  .film-top { top: 32px; }
+  .film-tally { position: absolute; z-index: 3; top: 78px; left: 28px; display: flex; align-items: flex-end; gap: 12px; }
+  .film-tally strong { font-size: 88px; line-height: .9; font-variant-numeric: tabular-nums; letter-spacing: -.085em; }
+  .film-tally span { padding-bottom: 8px; color: #58625c; font-size: 13px; font-weight: 600; line-height: 1.2; }
+  .film-field { position: absolute; inset: 171px 0 44px; }
+  .route { width: 100%; height: 100%; overflow: visible; }
+  .route path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .route-shadow { stroke: #c6cec7; stroke-width: 5; stroke-dasharray: 2 13; }
+  .route-line { stroke: #327c9f; stroke-width: 3; stroke-dasharray: 1400; stroke-dashoffset: 1400; }
+  .poster .route-line { stroke-dashoffset: 0; }
+  .playing .route-line { animation: draw-route 17s linear forwards; }
+  .stop { position: absolute; z-index: 1; top: var(--y); left: var(--x); width: 11px; height: 11px; border: 3px solid #fff; border-radius: 50%; background: #327c9f; box-shadow: 0 0 0 2px #327c9f; opacity: 0; }
+  .poster .stop { opacity: 1; }
+  .playing .stop { animation: stop-in 300ms ease-out var(--delay) forwards; }
+  .moment { position: absolute; z-index: 2; top: var(--y); left: var(--x); width: 96px; height: 116px; padding: 4px; border-radius: 7px; background: #fff; box-shadow: 0 8px 22px rgba(28, 39, 36, .23); opacity: 0; transform: translateY(20px) rotate(var(--angle)) scale(.9); }
+  .poster .moment { opacity: 1; transform: rotate(var(--angle)); }
+  .playing .moment { animation: reveal 550ms cubic-bezier(.32,.72,0,1) var(--delay) forwards; }
+  .moment img, .moment video { display: block; width: 100%; height: 100%; border-radius: 3px; object-fit: cover; }
+  .moment span { position: absolute; right: -8px; bottom: -8px; display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; background: #327c9f; color: #fff; font-size: 10px; font-weight: 700; }
+  .film-location { position: absolute; z-index: 3; right: 30px; bottom: 70px; left: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #345855; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+  .film-location strong { padding: 9px 12px; border-radius: 999px; background: #f8f5ef; text-align: right; }
+  .film-footer { bottom: 23px; font-size: 10px; }
+  .film-progress { position: absolute; right: 0; bottom: 0; left: 0; height: 4px; background: #d2d7d1; }
+  .film-progress span { display: block; width: calc(var(--progress) * 100%); height: 100%; background: #327c9f; }
+  .poster .film-progress span { width: 100%; }
+  .film-static { position: absolute; inset: 0; z-index: 4; display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .film-export { display: none; position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; background: #eeeae2; object-fit: cover; }
+  .show-export .film-export { display: block; }
+  .film-actions { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px 2px; }
+  .film-actions button { min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: #202523; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .film-actions button span { margin-left: 12px; }
+  .film-actions a { display: inline-flex; min-height: 44px; align-items: center; padding: 0 4px; font-size: 13px; font-weight: 700; }
+  .archive { padding-bottom: 80px; }
+  .archive-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 27px; border-top: 1px solid #d6d2c9; padding-top: 35px; }
+  .archive-heading h2 { margin: 0; font-size: clamp(36px, 5vw, 65px); letter-spacing: -.06em; text-wrap: balance; }
+  .archive-heading > span { padding-bottom: 7px; color: #70776f; font-size: 12px; }
+  .archive-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px 14px; }
+  figure { min-width: 0; margin: 0; }
+  figure img, figure video { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: 7px; background: #dedbd3; object-fit: cover; }
+  figure video { cursor: pointer; }
+  figcaption { padding: 8px 0 0; color: #777e77; font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+  footer { min-height: 90px; border-top: 1px solid #d6d2c9; border-bottom: 0; }
+  @keyframes draw-route { to { stroke-dashoffset: 0; } }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0) rotate(var(--angle)) scale(1); } }
+  @keyframes stop-in { to { opacity: 1; } }
+  @media (min-width: 1050px) { main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 540px); align-items: center; gap: 0 5vw; } .introduction { align-self: center; padding: 0; } .recap { grid-column: 2; grid-row: 1; margin: 52px 0 64px; } .archive { grid-column: 1 / -1; } }
+  @media (max-width: 750px) { .page { padding: 0 18px; } .introduction { padding: 72px 0 35px; } .archive-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 9px; } .film-actions { padding-bottom: 0; } }
+  @media (max-width: 450px) { .page { padding: 0 12px; } .topbar { min-height: 68px; } .introduction { padding-top: 56px; } .introduction > p:last-child { font-size: 13px; } .film { border-radius: 9px; } .film-top, .film-footer { right: 6%; left: 6%; } .film-top { top: 5%; } .film-tally { top: 12%; left: 5%; } .film-tally strong { font-size: clamp(56px, 16vw, 88px); } .film-field { inset: 25% 0 7%; } .film-location { right: 6%; bottom: 10%; left: 6%; } .moment { width: 18%; height: 25%; } .archive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (prefers-reduced-motion: reduce) { .film .route-line { stroke-dashoffset: 0; animation: none; } .film .moment { opacity: 1; transform: rotate(var(--angle)); animation: none; } .film .stop { opacity: 1; animation: none; } }
+</style>

@@ -3,6 +3,10 @@ import "@/styles/fonts.css";
 import OreGlobe from "../components/OreGlobe.astro";
 import { oreMedia } from "../data/oreTravel";
 
+if (!import.meta.env.DEV) {
+  Astro.response.headers.set("Cache-Control", "public, max-age=300, s-maxage=31536000");
+}
+
 const photos = Array.from({ length: 39 }, (_, index) => `/ore-travel/photos/${String(index + 1).padStart(2, "0")}.jpg`);
 const clips = Array.from({ length: 14 }, (_, index) => ({
   src: `/ore-travel/clips/${String(index + 1).padStart(2, "0")}.mp4`,
@@ -96,7 +100,7 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
             <div class="film-footer"><span>39 PHOTOS · 14 CLIPS</span><span>5 STOPS</span></div>
             <div class="film-progress" aria-hidden="true"><span></span></div>
             {!capture && <img class="film-static" src="/ore-travel/poster.png" alt="" aria-hidden="true" width="540" height="675" />}
-            {!capture && <video class="film-export" id="film-export" src="/ore-travel/ore-2026-recap.mp4" poster="/ore-travel/poster.png" controls playsinline preload="metadata" aria-label="Ore's 2026 travel recap video" />}
+            {!capture && <video class="film-export" id="film-export" src="/ore-travel/ore-2026-recap.mp4" poster="/ore-travel/poster.png" controls playsinline preload="none" aria-label="Ore's 2026 travel recap video" />}
           </div>
           <div class="film-actions">
             <button type="button" id="play-film" aria-label="Play travel recap">Play recap <span aria-hidden="true">▶</span></button>

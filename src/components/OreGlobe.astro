@@ -1,0 +1,219 @@
+---
+import { oreStops } from "../data/oreTravel";
+---
+
+<section class="journey" aria-labelledby="journey-title">
+  <div class="journey-heading">
+    <p class="eyebrow">THE JOURNEY</p>
+    <h2 id="journey-title">Around the world with Ore.</h2>
+    <p>Drag the globe. Choose a stop to see its moments.</p>
+  </div>
+  <div class="globe-stage">
+    <svg id="ore-globe" viewBox="0 0 620 620" role="img" aria-label="Interactive globe showing Ore's five travel stops in order">
+      <defs><clipPath id="globe-clip"><circle cx="310" cy="310" r="252" /></clipPath></defs>
+      <circle class="sphere" cx="310" cy="310" r="252" />
+      <g clip-path="url(#globe-clip)">
+        <path id="globe-grid" class="grid" />
+        <path id="globe-land" class="land" />
+        <path id="globe-borders" class="borders" />
+        <g id="globe-routes"></g>
+        <g id="globe-pins"></g>
+      </g>
+    </svg>
+    <div class="photo-stack" aria-hidden="true">
+      <img id="globe-photo-back" src="/ore-travel/photos/21.jpg" alt="" width="145" height="180" />
+      <img id="globe-photo-front" src="/ore-travel/photos/05.jpg" alt="" width="145" height="180" />
+    </div>
+    <span class="globe-hint">DRAG TO SPIN ↔</span>
+  </div>
+  <div class="stop-list" role="group" aria-label="Travel locations">
+    <button type="button" class="stop-button active" data-stop="all" aria-pressed="true"><span>✳</span> All moments <small>53</small></button>
+    {oreStops.map((stop, index) => (
+      <button type="button" class="stop-button" data-stop={stop.id} aria-pressed="false">
+        <span>{String(index + 1).padStart(2, "0")}</span> {stop.city} <small>{stop.photos.length + stop.clips.length}</small>
+      </button>
+    ))}
+  </div>
+  <div class="stop-preview" id="stop-preview" hidden aria-live="polite">
+    <div class="preview-copy"><strong id="preview-city"></strong><span id="preview-count"></span></div>
+    <div class="preview-images">
+      <img src="/ore-travel/photos/05.jpg" alt="" width="120" height="145" />
+      <img src="/ore-travel/photos/21.jpg" alt="" width="120" height="145" />
+      <img src="/ore-travel/photos/34.jpg" alt="" width="120" height="145" />
+    </div>
+    <a href="#archive-title">See all moments ↓</a>
+  </div>
+</section>
+
+<script>
+  import { geoDistance, geoGraticule10, geoInterpolate, geoOrthographic, geoPath } from "d3-geo";
+  import { feature, mesh } from "topojson-client";
+  import world from "world-atlas/countries-110m.json";
+  import { oreStops } from "../data/oreTravel";
+
+  const svg = document.querySelector<SVGSVGElement>("#ore-globe");
+  const land = document.querySelector<SVGPathElement>("#globe-land");
+  const grid = document.querySelector<SVGPathElement>("#globe-grid");
+  const borders = document.querySelector<SVGPathElement>("#globe-borders");
+  const routes = document.querySelector<SVGGElement>("#globe-routes");
+  const pins = document.querySelector<SVGGElement>("#globe-pins");
+  const projection = geoOrthographic().translate([310, 310]).scale(252).rotate([25, -20]).clipAngle(90);
+  const path = geoPath(projection);
+  const geography = world as Parameters<typeof feature>[0];
+  const countries = geography.objects.countries;
+  const landShape = feature(geography, countries);
+  const borderShape = mesh(geography, countries, (a, b) => a !== b);
+  const pinOffsets: [number, number][] = [[-25, 25], [30, 22], [-30, -25], [-21, -22], [29, -23]];
+  const segments = oreStops.slice(1).map((stop, index) => {
+    const interpolate = geoInterpolate(oreStops[index].coordinates, stop.coordinates);
+    return { type: "LineString" as const, coordinates: Array.from({ length: 64 }, (_, point) => interpolate(point / 63)) };
+  });
+
+  const draw = () => {
+    if (!land || !grid || !borders || !routes || !pins) return;
+    grid.setAttribute("d", path(geoGraticule10()) ?? "");
+    land.setAttribute("d", path(landShape) ?? "");
+    borders.setAttribute("d", path(borderShape) ?? "");
+    routes.replaceChildren(...segments.map((segment) => {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      line.setAttribute("class", "route");
+      line.setAttribute("d", path(segment) ?? "");
+      return line;
+    }));
+    const center: [number, number] = [-projection.rotate()[0], -projection.rotate()[1]];
+    pins.replaceChildren(...oreStops.flatMap((stop, index) => {
+      if (geoDistance(center, stop.coordinates) > Math.PI / 2) return [];
+      const point = projection(stop.coordinates);
+      if (!point) return [];
+      const marker = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      marker.setAttribute("class", "pin");
+      marker.setAttribute("data-stop", stop.id);
+      marker.setAttribute("aria-label", `Stop ${index + 1}: ${stop.city}`);
+      marker.setAttribute("role", "button");
+      marker.setAttribute("tabindex", "0");
+      marker.setAttribute("transform", `translate(${point[0]} ${point[1]})`);
+      const [dx, dy] = pinOffsets[index];
+      const leader = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      leader.setAttribute("x2", String(dx));
+      leader.setAttribute("y2", String(dy));
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("r", "22");
+      circle.setAttribute("cx", String(dx));
+      circle.setAttribute("cy", String(dy));
+      const number = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      number.setAttribute("text-anchor", "middle");
+      number.setAttribute("x", String(dx));
+      number.setAttribute("y", String(dy + 4));
+      number.textContent = String(index + 1);
+      marker.append(leader, circle, number);
+      return [marker];
+    }));
+  };
+
+  const select = (id: string) => {
+    const stop = oreStops.find((item) => item.id === id);
+    document.querySelectorAll<HTMLButtonElement>(".stop-button").forEach((button) => {
+      const active = button.dataset.stop === id;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    document.querySelectorAll<HTMLElement>(".archive-grid figure").forEach((item) => {
+      item.querySelector("video")?.pause();
+      item.hidden = id !== "all" && item.dataset.stop !== id;
+    });
+    const title = document.querySelector<HTMLElement>("#archive-title");
+    const tally = document.querySelector<HTMLElement>("#archive-count");
+    if (title) title.textContent = stop ? `Moments from ${stop.city}.` : "Every frame.";
+    if (tally) tally.textContent = stop ? `${stop.photos.length + stop.clips.length} moments` : "53 moments";
+    const front = document.querySelector<HTMLImageElement>("#globe-photo-front");
+    const back = document.querySelector<HTMLImageElement>("#globe-photo-back");
+    if (front) front.src = `/ore-travel/photos/${String(stop?.photos[0] ?? 5).padStart(2, "0")}.jpg`;
+    if (back) back.src = `/ore-travel/photos/${String(stop?.photos[1] ?? 21).padStart(2, "0")}.jpg`;
+    const preview = document.querySelector<HTMLElement>("#stop-preview");
+    if (preview) preview.hidden = !stop;
+    const previewCity = document.querySelector<HTMLElement>("#preview-city");
+    const previewCount = document.querySelector<HTMLElement>("#preview-count");
+    if (previewCity) previewCity.textContent = stop ? `${stop.city}, ${stop.country}` : "";
+    if (previewCount) previewCount.textContent = stop ? `${stop.photos.length} photos · ${stop.clips.length} clips` : "";
+    if (stop) document.querySelectorAll<HTMLImageElement>(".preview-images img").forEach((image, index) => {
+      image.src = `/ore-travel/photos/${String(stop.photos[index % stop.photos.length]).padStart(2, "0")}.jpg`;
+    });
+    if (stop) {
+      projection.rotate([-stop.coordinates[0], -stop.coordinates[1]]);
+      draw();
+    }
+  };
+
+  document.querySelectorAll<HTMLButtonElement>(".stop-button").forEach((button) => {
+    button.addEventListener("click", () => select(button.dataset.stop ?? "all"));
+  });
+  pins?.addEventListener("click", (event) => {
+    const marker = (event.target as Element).closest<SVGGElement>(".pin");
+    if (marker?.dataset.stop) select(marker.dataset.stop);
+  });
+  pins?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const marker = (event.target as Element).closest<SVGGElement>(".pin");
+    if (!marker?.dataset.stop) return;
+    event.preventDefault();
+    select(marker.dataset.stop);
+  });
+
+  let start: { x: number; y: number; rotate: [number, number, number] } | null = null;
+  svg?.addEventListener("pointerdown", (event) => {
+    if ((event.target as Element).closest(".pin")) return;
+    start = { x: event.clientX, y: event.clientY, rotate: projection.rotate() as [number, number, number] };
+    svg.setPointerCapture(event.pointerId);
+  });
+  svg?.addEventListener("pointermove", (event) => {
+    if (!start || !svg) return;
+    const scale = 620 / svg.getBoundingClientRect().width;
+    projection.rotate([start.rotate[0] + (event.clientX - start.x) * scale * .3, Math.max(-85, Math.min(85, start.rotate[1] - (event.clientY - start.y) * scale * .3))]);
+    draw();
+  });
+  svg?.addEventListener("pointerup", () => { start = null; });
+  svg?.addEventListener("pointercancel", () => { start = null; });
+  draw();
+</script>
+
+<style>
+  .journey { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; gap: 0 4vw; margin-bottom: 95px; }
+  .journey-heading { align-self: end; }
+  .eyebrow { margin: 0 0 18px; color: #527b78; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+  h2 { max-width: 500px; margin: 0; font-size: clamp(40px, 4.8vw, 72px); line-height: 1.03; letter-spacing: -.065em; text-wrap: balance; }
+  .journey-heading > p:last-child { margin: 20px 0 0; color: #5f6662; font-size: 14px; }
+  .globe-stage { position: relative; grid-column: 2; grid-row: 1 / 4; width: min(100%, 550px); min-width: 0; aspect-ratio: 1; margin-left: auto; }
+  svg { display: block; width: 100%; height: 100%; overflow: visible; cursor: grab; touch-action: pan-y; filter: drop-shadow(0 22px 25px #17353633); }
+  svg:active { cursor: grabbing; }
+  .sphere { fill: #204d55; stroke: #193e44; stroke-width: 2; }
+  .grid { fill: none; stroke: #77989a; stroke-width: 1; opacity: .42; }
+  .land { fill: #dce2d6; }
+  .borders { fill: none; stroke: #acc0b3; stroke-width: .65; }
+  :global(.route) { fill: none; stroke: #f28d6e; stroke-width: 3.5; stroke-linecap: round; }
+  :global(.pin) { cursor: pointer; }
+  :global(.pin line) { stroke: #fff9ef; stroke-width: 1.5; pointer-events: none; }
+  :global(.pin circle) { fill: #f28d6e; stroke: #fff9ef; stroke-width: 2; }
+  :global(.pin text) { fill: #173e45; font-size: 12px; font-weight: 800; pointer-events: none; }
+  :global(.pin:focus-visible circle) { stroke: #172729; stroke-width: 4; }
+  .photo-stack { position: absolute; left: 0; bottom: 11%; width: 150px; height: 185px; pointer-events: none; }
+  .photo-stack img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; padding: 5px; border-radius: 8px; background: #fff; box-shadow: 0 12px 30px #17272955; object-fit: cover; }
+  .photo-stack img:first-child { transform: translate(27px, -25px) rotate(8deg); }
+  .photo-stack img:last-child { transform: rotate(-8deg); }
+  .globe-hint { position: absolute; right: 5%; bottom: 2%; color: #527b78; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+  .stop-list { align-self: start; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
+  .stop-button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 13px; border: 1px solid #d0d5cc; border-radius: 999px; background: transparent; color: #243431; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .stop-button span { color: #b5705c; font-size: 10px; }
+  .stop-button small { color: #68736d; font-size: 10px; }
+  .stop-button:hover, .stop-button.active { border-color: #244f55; background: #244f55; color: white; }
+  .stop-button:hover span, .stop-button.active span, .stop-button:hover small, .stop-button.active small { color: #f2b5a0; }
+  .stop-preview { align-self: start; margin-top: 20px; }
+  .stop-preview[hidden] { display: none; }
+  .preview-copy { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+  .preview-copy strong { font-size: 16px; }
+  .preview-copy span { color: #67736c; font-size: 12px; }
+  .preview-images { display: flex; gap: 8px; }
+  .preview-images img { width: min(30%, 120px); aspect-ratio: 4 / 5; border-radius: 6px; object-fit: cover; }
+  .stop-preview a { display: inline-flex; align-items: center; min-height: 44px; margin-top: 7px; color: #244f55; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 850px) { .journey { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin-bottom: 70px; } .journey-heading { align-self: auto; } .globe-stage { width: min(100%, 620px); margin: 8px auto 0; } .stop-list { margin-top: 0; } }
+  @media (max-width: 450px) { .photo-stack { width: 92px; height: 114px; left: 2%; bottom: 10%; } .globe-hint { bottom: 0; } .stop-list { gap: 6px; } .stop-button { padding: 0 10px; font-size: 11px; } }
+</style>

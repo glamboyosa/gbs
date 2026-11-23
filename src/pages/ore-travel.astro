@@ -16,7 +16,7 @@ const clips = Array.from({ length: 14 }, (_, index) => ({
 const stops = [
   { city: "Accra", country: "Ghana", x: 64, y: 71, delay: 0.8 },
   { city: "Sharm El Sheikh", country: "Egypt", x: 86, y: 38, delay: 4 },
-  { city: "Cairo", country: "Egypt", x: 84, y: 34, delay: 7 },
+  { city: "Hurghada", country: "Egypt", x: 84, y: 34, delay: 7 },
   { city: "Toronto", country: "Canada", x: 14, y: 20, delay: 10 },
   { city: "Cotonou", country: "Benin", x: 66, y: 72, delay: 13 },
 ];
@@ -45,18 +45,18 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.glamboyosa.xyz/ore-travel" />
     <meta property="og:title" content="Ore's 2026 travel recap" />
-    <meta property="og:description" content="Five stops. 39 photos. 14 clips. Accra, Sharm El Sheikh, Cairo, Toronto, and Cotonou." />
-    <meta property="og:image" content="https://www.glamboyosa.xyz/ore-travel/teaser.jpg" />
+    <meta property="og:description" content="Five stops. 39 photos. 14 clips. Accra, Sharm El Sheikh, Hurghada, Toronto, and Cotonou." />
+    <meta property="og:image" content="https://www.glamboyosa.xyz/ore-travel/teaser-hurghada.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:video" content="https://www.glamboyosa.xyz/ore-travel/teaser.mp4" />
-    <meta property="og:video:secure_url" content="https://www.glamboyosa.xyz/ore-travel/teaser.mp4" />
+    <meta property="og:video" content="https://www.glamboyosa.xyz/ore-travel/teaser-hurghada.mp4" />
+    <meta property="og:video:secure_url" content="https://www.glamboyosa.xyz/ore-travel/teaser-hurghada.mp4" />
     <meta property="og:video:type" content="video/mp4" />
     <meta property="og:video:width" content="1200" />
     <meta property="og:video:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://www.glamboyosa.xyz/ore-travel/teaser.jpg" />
+    <meta name="twitter:image" content="https://www.glamboyosa.xyz/ore-travel/teaser-hurghada.jpg" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Ore's 2026 | Travel recap</title>
   </head>
@@ -100,11 +100,11 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
             <div class="film-footer"><span>39 PHOTOS · 14 CLIPS</span><span>5 STOPS</span></div>
             <div class="film-progress" aria-hidden="true"><span></span></div>
             {!capture && <img class="film-static" src="/ore-travel/poster.png" alt="" aria-hidden="true" width="540" height="675" />}
-            {!capture && <video class="film-export" id="film-export" src="/ore-travel/ore-2026-recap.mp4" poster="/ore-travel/poster.png" controls playsinline preload="none" aria-label="Ore's 2026 travel recap video" />}
+            {!capture && <video class="film-export" id="film-export" src="/ore-travel/ore-2026-recap-hurghada.mp4" poster="/ore-travel/poster.png" controls playsinline preload="none" aria-label="Ore's 2026 travel recap video" />}
           </div>
           <div class="film-actions">
             <button type="button" id="play-film" aria-label="Play travel recap">Play recap <span aria-hidden="true">▶</span></button>
-            <div class="film-links"><a href="/ore-travel/teaser.mp4">Watch teaser ↗</a><a href="/ore-travel/ore-2026-recap.mp4" download>Download film ↗</a></div>
+            <div class="film-links"><a href="/ore-travel/teaser-hurghada.mp4">Watch teaser ↗</a><a href="/ore-travel/ore-2026-recap-hurghada.mp4" download>Download film ↗</a></div>
           </div>
         </section>
 
@@ -126,7 +126,7 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
       const playButton = document.querySelector<HTMLButtonElement>("#play-film");
       const exportVideo = document.querySelector<HTMLVideoElement>("#film-export");
       const duration = 19_700;
-      const stopLabels = ["ACCRA, GHANA", "SHARM EL SHEIKH, EGYPT", "CAIRO, EGYPT", "TORONTO, CANADA", "COTONOU, BENIN"];
+      const stopLabels = ["ACCRA, GHANA", "SHARM EL SHEIKH, EGYPT", "HURGHADA, EGYPT", "TORONTO, CANADA", "COTONOU, BENIN"];
       let startTime = 0;
       let frame = 0;
 

@@ -1,6 +1,6 @@
 ---
 import NotesLayout from '../../layouts/NotesLayout.astro'
-import { frameSrc, storyboards } from '../../data/storyboards'
+import { EXCALIDRAW_BOARD_URL, frameSrc, storyboards } from '../../data/storyboards'
 
 export const prerender = true
 
@@ -15,6 +15,11 @@ const others = storyboards.filter((other) => other.slug !== storyboard.slug)
   <h1>{storyboard.title}</h1>
   <p>{storyboard.intro}</p>
   <p class="key">{storyboard.accent}</p>
+  <nav class="resources" aria-label="Storyboard resources">
+    {storyboard.notes && <a href={storyboard.notes.href}>{storyboard.notes.label}</a>}
+    {storyboard.diagram && <a href={storyboard.diagram.href}>{storyboard.diagram.label}</a>}
+    <a href={EXCALIDRAW_BOARD_URL} target="_blank" rel="noopener noreferrer">Open the shared Excalidraw board ↗</a>
+  </nav>
 
   {
     storyboard.strips.map((strip, stripIndex) => (
@@ -53,6 +58,7 @@ const others = storyboards.filter((other) => other.slug !== storyboard.slug)
     font-size: 0.92rem;
     color: var(--ink-secondary);
   }
+  .resources { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 1.5rem 0; font-size: 0.95rem; }
 
   .frames {
     display: grid;

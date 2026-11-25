@@ -1,0 +1,57 @@
+---
+import NotesLayout from '../../layouts/NotesLayout.astro'
+import { incidentSequence } from '../../data/incidents-sequence'
+import { EXCALIDRAW_BOARD_URL } from '../../data/storyboards'
+
+export const prerender = true
+---
+
+<NotesLayout
+  title="Incidents: from map selection to a saved record"
+  description="The creation, reopening and export sequence for incidents in Guardian Connector Explorer."
+  noindex
+>
+  <h1>Incidents: from map selection to a saved record</h1>
+  <p>The same source identity moves through selection, a guarded API, saved evidence and a link back to the map.</p>
+  <nav aria-label="Incident resources">
+    <a href="/incidents">Full story</a> · <a href="/storyboards/incidents">Storyboard</a> · <a href={EXCALIDRAW_BOARD_URL} target="_blank" rel="noopener noreferrer">Shared Excalidraw board ↗</a>
+  </nav>
+
+  <h2>Create, then reopen</h2>
+  <figure class="wide-diagram">
+    <a href="/images/diagrams/incidents-sequence.svg" aria-label="Open the full-size incident sequence diagram">
+      <img src="/images/diagrams/incidents-sequence.svg" alt="Sequence diagram: a monitor selects map evidence; the Member-guarded API reads warehouse rows and writes incident snapshots in a configuration transaction; an authorised link later restores the evidence; CSV and GeoJSON are generated locally." width="1440" height="1660" />
+    </a>
+    <figcaption>Scroll horizontally on a small screen, or open the image at full size. This follows the source code; it is not a trace from a live community incident.</figcaption>
+  </figure>
+
+  <p><a href="/images/diagrams/incidents-sequence.svg" download>Download SVG</a> · <a href="/diagrams/incidents-sequence.mmd" download>Mermaid source</a> · <a href="/diagrams/incidents.excalidraw" download>Editable incident storyboard and sequence</a></p>
+  <p>The editable file is a new, standalone Excalidraw scene. You can import it or copy it into your <a href={EXCALIDRAW_BOARD_URL} target="_blank" rel="noopener noreferrer">existing shared board</a>; the shared snapshot itself has not been overwritten.</p>
+
+  <h2>The boundaries that matter</h2>
+  <ul>
+    <li><strong>Selection is source identity.</strong> Entries carry a table, an id and a feature type. The server looks up the source row; it does not persist only a pixel or a highlighted dot.</li>
+    <li><strong>One configuration transaction.</strong> Collection, incident and evidence-entry writes commit together. The warehouse lookup is a separate read, not a distributed transaction.</li>
+    <li><strong>View context is explicit.</strong> The parent alerts table scopes the saved list. It is not inferred from whichever evidence table happens to appear first.</li>
+    <li><strong>A link is not an access grant.</strong> Opening <code>incidentId</code> still requires the application's normal permission checks.</li>
+    <li><strong>Exports reuse loaded data.</strong> The browser creates CSV and GeoJSON from the saved payload; there is no additional incident-export server endpoint in this flow.</li>
+  </ul>
+
+  <details>
+    <summary>Read the sequence as text / Mermaid</summary>
+    <pre><code>{incidentSequence}</code></pre>
+  </details>
+  <p><a href="/incidents#source-trail">Source paths and pull requests</a> · <a href="/storyboards/incidents">Follow the user journey</a></p>
+</NotesLayout>
+
+<style>
+  nav { margin: 1.5rem 0; }
+  .wide-diagram {
+    width: min(90rem, calc(100vw - 2rem));
+    margin: 1.5rem 0 1.5rem calc(50% - min(45rem, 50vw - 1rem));
+    overflow-x: auto;
+  }
+  img { display: block; width: 100%; min-width: 800px; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+  figcaption { font-size: 0.9rem; color: var(--ink-secondary); padding-top: 0.75rem; }
+  summary { cursor: pointer; padding: 0.75rem 0; }
+</style>

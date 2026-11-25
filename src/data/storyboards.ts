@@ -18,14 +18,39 @@ export type Storyboard = {
   accent: string
   noindex: boolean
   notes?: { href: string; label: string }
+  diagram?: { href: string; label: string }
   strips: StoryboardStrip[]
 }
+
+export const EXCALIDRAW_BOARD_URL = 'https://excalidraw.com/#json=A8iwcCl2OREHVlfW1LKGr,Uq90IRHolzvxhFHMlRiUsQ'
 
 /** Frame images live at /images/storyboards/<slug>/<strip>-<frame>.svg, numbered from 1. */
 export const frameSrc = (slug: string, strip: number, frame: number) =>
   `/images/storyboards/${slug}/${strip + 1}-${frame + 1}.svg`
 
 export const storyboards: Storyboard[] = [
+  {
+    slug: 'incidents',
+    title: 'Incidents storyboard',
+    description: 'A community monitor turns map alerts and field observations into a record a colleague can reopen and follow up.',
+    intro: 'Guardian Connector Explorer lets people group and annotate map evidence, then return to it, share an authorised link or export a record. I built the core incidents flow.',
+    accent: 'Orange marks source alerts; green marks selected evidence. The person, territory and incident are illustrative placeholders, not a community report.',
+    noindex: true,
+    notes: { href: '/incidents', label: 'Read the full implementation story' },
+    diagram: { href: '/incidents/sequence', label: 'Follow the request sequence' },
+    strips: [{
+      title: 'From an alert to something someone can follow up',
+      premise: 'A community monitor sees several possible clearing alerts near a road. They need to keep the evidence and their interpretation together, rather than asking a colleague to recreate a map search.',
+      frames: [
+        { tag: 'Before', caption: 'Several alerts appear on the map. Which ones belong to the same incident, and what did the monitor see?', alt: 'A monitor looking at separate orange alert markers with no saved incident tying them together.' },
+        { tag: 'Select', caption: 'The monitor selects alerts and observations, individually or with a bounding box. Highlights show the evidence being grouped.', alt: 'Three map features outlined in green and a Create incident action enabled.' },
+        { tag: 'Describe', caption: 'They name the incident and add a description, type, impact and supporting context. Suspected is a starting status, not an automatic conclusion.', alt: 'An incident sidebar with a name, description and type, alongside the selected map features.' },
+        { tag: 'Save', caption: 'The API checks access, reads the source records and saves a snapshot with the incident. The related configuration records commit together.', alt: 'A guarded API reading warehouse evidence and committing collection, incident and entry records in the configuration database.' },
+        { tag: 'Reopen', caption: 'An authorised colleague opens the incident link. The sidebar restores the saved record, highlights its evidence and fits the map to it.', alt: 'A saved incidentId link reopening an incident beside a map fitted around the selected evidence.' },
+        { tag: 'Follow up', caption: 'The record can leave the dashboard: metadata and entry rows as CSV, and the saved features as GeoJSON. The next person does not have to rebuild the selection.', alt: 'CSV and GeoJSON downloads beside the incident record and its retained source identities.' },
+      ],
+    }],
+  },
   {
     slug: 'pulse',
     title: 'Pulse storyboard',

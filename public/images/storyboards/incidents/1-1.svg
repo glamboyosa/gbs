@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" viewBox="0 0 640 460" role="img" aria-labelledby="title desc"><title id="title">Separate alerts, no shared record</title><desc id="desc">Illustrative storyboard, not a screenshot or real community report.</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="#21312d"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="8" y="8" width="624" height="444" rx="8" fill="#ffffff" stroke="#cad2ce" stroke-width="2"/>
+<text x="32" y="41" fill="#188568" font-size="14" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">01 / INCIDENTS</tspan></text>
+<text x="32" y="84" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">Separate alerts, no shared record</tspan></text>
+<rect x="190" y="122" width="395" height="230" rx="8" fill="#f3f7f3" stroke="#a7b6ae" stroke-width="2"/>
+<line x1="210" y1="322" x2="367.75" y2="152" stroke="#cad7cc" stroke-width="2"  />
+<line x1="367.75" y1="152" x2="565" y2="260" stroke="#cad7cc" stroke-width="2"  />
+<circle cx="288.75" cy="191" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="379.6" cy="223.2" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="442.8" cy="269.20000000000005" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="494.15000000000003" cy="184.1" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="276.9" cy="296.8" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="88" cy="183" r="27" fill="#ffffff" stroke="#21312d" stroke-width="2"/>
+<line x1="88" y1="210" x2="88" y2="290" stroke="#21312d" stroke-width="2"  />
+<line x1="88" y1="235" x2="145" y2="230" stroke="#21312d" stroke-width="2"  />
+<line x1="88" y1="290" x2="62" y2="328" stroke="#21312d" stroke-width="2"  />
+<line x1="88" y1="290" x2="114" y2="328" stroke="#21312d" stroke-width="2"  />
+<text x="40" y="396" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="40" dy="0">Which alerts belong together?</tspan></text>
+</svg>

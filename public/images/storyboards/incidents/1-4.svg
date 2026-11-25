@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" viewBox="0 0 640 460" role="img" aria-labelledby="title desc"><title id="title">Save evidence with the record</title><desc id="desc">Illustrative storyboard, not a screenshot or real community report.</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="#21312d"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="8" y="8" width="624" height="444" rx="8" fill="#ffffff" stroke="#cad2ce" stroke-width="2"/>
+<text x="32" y="41" fill="#188568" font-size="14" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">04 / INCIDENTS</tspan></text>
+<text x="32" y="84" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">Save evidence with the record</tspan></text>
+<rect x="40" y="130" width="170" height="75" rx="8" fill="#eff6f2" stroke="#188568" stroke-width="2"/>
+<text x="57" y="169" fill="#21312d" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="57" dy="0">Member check</tspan></text>
+<rect x="285" y="125" width="305" height="100" rx="8" fill="#f8faf8" stroke="#21312d" stroke-width="2"/>
+<text x="305" y="161" fill="#21312d" font-size="20" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="305" dy="0">Warehouse read</tspan></text>
+<text x="305" y="190" fill="#5c6b66" font-size="16" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="305" dy="0">source table + source id</tspan></text>
+<line x1="210" y1="170" x2="283" y2="170" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="155" y="283" width="435" height="100" rx="8" fill="#e8f5ee" stroke="#188568" stroke-width="2"/>
+<text x="175" y="317" fill="#188568" font-size="20" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="175" dy="0">One configuration transaction</tspan></text>
+<text x="175" y="352" fill="#21312d" font-size="17" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="175" dy="0">collection + incident + snapshots</tspan></text>
+<line x1="435" y1="225" x2="435" y2="280" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<text x="42" y="416" fill="#5c6b66" font-size="16" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="42" dy="0">No change to the original source rows</tspan></text>
+</svg>

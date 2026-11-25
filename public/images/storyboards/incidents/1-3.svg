@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" viewBox="0 0 640 460" role="img" aria-labelledby="title desc"><title id="title">Describe a suspected incident</title><desc id="desc">Illustrative storyboard, not a screenshot or real community report.</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="#21312d"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="8" y="8" width="624" height="444" rx="8" fill="#ffffff" stroke="#cad2ce" stroke-width="2"/>
+<text x="32" y="41" fill="#188568" font-size="14" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">03 / INCIDENTS</tspan></text>
+<text x="32" y="84" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">Describe a suspected incident</tspan></text>
+<rect x="38" y="122" width="235" height="270" rx="8" fill="#f3f7f3" stroke="#a7b6ae" stroke-width="2"/>
+<line x1="58" y1="362" x2="143.75" y2="152" stroke="#cad7cc" stroke-width="2"  />
+<line x1="143.75" y1="152" x2="253" y2="284" stroke="#cad7cc" stroke-width="2"  />
+<circle cx="96.75" cy="203" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="150.8" cy="240.8" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="188.4" cy="294.8" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="218.95000000000002" cy="194.9" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<circle cx="89.7" cy="327.2" r="7" fill="#d97732" stroke="#d97732" stroke-width="2"/>
+<rect x="75.6" y="178.7" width="131.60000000000002" height="148.5" rx="8" fill="transparent" stroke="#188568" stroke-width="2"/>
+<circle cx="96.75" cy="203" r="12" fill="transparent" stroke="#188568" stroke-width="2"/>
+<circle cx="150.8" cy="240.8" r="12" fill="transparent" stroke="#188568" stroke-width="2"/>
+<circle cx="188.4" cy="294.8" r="12" fill="transparent" stroke="#188568" stroke-width="2"/>
+<rect x="293" y="122" width="306" height="270" rx="8" fill="#f8faf8" stroke="#a7b6ae" stroke-width="2"/>
+<text x="310" y="159" fill="#21312d" font-size="21" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="310" dy="0">Suspected clearing</tspan></text>
+<text x="310" y="197" fill="#21312d" font-size="16" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="310" dy="0">Type: Deforestation</tspan></text>
+<text x="310" y="234" fill="#21312d" font-size="16" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="310" dy="0">Description + impact</tspan></text>
+<line x1="311" y1="253" x2="578" y2="253" stroke="#a7b6ae" stroke-width="2"  />
+<text x="310" y="285" fill="#5c6b66" font-size="16" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="310" dy="0">Evidence stays attached</tspan></text>
+<rect x="310" y="326" width="270" height="43" rx="8" fill="#188568" stroke="#188568" stroke-width="2"/>
+<text x="328" y="354" fill="#ffffff" font-size="19" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="328" dy="0">Save incident</tspan></text>
+</svg>

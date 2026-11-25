@@ -1,0 +1,14 @@
+---
+import NotesLayout from '../layouts/NotesLayout.astro'
+import { Content } from '../data/incidents.md'
+
+export const prerender = true
+---
+
+<NotesLayout
+  title="Turning map alerts into an incident someone can follow up"
+  description="The end-to-end story of environmental incident reporting in Guardian Connector Explorer: map selection, saved evidence, links and exports."
+  noindex
+>
+  <Content />
+</NotesLayout>

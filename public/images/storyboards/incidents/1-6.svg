@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" viewBox="0 0 640 460" role="img" aria-labelledby="title desc"><title id="title">Take the record into follow-up</title><desc id="desc">Illustrative storyboard, not a screenshot or real community report.</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="#21312d"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="8" y="8" width="624" height="444" rx="8" fill="#ffffff" stroke="#cad2ce" stroke-width="2"/>
+<text x="32" y="41" fill="#188568" font-size="14" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">06 / INCIDENTS</tspan></text>
+<text x="32" y="84" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="32" dy="0">Take the record into follow-up</tspan></text>
+<rect x="43" y="123" width="245" height="246" rx="8" fill="#f8faf8" stroke="#a7b6ae" stroke-width="2"/>
+<text x="61" y="165" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="61" dy="0">Incident record</tspan></text>
+<text x="61" y="207" fill="#21312d" font-size="17" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="61" dy="0">Name / description</tspan><tspan x="61" dy="22.1">Creator / timestamps</tspan><tspan x="61" dy="22.1">Source table / id</tspan><tspan x="61" dy="22.1">Saved evidence</tspan></text>
+<rect x="377" y="139" width="207" height="82" rx="8" fill="#e8f5ee" stroke="#188568" stroke-width="2"/>
+<text x="396" y="180" fill="#188568" font-size="28" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="396" dy="0">CSV</tspan></text>
+<text x="396" y="203" fill="#21312d" font-size="15" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="396" dy="0">Metadata + rows</tspan></text>
+<rect x="377" y="275" width="207" height="82" rx="8" fill="#e8f5ee" stroke="#188568" stroke-width="2"/>
+<text x="396" y="311" fill="#188568" font-size="25" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="396" dy="0">GeoJSON</tspan></text>
+<text x="396" y="339" fill="#21312d" font-size="15" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="396" dy="0">One feature / entry</tspan></text>
+<line x1="288" y1="198" x2="375" y2="181" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<line x1="288" y1="285" x2="375" y2="315" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<text x="45" y="418" fill="#21312d" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="45" dy="0">Follow up without rebuilding the selection</tspan></text>
+</svg>

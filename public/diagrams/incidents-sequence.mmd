@@ -1,0 +1,34 @@
+sequenceDiagram
+    actor Monitor as Community monitor
+    participant UI as Alerts dashboard
+    participant API as Nuxt incidents API
+    participant Warehouse as Warehouse DB
+    participant Config as Configuration DB
+
+    Monitor->>UI: Select alerts / observations; describe incident
+    UI->>API: POST /api/incidents (entries + parent_alerts_table)
+    API->>API: Member guard; session attribution; validate name
+    API->>Config: BEGIN transaction
+    API->>Config: INSERT collection + incident metadata
+    loop Each selected entry
+        API->>Warehouse: Read source row by source table / id
+        Warehouse-->>API: Source data (or no row)
+        API->>Config: INSERT entry + source_data snapshot
+    end
+    Note over Warehouse,Config: Only configuration writes share a transaction; warehouse reads are separate
+    API->>Config: COMMIT (or roll back configuration writes on failure)
+    API-->>UI: Created incident id
+    UI->>API: GET /api/incidents?parent_alerts_table=...
+    API->>Config: List incidents for current view
+    Config-->>UI: Saved incidents (via API)
+    UI-->>Monitor: Clear selection after successful creation
+
+    Monitor->>UI: Open saved incident / follow incidentId link
+    UI->>API: GET /api/incidents/:id (normal auth still applies)
+    API->>Config: Read collection + incident + saved entries
+    Config-->>API: Stored details and snapshots
+    API-->>UI: Incident details + entries
+    UI->>UI: Set incidentId; highlight entries; fit bounds
+    UI-->>Monitor: Same incident and evidence in view
+    Monitor->>UI: Download metadata / features
+    UI-->>Monitor: CSV / GeoJSON generated from loaded payload

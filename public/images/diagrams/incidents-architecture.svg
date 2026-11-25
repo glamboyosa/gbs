@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="620" viewBox="0 0 980 620" role="img" aria-labelledby="title desc"><title id="title">Incident reporting architecture</title><desc id="desc">Map selection reaches the API; warehouse rows are copied into configuration records. Configuration writes are transactional; warehouse reads are separate.</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="#21312d"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/>
+<text x="30" y="48" fill="#21312d" font-size="26" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="30" dy="0">Incident reporting: the records behind the map</tspan></text>
+<rect x="35" y="98" width="400" height="112" rx="8" fill="#eff6f2" stroke="#188568" stroke-width="2"/>
+<text x="55" y="136" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="55" dy="0">Vue / Nuxt + Mapbox GL</tspan></text>
+<text x="55" y="171" fill="#5c6b66" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="55" dy="0">Selection, sidebar, route, highlights</tspan></text>
+<rect x="545" y="98" width="400" height="112" rx="8" fill="#f7f9f7" stroke="#21312d" stroke-width="2"/>
+<text x="565" y="137" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="565" dy="0">Nuxt incidents API</tspan></text>
+<text x="565" y="171" fill="#5c6b66" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="565" dy="0">Member guard + session attribution</tspan></text>
+<line x1="435" y1="153" x2="543" y2="153" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<text x="450" y="134" fill="#21312d" font-size="14" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="450" dy="0">HTTP</tspan></text>
+<rect x="35" y="293" width="400" height="126" rx="8" fill="#fff6ec" stroke="#d97732" stroke-width="2"/>
+<text x="55" y="334" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="55" dy="0">Warehouse database</tspan></text>
+<text x="55" y="370" fill="#5c6b66" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="55" dy="0">Read original source table / id</tspan><tspan x="55" dy="23.400000000000002">Alert + field-observation data</tspan></text>
+<rect x="545" y="293" width="400" height="126" rx="8" fill="#eff6f2" stroke="#188568" stroke-width="2"/>
+<text x="565" y="334" fill="#21312d" font-size="23" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="565" dy="0">Configuration database</tspan></text>
+<text x="565" y="369" fill="#5c6b66" font-size="17" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="565" dy="0">Collection + incident + entry snapshots</tspan><tspan x="565" dy="22.1">One transaction for these writes</tspan></text>
+<line x1="650" y1="212" x2="650" y2="291" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<line x1="585" y1="234" x2="260" y2="291" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+<text x="300" y="260" fill="#21312d" font-size="15" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="300" dy="0">source lookup</tspan></text>
+<rect x="35" y="493" width="910" height="92" rx="8" fill="#f7f9f7" stroke="#a7b6ae" stroke-width="2"/>
+<text x="57" y="532" fill="#21312d" font-size="22" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="57" dy="0">Reopen with incidentId → restore map context</tspan></text>
+<text x="57" y="565" fill="#5c6b66" font-size="18" font-family="ui-sans-serif,system-ui,sans-serif"><tspan x="57" dy="0">CSV and GeoJSON are generated from the loaded saved payload in the browser.</tspan></text>
+<line x1="750" y1="420" x2="750" y2="490" stroke="#21312d" stroke-width="2" marker-end="url(#arrow)" />
+</svg>

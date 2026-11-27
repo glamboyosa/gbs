@@ -60,7 +60,6 @@ import casioA168wg9Image from "@/assets/wishlist/watches/casio-a168wg-9.jpg";
 import timexQReissueLcaImage from "@/assets/wishlist/watches/timex-q-reissue-lca.jpg";
 import cartierTankMustLargeImage from "@/assets/wishlist/watches/cartier-tank-must-large.jpg";
 import craftdFigaroBraceletGoldImage from "@/assets/wishlist/jewellery/craftd-figaro-bracelet-gold-5mm.jpg";
-import coachHitchCrossbodyBlackImage from "@/assets/wishlist/bags/coach-hitch-crossbody-black.jpg";
 import fujifilmXHalfImage from "@/assets/wishlist/cameras/fujifilm-x-half.jpg";
 import fujifilmXT30IiImage from "@/assets/wishlist/cameras/fujifilm-x-t30-ii.jpg";
 import fujifilmX100viImage from "@/assets/wishlist/cameras/fujifilm-x100vi.jpg";
@@ -170,16 +169,6 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://craftdlondon.com/products/inception-ring-silver",
     note: "Silver. Or any minimal sculptural ring.",
     price: 65,
-  },
-  {
-    id: "coach-hitch-messenger-bag",
-    name: "Hitch Messenger Bag",
-    brand: "Coach",
-    category: "accessories",
-    image: coachHitchCrossbodyBlackImage,
-    href: "https://www.coach.com/products/hitch-crossbody/CW461-BLK.html",
-    note: "Black leather.",
-    price: 408,
   },
   {
     id: "jacquemus-le-baneto",

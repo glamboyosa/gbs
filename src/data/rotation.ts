@@ -1,6 +1,7 @@
 import type { RotationItem } from "@/types";
 import adidasEvoSlImage from "@/assets/rotation/clothing/adidas-evo-sl.jpg";
 import coachRadioImage from "@/assets/rotation/clothing/coach-radio.jpg";
+import coachHitchImage from "@/assets/rotation/accessories/coach-hitch-black.jpg";
 import byredoMojaveGhostAbsoluImage from "@/assets/rotation/scents/byredo-mojave-ghost-absolu.jpg";
 import nikeVomero18Image from "@/assets/rotation/clothing/nike-vomero-18.png";
 import nialayaPantherRingImage from "@/assets/rotation/clothing/nialaya-panther-ring.jpg";
@@ -40,6 +41,14 @@ export const rotationItems: RotationItem[] = [
     href: "https://www.farfetch.com/uk/shopping/men/coach-radio-camera-leather-shoulder-bag-item-33211387.aspx",
     note: "Maple brown leather.",
     price: "$285.52",
+  },
+  {
+    name: "Hitch Messenger Bag",
+    brand: "Coach",
+    category: "accessories",
+    image: coachHitchImage,
+    href: "https://www.coach.com/products/hitch-crossbody/CW461-BLK.html",
+    note: "Black leather.",
   },
   {
     name: "Mojave Ghost Absolu",

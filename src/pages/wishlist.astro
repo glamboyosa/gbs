@@ -9,11 +9,11 @@ import type { WishlistCategory, WishlistItem } from "@/types";
 import "@/styles/global.css";
 
 const categories: { key: WishlistCategory; label: string; tag: string }[] = [
+  { key: "games", label: "Games", tag: "Game" },
   { key: "watches", label: "Watches", tag: "Watch" },
   { key: "accessories", label: "Accessories", tag: "Accessory" },
-  { key: "cameras", label: "Cameras", tag: "Camera" },
   { key: "tech", label: "Tech", tag: "Tech" },
-  { key: "games", label: "Games", tag: "Game" },
+  { key: "cameras", label: "Cameras", tag: "Camera" },
   { key: "clothing", label: "Clothing", tag: "Clothing" },
   { key: "shoes", label: "Shoes", tag: "Shoes" },
   { key: "scent", label: "Scent", tag: "Scent" },
@@ -32,6 +32,7 @@ const priceBands = [
   { key: "1500-plus", label: "$1.5k+", min: 1500, max: Infinity },
 ];
 
+const categoryOrder = categories.map((category) => category.key);
 const tags = Object.fromEntries(categories.map((category) => [category.key, category.tag]));
 const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
@@ -48,7 +49,8 @@ const formatNaira = (item: WishlistItem) => (item.priceTo ? `${toNaira(item.pric
 const [claims, ngnRate] = await Promise.all([getClaims(), getUsdToNgnRate()]);
 const ranked = [
   ...wishlistItems.filter((item) => item.priority).sort((a, b) => a.priority! - b.priority!),
-  ...wishlistItems.filter((item) => !item.priority),
+  // The rest follow the filter order, so the grid reads in the same order as the pills.
+  ...wishlistItems.filter((item) => !item.priority).sort((a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category)),
 ];
 // Claimed gifts sink to the end so visitors see what's still available first.
 const items = [...ranked.filter((item) => !claims[item.id]), ...ranked.filter((item) => claims[item.id])];

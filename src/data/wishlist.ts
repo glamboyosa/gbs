@@ -1,4 +1,5 @@
 import type { WishlistItem } from "@/types";
+import coachHitchImage from "@/assets/rotation/accessories/coach-hitch-black.jpg";
 import duneAwakeningImage from "@/assets/wishlist/games/dune-awakening.jpg";
 import avatarLegendsFightingGameImage from "@/assets/wishlist/games/avatar-legends-the-fighting-game.jpg";
 import starWarsGalacticRacerImage from "@/assets/wishlist/games/star-wars-galactic-racer.jpg";
@@ -169,6 +170,16 @@ export const wishlistItems: WishlistItem[] = [
     href: "https://craftdlondon.com/products/inception-ring-silver",
     note: "Silver. Or any minimal sculptural ring.",
     price: 65,
+  },
+  {
+    id: "coach-hitch-messenger-bag",
+    name: "Hitch Messenger Bag",
+    brand: "Coach",
+    category: "accessories",
+    image: coachHitchImage,
+    href: "https://www.coach.com/products/hitch-crossbody/CW461-BLK.html",
+    note: "Black leather.",
+    price: 408,
   },
   {
     id: "jacquemus-le-baneto",

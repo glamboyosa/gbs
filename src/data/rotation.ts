@@ -49,6 +49,7 @@ export const rotationItems: RotationItem[] = [
     image: coachHitchImage,
     href: "https://www.coach.com/products/hitch-crossbody/CW461-BLK.html",
     note: "Black leather.",
+    price: "$408",
   },
   {
     name: "Mojave Ghost Absolu",

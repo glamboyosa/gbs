@@ -1,0 +1,75 @@
+---
+import SiteHeader from "@/components/SiteHeader.astro";
+import Layout from "@/layouts/Layout.astro";
+import "@/styles/global.css";
+---
+
+<Layout preloadFonts={["inter", "rubik-marker-hatch"]} title="About | Osa" description="Osa is a full-stack engineer working with TypeScript, React, Node.js and Postgres.">
+  <div class="page-shell neutral-shell">
+    <SiteHeader current="about" />
+    <main class="about">
+      <h1>whoami</h1>
+      <p>
+        I’m a full-stack engineer, mostly working with TypeScript, React, Node.js
+        and Postgres. For the last few years I’ve worked in small teams, owning a
+        lot of the stack.
+      </p>
+      <p>
+        Right now I’m at <strong>Conservation Metrics</strong>, building software
+        for environmental monitoring and conservation programs. For a year and a
+        half I was the only full-stack engineer on the Indigenous Guardianship
+        Program team, working directly with the program director. The work runs
+        from VPSs and CapRover to design: geospatial data, building and revamping
+        UIs, end-to-end features, backend APIs, data pipelines over 140M+ records
+        and performance work.
+      </p>
+      <p>
+        Before that I was the first engineering hire in the Innovation department
+        at <strong>APM</strong>, building AI products for property management. I
+        started as the only engineer, and we grew to a team of three. Earlier, I
+        was a founding engineer at <strong>Shepherd</strong>, working on the core
+        product and architecture of an AI learning product.
+      </p>
+      <p>
+        I’ve also been building my own products since well before LLMs took off:
+        <a href="https://pulseapp.click" target="_blank" rel="noopener noreferrer">Pulse</a>,
+        a voice-feedback platform that started with restaurants and is now an
+        embeddable widget for software teams;
+        <a href="https://swig.glamboyosa.xyz" target="_blank" rel="noopener noreferrer">Swig</a>,
+        a PostgreSQL job queue for Go;
+        <a href="/ore-travel">Ore</a>; and a collection of
+        <a href="https://things.glamboyosa.xyz" target="_blank" rel="noopener noreferrer">Things</a>.
+      </p>
+      <p>
+        The common thread: I like owning problems end to end, from working out
+        what needs to be built to making the technical calls and shipping it.
+      </p>
+
+      <p>
+        Away from the keyboard I’m usually air-frying something experimental,
+        <a href="/#activity">watching films</a> or <a href="/#activity">gaming</a>.
+      </p>
+
+      <h2>Let’s get in touch</h2>
+      <p class="about-links">
+        <a href="mailto:ogbemudiatimothy@gmail.com">Email</a>
+        <a href="/resume.html">Résumé</a>
+        <a href="https://github.com/glamboyosa" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </p>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .about { max-width: 620px; margin: 0 auto; padding: clamp(24px, 6vw, 72px) 0 96px; }
+  h1 { margin: 0 0 20px; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+  h2 { margin: 40px 0 12px; font-size: 15px; font-weight: 500; }
+  p { margin: 0 0 16px; color: var(--ink); font-size: 15px; line-height: 1.7; }
+  strong { font-weight: 500; }
+  a { margin: 0 -3px; padding: 1px 3px; border-radius: 4px; text-decoration: underline; text-decoration-color: var(--divider, rgba(0, 0, 0, 0.2)); text-underline-offset: 3px; transition: background-color 160ms ease-out; }
+  .about-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+  .about-links a { display: inline-flex; align-items: center; min-height: 44px; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { background: var(--paper-deep); }
+  }
+</style>

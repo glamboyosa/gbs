@@ -542,3 +542,51 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* Homepage split: a quiet intro pinned left, beside a flat feed of the live sections */
+.home-split .dashboard { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(32px, 6vw, 96px); row-gap: 0; align-items: start; }
+.home-split .dashboard > * { grid-column: 2; }
+.home-split .panel { min-height: 0; margin: 0; padding: 30px 0; border-top: 1px solid var(--divider); border-radius: 0; background: none; box-shadow: none; color: var(--ink); }
+.home-split .intro-panel { grid-column: 1; grid-row: 1 / span 20; padding: 30px 0; border-top: 0; }
+/* Pin the intro only when the whole of it fits in the window */
+@media (min-width: 901px) and (min-height: 640px) { .home-split .intro-panel { position: sticky; top: 24px; } }
+.home-split .intro-panel::after { display: none; }
+.home-split .intro-panel h1 { margin: 18px 0; font-size: clamp(34px, 4vw, 48px); }
+.home-split .intro-panel h1 em { color: var(--purple); }
+.home-split .intro-panel > p + p { margin-top: 14px; }
+.home-split .button-quiet { background: var(--paper-deep); color: var(--ink); }
+.home-split .updates-banner { padding-inline: 0; border-bottom: 1px solid var(--divider); border-radius: 0; background: none; box-shadow: none; }
+.home-split .uses-panel { grid-template-columns: 1fr; }
+.home-split .reading-current h2 { font-size: clamp(22px, 2vw, 30px); }
+.intro-more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 8px; color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: underline; text-decoration-color: var(--divider); text-underline-offset: 4px; transition: text-decoration-color 160ms ease-out; }
+.intro-more span { display: inline-block; transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* Hovering "More about me" sends a poking hand to the About link in the header */
+.nav-link[href="/about"] { position: relative; }
+.nav-link[href="/about"]::before { position: absolute; top: 100%; left: 50%; content: "👆"; color: transparent; font-size: 18px; line-height: 1; text-shadow: 0 0 0 var(--ink); opacity: 0; transform: translate(-50%, 10px) rotate(-12deg) scale(0.6); transform-origin: 50% 0; pointer-events: none; transition: opacity 160ms ease-out, transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .intro-more:hover { text-decoration-color: currentColor; }
+  .intro-more:hover span { transform: translateX(3px); }
+  html:has(.intro-more:hover) .nav-link[href="/about"] { color: var(--ink); }
+  html:has(.intro-more:hover) .nav-link[href="/about"]::before { opacity: 1; transform: translate(-50%, 0) rotate(0) scale(1); animation: about-poke 900ms 260ms cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+}
+@keyframes about-poke {
+  0%, 100% { transform: translate(-50%, 0) rotate(0) scale(1); }
+  30% { transform: translate(-50%, -7px) rotate(-6deg) scale(1.08); }
+  45% { transform: translate(-50%, -4px) rotate(4deg) scale(0.96); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.intro-more:hover) .nav-link[href="/about"]::before { animation: none; }
+}
+@media (max-width: 900px) {
+  .home-split .dashboard { display: block; }
+  .home-split .intro-panel { padding-top: 8px; }
+}
+
+/* Five nav links don't fit beside the wordmark on small phones, so the nav takes its own row */
+@media (max-width: 430px) {
+  .site-header { flex-wrap: wrap; }
+  .site-header .theme-toggle { margin-left: auto; }
+  .site-header nav, .neutral-shell .site-header nav { order: 3; flex-basis: 100%; max-width: none; margin: 4px 0 0 -8px; justify-content: flex-start; }
+  .nav-link { padding: 0 8px; }
+}

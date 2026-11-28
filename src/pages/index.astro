@@ -4,7 +4,6 @@ import FilmRating from "@/components/FilmRating.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import RotationCarousel from "@/components/RotationCarousel.astro";
 import ProjectFolder from "@/components/ProjectFolder.astro";
-import StoryTimeline from "@/components/StoryTimeline.astro";
 import StravaStats from "@/components/StravaStats.astro";
 import BookCover from "@/components/BookCover.astro";
 import Layout from "@/layouts/Layout.astro";
@@ -41,7 +40,7 @@ try {
   title="Osa | Product engineer"
   description="Osa is a product engineer who makes software and other things for the internet."
 >
-  <div class="page-shell neutral-shell">
+  <div class="page-shell neutral-shell home-split">
     <SiteHeader current="home" />
 
     {bannerUpdate && (
@@ -61,6 +60,16 @@ try {
           TypeScript, Next.js and Python. I like shipping useful things, learning
           in public and taking side projects too far.
         </p>
+        <p>
+          Right now I’m at Conservation Metrics, building software for
+          conservation programs, from geospatial data and pipelines to the UI.
+          Before that I built AI products at APM and Shepherd.
+        </p>
+        <p>
+          On the side I make my own things, like Pulse, Swig and Ore, and have
+          since well before LLMs took off.
+        </p>
+        <a class="intro-more" href="/about">More about me <span aria-hidden="true">→</span></a>
         <div class="intro-actions">
           <a class="button button-primary pressable" href="https://cal.com/glamboyosa/15min" target="_blank" rel="noopener noreferrer">Book a call <span>↗</span></a>
           <a class="button button-quiet pressable" href="mailto:ogbemudiatimothy@gmail.com">Email me <span>↗</span></a>
@@ -69,8 +78,6 @@ try {
       </section>
 
       <StravaStats />
-
-      <StoryTimeline />
 
       <section class="panel listening-panel stagger-item">
         <div class="panel-label"><span>LISTENING</span><span class="signal" aria-hidden="true">🎵</span></div>
@@ -180,7 +187,7 @@ try {
 
     <footer class="site-footer">
       <span>© {new Date().getFullYear()} Osa Ogbemudia</span>
-      <span class="activity-summary">
+      <span class="activity-summary" id="activity">
         <a href="https://letterboxd.com/glamboyosa/" target="_blank" rel="noopener noreferrer">{letterboxdSummary.yearCount} films this year</a>
         {letterboxdSummary.latestFilm && (
           <>

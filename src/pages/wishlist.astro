@@ -80,7 +80,12 @@ const initiallyEmpty = !items.some(isInitiallyVisible);
       <header class="collection-hero">
         <p class="eyebrow">BIRTHDAY · DECEMBER 3 · {items.length} THINGS</p>
         <h1>Wishlist<span>.</span></h1>
-        <p>Watches, cameras, clothes, scents and small luxuries. Filter by what it is or what it costs.</p>
+        <p class="occasion-line">
+          <span class="visually-hidden">Things I’d love for Black Friday, Cyber Monday, my birthday on December 3, Christmas, New Year, or just because.</span>
+          <span aria-hidden="true">Things I’d love for</span>
+          <span class="occasion-chip" data-occasion-chip data-tone="black" aria-hidden="true"><span class="occasion-content">Black Friday</span></span>
+          <span class="occasion-aside" data-occasion-aside aria-hidden="true" hidden></span>
+        </p>
       </header>
 
       <div class="wishlist-filters" data-initial-type={initialType} data-initial-price={initialPrice}>
@@ -291,6 +296,103 @@ const initiallyEmpty = !items.some(isInitiallyVisible);
     };
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    const occasionIcon = (paths: string) => `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+
+    // Dates belong to the current gifting season (November to January), so past occasions reset each year.
+    const now = new Date();
+    const seasonYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const firstFriday = ((5 - new Date(seasonYear, 10, 1).getDay() + 7) % 7) + 1;
+    const blackFriday = new Date(seasonYear, 10, firstFriday + 21);
+    // Checked on every change, so a tab left open past midnight still strikes the day that ended.
+    const isDone = (date: Date | null) => {
+      const current = new Date();
+      const inSeason = current.getMonth() >= 10 || current.getMonth() === 0;
+      const today = new Date(current.getFullYear(), current.getMonth(), current.getDate());
+      return inSeason && date !== null && today > date;
+    };
+
+    const occasions = [
+      { label: "Black Friday", tone: "black", date: blackFriday, icon: occasionIcon('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/>') },
+      { label: "Cyber Monday", tone: "blue", date: new Date(seasonYear, 10, blackFriday.getDate() + 3), icon: occasionIcon('<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>') },
+      { label: "my birthday, Dec 3", tone: "purple", date: new Date(seasonYear, 11, 3), aside: "it’s always my birthday anyway", icon: occasionIcon('<path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M12 12V8M12 4.5a1.5 1.5 0 0 0 0 3 1.5 1.5 0 0 0 0-3"/>') },
+      { label: "Christmas", tone: "green", date: new Date(seasonYear, 11, 25), icon: occasionIcon('<path d="M12 3 6 11h3l-4 6h14l-4-6h3Z"/><path d="M12 17v4"/>') },
+      { label: "New Year", tone: "gold", date: new Date(seasonYear + 1, 0, 1), icon: occasionIcon('<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M6.3 17.7l2.8-2.8M14.9 9.1l2.8-2.8"/>') },
+      { label: "just because", tone: "light", date: null, icon: occasionIcon('<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5.3 5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>') },
+    ];
+    const occasionChip = document.querySelector<HTMLElement>("[data-occasion-chip]")!;
+    const occasionAside = document.querySelector<HTMLElement>("[data-occasion-aside]")!;
+    const easing = "cubic-bezier(0.32, 0.72, 0, 1)";
+
+    /**
+     * Draws the strike across a past occasion. Replaying pulls the line back first, then draws it again.
+     *
+     * @param {boolean} replay - Whether a line is already showing.
+     * @returns {void}
+     */
+    const drawStrike = (replay: boolean) => {
+      const strike = occasionChip.querySelector<HTMLElement>(".occasion-strike");
+      if (!strike) return;
+      strike.getAnimations().forEach((animation) => animation.cancel());
+      strike.style.transformOrigin = "left";
+      if (reducedMotion.matches) {
+        strike.style.transform = "scaleX(1)";
+        return;
+      }
+      const draw = [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }];
+      if (!replay) {
+        strike.animate(draw, { duration: 420, delay: 260, easing, fill: "both" });
+        return;
+      }
+      strike.style.transformOrigin = "right";
+      // A newer hover cancels this retract, which rejects `finished` and skips the redraw.
+      strike.animate([{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }], { duration: 220, easing, fill: "both" }).finished.then(() => {
+        strike.style.transformOrigin = "left";
+        strike.animate(draw, { duration: 420, easing, fill: "both" });
+      }, () => {});
+    };
+
+    const showOccasion = (index: number, animate: boolean) => {
+      const occasion = occasions[index];
+      const done = isDone(occasion.date);
+      const from = occasionChip.getBoundingClientRect().width;
+      const content = document.createElement("span");
+      content.className = "occasion-content";
+      const label = done ? `<span class="occasion-label">${occasion.label}<span class="occasion-strike"></span></span>` : occasion.label;
+      content.innerHTML = `${label}${occasion.icon}`;
+      const aside = done && occasion.aside ? occasion.aside : "";
+      occasionAside.textContent = aside;
+      occasionAside.hidden = !aside;
+      if (aside && animate) occasionAside.animate([{ opacity: 0, transform: "translateX(-4px)" }, { opacity: 1, transform: "translateX(0)" }], { duration: 320, delay: 520, easing, fill: "both" });
+      occasionChip.replaceChildren(content);
+      occasionChip.dataset.tone = occasion.tone;
+      occasionChip.classList.toggle("is-done", done);
+      if (animate) {
+        const to = occasionChip.getBoundingClientRect().width;
+        occasionChip.animate([{ width: `${from}px` }, { width: `${to}px` }], { duration: 360, easing });
+        content.animate([
+          { transform: "translateY(55%)", opacity: 0, filter: "blur(4px)" },
+          { transform: "translateY(0)", opacity: 1, filter: "blur(0)" },
+        ], { duration: 360, easing });
+      }
+      drawStrike(false);
+    };
+
+    occasionChip.addEventListener("pointerenter", (event) => {
+      if (event.pointerType === "mouse") drawStrike(true);
+    });
+    occasionChip.addEventListener("click", () => drawStrike(true));
+    // With reduced motion the chip stays on the next occasion that hasn't passed; otherwise it cycles from the start.
+    const firstUpcoming = Math.max(0, occasions.findIndex((occasion) => !isDone(occasion.date)));
+    showOccasion(reducedMotion.matches ? firstUpcoming : 0, false);
+    if (!reducedMotion.matches) {
+      let occasionIndex = 0;
+      setInterval(() => {
+        if (document.hidden) return;
+        occasionIndex = (occasionIndex + 1) % occasions.length;
+        showOccasion(occasionIndex, true);
+      }, 2600);
+    }
 
     // Variant cards swipe on touch; the chips jump to an option and follow the swipe.
     document.querySelectorAll<HTMLElement>("[data-slides]").forEach((slides) => {

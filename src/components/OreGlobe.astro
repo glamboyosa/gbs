@@ -9,7 +9,7 @@ import { oreStops } from "../data/oreTravel";
     <p>Drag the globe. Choose a stop to see its moments.</p>
   </div>
   <div class="globe-stage">
-    <svg id="ore-globe" viewBox="0 0 620 620" role="img" aria-label="Interactive globe showing Ore's five travel stops in order">
+    <svg id="ore-globe" viewBox="0 0 620 620" role="group" aria-label="Interactive globe showing Ore's five travel stops in order">
       <defs><clipPath id="globe-clip"><circle cx="310" cy="310" r="252" /></clipPath></defs>
       <circle class="sphere" cx="310" cy="310" r="252" />
       <g clip-path="url(#globe-clip)">
@@ -179,7 +179,7 @@ import { oreStops } from "../data/oreTravel";
 <style>
   .journey { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; gap: 0 4vw; margin-bottom: 95px; }
   .journey-heading { align-self: end; }
-  .eyebrow { margin: 0 0 18px; color: #527b78; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+  .eyebrow { margin: 0 0 18px; color: #446a67; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
   h2 { max-width: 500px; margin: 0; font-size: clamp(40px, 4.8vw, 72px); line-height: 1.03; letter-spacing: -.065em; text-wrap: balance; }
   .journey-heading > p:last-child { margin: 20px 0 0; color: #5f6662; font-size: 14px; }
   .globe-stage { position: relative; grid-column: 2; grid-row: 1 / 4; width: min(100%, 550px); min-width: 0; aspect-ratio: 1; margin-left: auto; }
@@ -199,11 +199,11 @@ import { oreStops } from "../data/oreTravel";
   .photo-stack img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; padding: 5px; border-radius: 8px; background: #fff; box-shadow: 0 12px 30px #17272955; object-fit: cover; }
   .photo-stack img:first-child { transform: translate(27px, -25px) rotate(8deg); }
   .photo-stack img:last-child { transform: rotate(-8deg); }
-  .globe-hint { position: absolute; right: 5%; bottom: 2%; color: #527b78; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+  .globe-hint { position: absolute; right: 5%; bottom: 2%; color: #446a67; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
   .stop-list { align-self: start; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
   .stop-button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 13px; border: 1px solid #d0d5cc; border-radius: 999px; background: transparent; color: #243431; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
-  .stop-button span { color: #b5705c; font-size: 10px; }
-  .stop-button small { color: #68736d; font-size: 10px; }
+  .stop-button span { color: #9a5442; font-size: 10px; }
+  .stop-button small { color: #5c6660; font-size: 10px; }
   .stop-button:hover, .stop-button.active { border-color: #244f55; background: #244f55; color: white; }
   .stop-button:hover span, .stop-button.active span, .stop-button:hover small, .stop-button.active small { color: #f2b5a0; }
   .stop-preview { align-self: start; margin-top: 20px; }

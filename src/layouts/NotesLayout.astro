@@ -42,6 +42,8 @@ const pageUrl = new URL(Astro.url.pathname.replace(/\/$/, ""), Astro.site).href
 </html>
 
 <style is:global>
+  /* Shiki github-dark comments are 3:1 on its background; lift them to AA */
+  .astro-code span[style*="#6A737D" i] { color: #959da5 !important; }
   :root {
     color-scheme: light dark;
     --canvas: oklch(0.985 0.003 85);

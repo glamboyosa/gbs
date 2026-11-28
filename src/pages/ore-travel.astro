@@ -83,7 +83,7 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
                 <path class="route-line" d="M 346 298 C 356 231 425 207 464 160 L 454 143 C 340 32 154 36 76 84 C 56 186 213 335 356 302" />
               </svg>
               {stops.map((stop, index) => (
-                <span class="stop" style={`--x:${stop.x}%;--y:${stop.y}%;--delay:${stop.delay}s`} title={`${stop.city}, ${stop.country}`} aria-label={`Stop ${index + 1}: ${stop.city}, ${stop.country}`}></span>
+                <span class="stop" role="img" style={`--x:${stop.x}%;--y:${stop.y}%;--delay:${stop.delay}s`} title={`${stop.city}, ${stop.country}`} aria-label={`Stop ${index + 1}: ${stop.city}, ${stop.country}`}></span>
               ))}
               {moments.map((moment, index) => (
                 <div class="moment" style={`--x:${moment.x}%;--y:${moment.y}%;--delay:${moment.delay}s;--angle:${moment.angle}deg`}>
@@ -200,7 +200,7 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
   a { color: inherit; text-decoration: none; }
   a:hover { text-decoration: underline; text-underline-offset: 4px; }
   .introduction { padding: 62px 0 36px; }
-  .eyebrow { margin: 0 0 20px; color: #527b78; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+  .eyebrow { margin: 0 0 20px; color: #446a67; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
   h1 { margin: 0; font-size: clamp(56px, 9vw, 130px); line-height: .96; letter-spacing: -.075em; text-wrap: balance; }
   h1 span { color: #d67760; }
   .introduction > p:last-child { margin: 25px 0 0; color: #5f6662; font-size: 15px; }
@@ -245,12 +245,12 @@ const capture = import.meta.env.DEV && Astro.url.searchParams.has("capture");
   .archive-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 27px; border-top: 1px solid #d6d2c9; padding-top: 35px; }
   .archive-heading h2 { margin: 0; font-size: clamp(36px, 5vw, 65px); letter-spacing: -.06em; text-wrap: balance; }
   #archive-title { scroll-margin-top: 24px; }
-  .archive-heading > span { padding-bottom: 7px; color: #70776f; font-size: 12px; }
+  .archive-heading > span { padding-bottom: 7px; color: #636a62; font-size: 12px; }
   .archive-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px 14px; }
   figure { min-width: 0; margin: 0; }
   figure img, figure video { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: 7px; background: #dedbd3; object-fit: cover; }
   figure video { cursor: pointer; }
-  figcaption { padding: 8px 0 0; color: #777e77; font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+  figcaption { padding: 8px 0 0; color: #5f665f; font-size: 10px; font-weight: 700; letter-spacing: .1em; }
   footer { min-height: 90px; border-top: 1px solid #d6d2c9; border-bottom: 0; }
   @keyframes draw-route { to { stroke-dashoffset: 0; } }
   @keyframes reveal { to { opacity: 1; transform: translateY(0) rotate(var(--angle)) scale(1); } }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import useSWR from "swr";
 import { getValidToken } from "@/lib/utils";
 import type { SpotifyTrackSummary } from "@/types";
@@ -85,60 +85,62 @@ export function NowPlaying({ accessToken }: { accessToken?: string }) {
   }
 
   return (
-    <motion.button
-      layout
-      type="button"
-      aria-expanded={expanded}
-      aria-label={`${song.isPlaying ? "Now playing" : relativeTime(song.playedAt)}: ${song.title} by ${song.artist}`}
-      onClick={() => setExpanded((value) => !value)}
-      className="group flex min-h-12 max-w-full cursor-pointer items-center gap-3 overflow-hidden border-0 bg-[#171616] p-2 pr-4 text-left text-white shadow-sm"
-      style={{ borderRadius: expanded ? 18 : 999 }}
-      transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-      whileTap={{ scale: 0.96 }}
-    >
-      <motion.img
+    <MotionConfig reducedMotion="user">
+      <motion.button
         layout
-        src={song.albumImageUrl || fallbackArt}
-        alt=""
-        className="size-8 flex-none rounded-[10px] object-cover outline outline-1 -outline-offset-1 outline-white/10"
+        type="button"
+        aria-expanded={expanded}
+        aria-label={`${song.isPlaying ? "Now playing" : relativeTime(song.playedAt)}: ${song.title} by ${song.artist}`}
+        onClick={() => setExpanded((value) => !value)}
+        className="group flex min-h-12 max-w-full cursor-pointer items-center gap-3 overflow-hidden border-0 bg-[#171616] p-2 pr-4 text-left text-white shadow-sm"
+        style={{ borderRadius: expanded ? 18 : 999 }}
         transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-      />
-
-      <AnimatePresence initial={false} mode="popLayout">
-        {expanded ? (
-          <motion.span
-            key="details"
-            initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-            transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-            className="min-w-0 py-0.5"
-          >
-            <span className="block truncate text-[11px] font-medium">{song.title}</span>
-            <span className="mt-0.5 block truncate text-[9px] text-white/55">
-              {song.artist} · {song.isPlaying ? "Playing now" : relativeTime(song.playedAt)}
-            </span>
-          </motion.span>
-        ) : (
-          <motion.span
-            key="compact"
-            initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-            transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-            className="flex items-center gap-1"
-          >
-            {[0, 1, 2, 3].map((bar) => (
-              <span
-                key={bar}
-                className={`block w-[2px] rounded-full bg-[#d8ff52] ${song.isPlaying ? "animate-pulse" : ""}`}
-                style={{ height: `${7 + bar * 2}px`, animationDelay: `${bar * 100}ms` }}
-              />
-            ))}
-            <span className="ml-1 text-[10px] text-white/70">{song.isPlaying ? "Live" : "Recent"}</span>
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.button>
+        whileTap={{ scale: 0.96 }}
+      >
+        <motion.img
+          layout
+          src={song.albumImageUrl || fallbackArt}
+          alt=""
+          className="size-8 flex-none rounded-[10px] object-cover outline outline-1 -outline-offset-1 outline-white/10"
+          transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+        />
+  
+        <AnimatePresence initial={false} mode="popLayout">
+          {expanded ? (
+            <motion.span
+              key="details"
+              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+              className="min-w-0 py-0.5"
+            >
+              <span className="block truncate text-[11px] font-medium">{song.title}</span>
+              <span className="mt-0.5 block truncate text-[9px] text-white/55">
+                {song.artist} · {song.isPlaying ? "Playing now" : relativeTime(song.playedAt)}
+              </span>
+            </motion.span>
+          ) : (
+            <motion.span
+              key="compact"
+              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+              className="flex items-center gap-1"
+            >
+              {[0, 1, 2, 3].map((bar) => (
+                <span
+                  key={bar}
+                  className={`block w-[2px] rounded-full bg-[#d8ff52] ${song.isPlaying ? "animate-pulse" : ""}`}
+                  style={{ height: `${7 + bar * 2}px`, animationDelay: `${bar * 100}ms` }}
+                />
+              ))}
+              <span className="ml-1 text-[10px] text-white/70">{song.isPlaying ? "Live" : "Recent"}</span>
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.button>
+    </MotionConfig>
   );
 }

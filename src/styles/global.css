@@ -35,7 +35,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-button:focus-visible, a:focus-visible { outline: 3px solid rgba(19, 92, 255, 0.35); outline-offset: 3px; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 h1, h2, h3 { text-wrap: balance; }
 p, li { text-wrap: pretty; }
 
@@ -44,7 +44,7 @@ p, li { text-wrap: pretty; }
 .wordmark { display: inline-flex; align-items: center; min-width: 54px; min-height: 44px; font-family: "Rubik Marker Hatch", system-ui; font-size: 27px; letter-spacing: -0.08em; }
 .wordmark i { position: relative; top: -9px; margin-left: 4px; color: var(--purple); font-family: "Inter", sans-serif; font-size: 9px; font-style: normal; letter-spacing: 0; }
 .site-header nav { display: flex; align-items: center; gap: 4px; }
-.nav-link { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 42px; padding: 0 14px; border-radius: 999px; color: var(--muted); font-size: 13px; font-weight: 500; transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out; }
+.nav-link { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 44px; padding: 0 14px; border-radius: 999px; color: var(--muted); font-size: 13px; font-weight: 500; transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out; }
 .nav-link.active { color: var(--ink); background: rgba(255, 255, 255, 0.7); }
 .pressable:active { scale: 0.96; }
 
@@ -82,7 +82,7 @@ p, li { text-wrap: pretty; }
 
 .role-panel { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; min-height: 420px; padding: 26px; background: var(--purple-soft); }
 .strava-panel { background: #fff3ec; }
-.strava-panel .panel-label a { min-height: 40px; display: inline-flex; align-items: center; }
+.strava-panel .panel-label a { min-height: 44px; display: inline-flex; align-items: center; }
 .strava-mark-link { display: grid; width: 190px; min-height: 150px; margin: 0 auto; cursor: pointer; place-items: center; }
 .strava-mark { position: relative; display: flex; justify-content: center; width: 126px; height: 122px; color: #fc4c02; pointer-events: none; transition: transform 240ms cubic-bezier(0.2, 0, 0, 1); }
 .strava-mark span { position: absolute; font-size: 96px; line-height: 1; transform: scaleX(0.72); }
@@ -178,7 +178,7 @@ p, li { text-wrap: pretty; }
 .collection-hero > p:last-child { max-width: 430px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
 .filter-bar { position: sticky; top: 12px; z-index: 20; display: flex; width: fit-content; max-width: 100%; gap: 5px; margin-bottom: 34px; padding: 5px; overflow-x: auto; border-radius: 999px; background: rgba(241, 239, 233, 0.78); box-shadow: var(--shadow-border); backdrop-filter: blur(14px); scrollbar-width: none; }
 .filter-bar::-webkit-scrollbar { display: none; }
-.filter-pill { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 15px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out; }
+.filter-pill { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 15px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out; }
 .filter-pill span { font-variant-numeric: tabular-nums; opacity: 0.55; }
 .filter-pill.active { background: var(--ink); color: white; }
 
@@ -303,7 +303,7 @@ p, li { text-wrap: pretty; }
   .update-body a { margin-top: 14px; }
   .site-header { align-items: flex-start; margin-bottom: 18px; }
   .site-header nav { max-width: calc(100% - 64px); overflow-x: auto; scrollbar-width: none; }
-  .nav-link { min-height: 40px; padding: 0 10px; font-size: 11px; }
+  .nav-link { min-height: 44px; padding: 0 10px; font-size: 11px; }
   .dashboard { grid-template-columns: 1fr; gap: 11px; }
   .intro-panel, .role-panel, .listening-panel, .rotation-panel, .making-panel, .writing-panel, .uses-panel { grid-column: 1; }
   .intro-panel { min-height: 470px; padding: 28px 23px; }
@@ -366,7 +366,7 @@ html[data-theme="dark"]:has(.neutral-shell) {
 }
 body:has(.neutral-shell) { background: var(--paper); }
 .neutral-shell .site-header nav { margin-left: auto; }
-.theme-toggle { display: grid; flex-shrink: 0; width: 42px; height: 42px; margin-left: 10px; border-radius: 50%; background: var(--card); box-shadow: var(--shadow-border); font-size: 24px; place-items: center; transition: scale 160ms ease-out; }
+.theme-toggle { display: grid; flex-shrink: 0; width: 44px; height: 44px; margin-left: 10px; border-radius: 50%; background: var(--card); box-shadow: var(--shadow-border); font-size: 24px; place-items: center; transition: scale 160ms ease-out; }
 .neutral-shell .nav-link.active { background: var(--paper-deep); }
 .neutral-shell .panel, .neutral-shell .inventory-card { background: var(--card); }
 .neutral-shell .intro-panel { color: var(--ink); }
@@ -520,7 +520,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
   .carousel-key-hint { display: none; }
   .neutral-shell .site-header { align-items: center; }
   .neutral-shell .site-header nav { max-width: calc(100% - 100px); }
-  .theme-toggle { margin-left: 4px; width: 40px; height: 40px; }
+  .theme-toggle { margin-left: 4px; width: 44px; height: 44px; }
   .carousel-bottom { flex-wrap: wrap; }
   .folder-toggle { width: 215px; }
 }
@@ -563,7 +563,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 
 /* Hovering "More about me" sends a poking hand to the About link in the header */
 .nav-link[href="/about"] { position: relative; }
-.nav-link[href="/about"]::before { position: absolute; top: 100%; left: 50%; content: "👆"; color: transparent; font-size: 18px; line-height: 1; text-shadow: 0 0 0 var(--ink); opacity: 0; transform: translate(-50%, 10px) rotate(-12deg) scale(0.6); transform-origin: 50% 0; pointer-events: none; transition: opacity 160ms ease-out, transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.nav-link[href="/about"]::before { position: absolute; top: 100%; left: 50%; content: "👆" / ""; color: transparent; font-size: 18px; line-height: 1; text-shadow: 0 0 0 var(--ink); opacity: 0; transform: translate(-50%, 10px) rotate(-12deg) scale(0.6); transform-origin: 50% 0; pointer-events: none; transition: opacity 160ms ease-out, transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
 @media (hover: hover) and (pointer: fine) {
   .intro-more:hover { text-decoration-color: currentColor; }
   .intro-more:hover span { transform: translateX(3px); }
@@ -590,3 +590,8 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
   .site-header nav, .neutral-shell .site-header nav { order: 3; flex-basis: 100%; max-width: none; margin: 4px 0 0 -8px; justify-content: flex-start; }
   .nav-link { padding: 0 8px; }
 }
+
+/* Small text links keep their look but get a 44px tap area */
+.panel-label a, .reading-book-info a { position: relative; }
+.panel-label a::after, .reading-book-info a::after { position: absolute; inset: 50% -4px auto; height: 44px; min-height: 100%; translate: 0 -50%; content: ""; }
+.reading-rail:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }

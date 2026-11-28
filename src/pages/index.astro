@@ -163,7 +163,7 @@ try {
             </div>
             <div class="reading-rotation">
               <p class="eyebrow">IN ROTATION</p>
-              <div class="reading-rail">
+              <div class="reading-rail" role="region" aria-label="Books in rotation" tabindex="0">
                 {inRotation.map((book) => (
                   <div class="reading-rail-item">
                     <BookCover title={book.title} coverId={book.coverId} />

@@ -19,13 +19,13 @@ const selection = homepageRotation.flatMap((name) => rotationItems.filter((item)
       <div class="carousel-arrows"><button type="button" data-step="-1" aria-label="Previous item (L key)">‹</button><button type="button" data-step="1" aria-label="Next item (R key)">›</button></div>
     </div>
   </div>
-  <div class="carousel-track" tabindex="0" aria-label="Clothes, gear and fragrances. Swipe to browse.">
+  <div class="carousel-track" role="group" tabindex="0" aria-label="Clothes, gear and fragrances. Swipe to browse.">
     {selection.map((item) => <a class="carousel-slide" href="/clothing" aria-label={`${item.brand} ${item.name}, view archive`}>
       <Image src={item.image} alt={`${item.brand} ${item.name}`} widths={[320, 480, 720]} sizes="240px" quality={75} loading="eager" />
       <span class="carousel-caption"><small>{item.brand}</small><strong>{item.name}</strong></span>
     </a>)}
   </div>
-  <div class="carousel-bottom"><a href="/clothing">View all {rotationItems.length} items ↗</a><div class="carousel-dots" aria-label="Choose item">{selection.map((item, index) => <button type="button" data-slide={index} aria-label={`Show ${item.brand} ${item.name}`} aria-pressed={index === 0 ? "true" : "false"}><span></span></button>)}</div></div>
+  <div class="carousel-bottom"><a href="/clothing">View all {rotationItems.length} items ↗</a><div class="carousel-dots" role="group" aria-label="Choose item">{selection.map((item, index) => <button type="button" data-slide={index} aria-label={`Show ${item.brand} ${item.name}`} aria-pressed={index === 0 ? "true" : "false"}><span></span></button>)}</div></div>
 </section>
 <script>
   const carousel = document.querySelector<HTMLElement>(".carousel-panel");

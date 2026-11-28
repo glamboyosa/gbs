@@ -595,6 +595,7 @@ html[data-theme="dark"] .neutral-shell .strava-stats div { background: #202024; 
 .nav-link[href="/about"] { position: relative; }
 .nav-link[href="/about"]::before { position: absolute; top: 100%; left: 50%; content: "👆"; color: transparent; font-size: 18px; line-height: 1; text-shadow: 0 0 0 var(--ink); opacity: 0; transform: translate(-50%, 10px) rotate(-12deg) scale(0.6); transform-origin: 50% 0; pointer-events: none; transition: opacity 160ms ease-out, transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
 @media (hover: hover) and (pointer: fine) {
+  .home-split a.panel:hover { translate: none; box-shadow: none; }
   .intro-more:hover { text-decoration-color: currentColor; }
   .intro-more:hover span { transform: translateX(3px); }
   html:has(.intro-more:hover) .nav-link[href="/about"] { color: var(--ink); }

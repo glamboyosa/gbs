@@ -304,7 +304,7 @@ p, li { text-wrap: pretty; }
 .uses-hero h1 { margin: 0; font-size: clamp(50px, 8vw, 104px); font-weight: 500; letter-spacing: -0.075em; line-height: 0.9; }
 .uses-hero h1 span { color: var(--purple); }
 .uses-hero > p:last-child { max-width: 570px; margin: 28px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
-.inventory-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.inventory-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .inventory-card { display: flex; flex-direction: column; min-height: 430px; padding: 26px; border-radius: 24px; background: var(--card); box-shadow: var(--shadow-border); }
 .inventory-card:nth-child(2) { background: var(--purple-soft); }
 .inventory-card:nth-child(3) { background: var(--acid); }
